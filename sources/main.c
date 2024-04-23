@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 17:46:07 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/23 17:50:40 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	main(int ac, char **av)
 		printf("Error: Cannot get format for file %s\n", av[1]);
 		return (1);
 	}
-	printf("File type: '%s' with %i bits, %s, type of file : %s, entry : %p\n", fileFormat->filetype, fileFormat->fileformat, fileFormat->endianness, fileFormat->type_Name, fileFormat->entry);
-	printf("Offset of section header: Ox%x offset of programm header : Ox%x\n", fileFormat->offset_Header_Section, fileFormat->offset_Header_Program);
+	printf("File type: '%s' with %i bits, %s, type of file: %s, entry: %p\n", fileFormat->filetype, fileFormat->fileformat, fileFormat->endianness, fileFormat->type_Name, fileFormat->entry);
+	printf("Offset of section header: %#x\nOffset of programm header: %#x\n", fileFormat->offset_Header_Section, fileFormat->offset_Header_Program);
 	// size_t str = reader->get_date(reader);
 	// printf("Date: '%zu'\n", str);
 	// free(fileFormat);
