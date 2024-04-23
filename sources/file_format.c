@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 16:11:26 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 17:47:10 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/23 17:49:13 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ t_file_Format *new_file_format(t_binary_reader *reader)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
 	reader->seek(reader, 1);
 	fileFormat->filetype = reader->get_string(reader, 3);
-	fileFormat->fileformat = (32 << reader->get_uint8(reader));
+	fileFormat->fileformat = (32 * reader->get_uint8(reader));
 	if (ft_strcmp(fileFormat->filetype, "ELF") == 0)
 		fileFormat->correctfiletype = 1;
 	else
