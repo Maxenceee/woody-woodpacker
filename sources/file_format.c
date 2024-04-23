@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   file_format.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 16:11:26 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 17:29:47 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 17:47:10 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
 
-static void get_Type(t_binary_reader *reader, t_file_Format *fileFormat){
+static void get_Type(t_binary_reader *reader, t_file_Format *fileFormat)
+{
 	reader->seek(reader, 16);
 	fileFormat->type = reader->get_uint8(reader);
 	 switch(fileFormat->type) {
@@ -45,25 +46,24 @@ static void get_Type(t_binary_reader *reader, t_file_Format *fileFormat){
             break;
         default:
 			fileFormat->type_Name = "Error";
-
-    }
-	
+    }	
 }
 
-t_file_Format *new_file_format(t_binary_reader *reader){
+t_file_Format *new_file_format(t_binary_reader *reader)
+{
 	t_file_Format *fileFormat = ft_calloc(1, sizeof(t_file_Format));
 	if (fileFormat == NULL)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
 	reader->seek(reader, 1);
 	fileFormat->filetype = reader->get_string(reader, 3);
-	fileFormat->fileformat = reader->get_uint8(reader) * 32;
+	fileFormat->fileformat = (32 << reader->get_uint8(reader));
 	if (ft_strcmp(fileFormat->filetype, "ELF") == 0)
 		fileFormat->correctfiletype = 1;
 	else
 		fileFormat->correctfiletype = 0;
 	fileFormat->endianness = reader->get_uint8(reader) - 1 ? "little endianness" : "big endianness";
 	fileFormat->endianness_Type = reader->get_uint8(reader);
-	get_Type(reader ,fileFormat);
+	get_Type(reader, fileFormat);
 	fileFormat->entry = 0;
 	reader->seek(reader, 0x18);
 	if (fileFormat->fileformat / 32 == 1)
@@ -76,8 +76,8 @@ t_file_Format *new_file_format(t_binary_reader *reader){
 	return (fileFormat);
 }
 
-void delete_file_format(t_file_Format *fileFormat){
+void delete_file_format(t_file_Format *fileFormat)
+{
 	free(fileFormat->filetype);
 	free(fileFormat);
 }
-

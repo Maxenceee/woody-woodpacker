@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   br_get_uint64.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 16:43:44 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 17:29:26 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 17:43:07 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 uint64_t	br_get_uint64(t_binary_reader *this)
 {
-	return((unsigned long)this->get_uint32(this) << 32 | this->get_uint32(this));
+	return (((uint64_t)this->get_uint32(this) << 32) | this->get_uint32(this));
 }

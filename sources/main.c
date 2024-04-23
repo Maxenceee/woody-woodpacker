@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 17:09:20 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 17:46:07 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,16 @@ int	main(int ac, char **av)
 	 * Create new reader
 	 */
 	t_binary_reader *reader = new_binary_reader(fd);
-	if (!reader || reader->get_uint8(reader) != 0x7F)
+	if (!reader)
 	{
 		printf("Error: Cannot read file %s\n", av[1]);
+		return (1);
+	}
+
+	if (reader->get_uint8(reader) != 0x7F)
+	{
+		delete_binary_reader(reader);
+		printf("Error: File %s is not an ELF file\n", av[1]);
 		return (1);
 	}
 
@@ -44,7 +51,8 @@ int	main(int ac, char **av)
 	
 	// Get the file type reading 3 bytes as a string
 	struct s_file_Format *fileFormat = new_file_format(reader);
-	if (fileFormat == NULL){
+	if (fileFormat == NULL)
+	{
 		printf("Error: Cannot get format for file %s\n", av[1]);
 		return (1);
 	}
