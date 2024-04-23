@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
+/*   Updated: 2024/04/23 14:15:08 by mbrement         ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <fcntl.h>
 #include "reader/binary_reader.h"
@@ -32,5 +44,5 @@ int	main(int ac, char **av)
 
 	// Get the file type reading 3 bytes as a string
 	char *filetype = reader->get_string(reader, 3);
-	printf("File type: %s\n", filetype);
+	printf("File type: '%s', len : %zu\n", filetype, ft_strlen(filetype));
 }

@@ -23,5 +23,6 @@ char	*br_get_string(t_binary_reader *this, uint16_t length)
 	i = -1;
 	while (++i < length)
 		res[i] = this->get_uint8(this);
+	res[length] = '\0';
 	return (res);
 }
