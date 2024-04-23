@@ -1,3 +1,5 @@
+# Genaral
+
 allowed function : 
 * open, close, exit
 * fpusts, fflush, lseek
@@ -29,6 +31,7 @@ step :
 * look if file is here/openable/permission with open --> return false if wrong
 * look if ELF64.
 	* header of ELF64: 7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  * mafic number: 0x7F 'E' 'L' 'F'
 * parse the executable
 	* extract the section
 	* compress the session
@@ -36,3 +39,6 @@ step :
 	* custom key of encription : 9c090817c68464c4f153ecda9afce135951de141
 *	create a main that decrypt and run the executable
 
+# Usefull
+
+https://en.wikipedia.org/wiki/Executable_and_Linkable_Format#
