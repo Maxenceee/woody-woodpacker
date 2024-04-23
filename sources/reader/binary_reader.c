@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 14:11:02 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 16:52:24 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ void	init_binary_reader(t_binary_reader *reader)
 	reader->get_uint8 = &br_get_uint8;
 	reader->get_uint16 = &br_get_uint16;
 	reader->get_uint32 = &br_get_uint32;
+	reader->get_uint64 = &br_get_uint64;
 	reader->get_int16 = &br_get_int16;
 	reader->get_int32 = &br_get_int32;
+	reader->get_int64 = &br_get_int64;
 	reader->get_fword = &br_get_fword;
 	reader->get_2dot14 = &br_get_2dot14;
 	reader->get_fixed = &br_get_fixed;
