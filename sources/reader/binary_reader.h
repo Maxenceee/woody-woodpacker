@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binary_reader.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 12:16:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/23 16:52:35 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,11 @@ struct s_binary_reader
 	uint8_t				(*get_uint8)(t_binary_reader *);
 	uint16_t			(*get_uint16)(t_binary_reader *);
 	uint32_t			(*get_uint32)(t_binary_reader *);
+	uint64_t			(*get_uint64)(t_binary_reader *);
 
 	int16_t				(*get_int16)(t_binary_reader *);
 	int32_t				(*get_int32)(t_binary_reader *);
+	int64_t				(*get_int64)(t_binary_reader *);
 
 	int16_t				(*get_fword)(t_binary_reader *);
 	int16_t				(*get_2dot14)(t_binary_reader *);
@@ -80,9 +82,11 @@ uint32_t		br_tell(t_binary_reader *this);
 uint8_t			br_get_uint8(t_binary_reader *this);
 uint16_t		br_get_uint16(t_binary_reader *this);
 uint32_t		br_get_uint32(t_binary_reader *this);
+uint64_t		br_get_uint64(t_binary_reader *this);
 
 int16_t			br_get_int16(t_binary_reader *this);
 int32_t			br_get_int32(t_binary_reader *this);
+int64_t			br_get_int64(t_binary_reader *this);
 
 int16_t			br_get_fword(t_binary_reader *this);
 int16_t			br_get_2dot14(t_binary_reader *this);

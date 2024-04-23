@@ -1,28 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   br_get_string.c                                    :+:      :+:    :+:   */
+/*   br_get_int64.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/22 15:16:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 12:15:16 by mgama            ###   ########.fr       */
+/*   Created: 2024/04/23 16:46:17 by mbrement          #+#    #+#             */
+/*   Updated: 2024/04/23 17:28:43 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "reader/binary_reader.h"
 
-char	*br_get_string(t_binary_reader *this, uint16_t length)
+int64_t	br_get_int64(t_binary_reader *this)
 {
-	int		i;
-	char	*res;
-
-	res = malloc((length + 1) * sizeof(char));
-	if (!res)
-		return (NULL);
-	i = -1;
-	while (++i < length)
-		res[i] = this->get_uint8(this);
-	res[length] = '\0';
-	return (res);
+	return ((long)this->get_int32(this) << 32 | this->get_int32(this));
 }
