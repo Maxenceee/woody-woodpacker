@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 16:51:47 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 17:03:46 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ struct s_file_Format {
 	int		type;
 	char	*type_Name;
 	void	*entry;
+	int32_t	offset_Header_Program;
+	int32_t	offset_Header_Section;
 };
 
 typedef struct s_file_Format t_file_Format;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_file_format.c                                  :+:      :+:    :+:   */
+/*   file_format.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 16:11:26 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 16:59:16 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 17:29:47 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void get_Type(t_binary_reader *reader, t_file_Format *fileFormat){
 }
 
 t_file_Format *new_file_format(t_binary_reader *reader){
-	t_file_Format *fileFormat = malloc(sizeof(t_file_Format));
+	t_file_Format *fileFormat = ft_calloc(1, sizeof(t_file_Format));
 	if (fileFormat == NULL)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
 	reader->seek(reader, 1);
@@ -70,6 +70,9 @@ t_file_Format *new_file_format(t_binary_reader *reader){
 		fileFormat->entry += reader->get_uint32(reader);
 	else
 		fileFormat->entry += reader->get_uint64(reader);
+	// unsure if it's right after
+	fileFormat->offset_Header_Program = reader->get_uint32(reader);
+	fileFormat->offset_Header_Section = reader->get_uint32(reader);
 	return (fileFormat);
 }
 

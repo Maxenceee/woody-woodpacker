@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 16:42:41 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/23 17:09:20 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	printf("File type: '%s' with %i bits, %s, type of file : %s, entry : %p\n", fileFormat->filetype, fileFormat->fileformat, fileFormat->endianness, fileFormat->type_Name, fileFormat->entry);
+	printf("Offset of section header: Ox%x offset of programm header : Ox%x\n", fileFormat->offset_Header_Section, fileFormat->offset_Header_Program);
 	// size_t str = reader->get_date(reader);
 	// printf("Date: '%zu'\n", str);
 	// free(fileFormat);
