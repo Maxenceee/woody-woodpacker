@@ -31,7 +31,7 @@ $(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c Makefile
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(CC) $(OBJS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled!$(DEFAULT)"
 
 clean:

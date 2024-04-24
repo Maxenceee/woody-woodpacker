@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/24 18:37:19 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/25 00:30:13 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,6 @@ int	main(int ac, char **av)
 	if (!reader)
 	{
 		printf("Error: Cannot read file %s\n", av[1]);
-		return (1);
-	}
-
-	if (reader->get_uint8(reader) != 0x7F)
-	{
-		delete_binary_reader(reader);
-		printf("Error: File %s is not an ELF file\n", av[1]);
 		return (1);
 	}
 	

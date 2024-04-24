@@ -94,20 +94,27 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	t_elf_file *elf_file = ft_calloc(1, sizeof(t_elf_file));
 	if (elf_file == NULL)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
-	reader->seek(reader, 1);
-	elf_file->e_ident_mag = reader->get_string(reader, 3);
-	elf_file->e_ident_class = reader->get_uint8(reader) * 32;
 
-	if (ft_strcmp(elf_file->e_ident_mag, "ELF") == 0)
+	reader->set_endian(reader, READER_LITTLE_ENDIAN);
+	elf_file->e_ident_magic = reader->get_uint32(reader);
+	if (elf_file->e_ident_magic != 0x464C457F) // 0x7F 'E' 'L' 'F'
 	{
-		elf_file->correcte_ident_mag = 1;
+		delete_elf_file(elf_file);
+		return (ft_error(WD_PREFIX"Invalid file format.\n"), NULL);
 	}
+	/**
+	 * Put the magic number in the e_ident field
+	 */
+	*(uint32_t *)elf_file->e_ident = elf_file->e_ident_magic;
 
+	elf_file->e_ident_class = reader->get_uint8(reader);
+	elf_file->e_ident[4] = elf_file->e_ident_class;
 	elf_file->e_ident_data = reader->get_uint8(reader);
+	elf_file->e_ident[5] = elf_file->e_ident_data;
 	elf_file->e_ident_data_type = elf_file->e_ident_data - 1 ? "big endian" : "little endian";
-	if (elf_file->e_ident_data == 1)
+	if (elf_file->e_ident_data == 2)
 	{
-		reader->set_endian(reader, READER_LITTLE_ENDIAN);
+		reader->set_endian(reader, READER_BIG_ENDIAN);
 	}
 
 	/**
@@ -118,6 +125,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		delete_elf_file(elf_file);
 		return (ft_error(WD_PREFIX"Wrong version.\n"), NULL);
 	}
+	elf_file->e_ident[6] = 1;
 
 	elf_file->e_ident_osabi =  reader->get_uint8(reader);
 	if (elf_file->e_ident_osabi != 0x00 && elf_file->e_ident_osabi != 0x03)
@@ -163,8 +171,6 @@ void	delete_elf_file(t_elf_file *elf_file)
 	if (elf_file == NULL)
 		return ;
 
-	if (elf_file->e_ident_mag)
-		free(elf_file->e_ident_mag);
 	if (elf_file->section_tables)
 		free(elf_file->section_tables);
 	free(elf_file);
@@ -172,8 +178,11 @@ void	delete_elf_file(t_elf_file *elf_file)
 
 void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 {
-	printf("Magic:                             %s\n", elf_file->e_ident_mag);
-	printf("Class:                             %s%d\n", elf_file->e_ident_mag, elf_file->e_ident_class);
+	printf("Magic: ");
+	for (int i = 0; i < 16; i++)
+		printf("%02X ", elf_file->e_ident[i]);
+	printf("\n");
+	printf("Class:                             ELF%d\n", elf_file->e_ident_class * 32);
 	printf("Data:                              2's complement, %s\n", elf_file->e_ident_data_type);
 	printf("Version:                           1 (current)\n");
 	printf("OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident_osabi]);

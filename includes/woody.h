@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/25 00:16:48 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/25 00:26:09 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ typedef struct s_elf_file			t_elf_file;
 typedef struct s_elf_section_table	t_elf_section_table;
 
 struct s_elf_file {
-	char		*e_ident_mag;				// magic number
-	int			correcte_ident_mag;
+	char		e_ident[16];
+	uint32_t	e_ident_magic;				// magic number
 	int			e_ident_class;				// 32 bits or 64 bits
 	int 		e_ident_data;				// little of big endian
 	char		*e_ident_data_type;
