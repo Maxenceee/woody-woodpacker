@@ -190,13 +190,12 @@ void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 
 	printf("\nSection Headers:\n");
 	printf("  [Nr] Name               Type               Address            Offset             Size\n");
-	uint64_t	old_addr;
+	uint64_t	old_addr = reader->tell(reader);
 	for (int i = 0; i < elf_file->e_shnum; i++)
 	{
 		printf("  [%2d] ", i);
-		old_addr = reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
+		reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
 		reader->get_rstring(reader, 18);
-		reader->seek(reader, old_addr);
 		if (elf_file->section_tables[i].sh_type < 0x13)
 			printf(" %-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
 		else
@@ -205,4 +204,5 @@ void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 		printf("%#018lx ", elf_file->section_tables[i].sh_offset);
 		printf("%#018lx\n", elf_file->section_tables[i].sh_size);
 	}
+	reader->seek(reader, old_addr);
 }
