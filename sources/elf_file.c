@@ -135,6 +135,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	elf_file->e_phnum = reader->get_uint16(reader);
 	elf_file->e_shentsize = reader->get_uint16(reader);
 	elf_file->e_shnum = reader->get_uint16(reader);
+	elf_file->e_shstrndx = reader->get_uint16(reader);
 
 	if (get_elf_tables_offset(elf_file, reader))
 	{
