@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binary_reader.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 16:52:24 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/24 14:06:33 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ void	init_binary_reader(t_binary_reader *reader)
 	reader->get_int32 = &br_get_int32;
 	reader->get_int64 = &br_get_int64;
 	reader->get_fword = &br_get_fword;
-	reader->get_2dot14 = &br_get_2dot14;
 	reader->get_fixed = &br_get_fixed;
 	reader->get_string = &br_get_string;
 	reader->get_unicode_string = &br_get_unicode_string;
 	reader->get_date = &br_get_date;
 	reader->slice = &br_slice;
+	reader->set_endian = &br_set_endian;
 }
 
 void	delete_binary_reader(t_binary_reader *this)

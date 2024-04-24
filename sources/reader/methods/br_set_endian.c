@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   br_get_2dot14.c                                    :+:      :+:    :+:   */
+/*   br_set_endian.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/22 15:12:16 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 12:15:03 by mgama            ###   ########.fr       */
+/*   Created: 2024/04/24 13:58:41 by mgama             #+#    #+#             */
+/*   Updated: 2024/04/24 13:58:58 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "reader/binary_reader.h"
 
-int16_t	br_get_2dot14(t_binary_reader *this)
+void	br_set_endian(t_binary_reader *this, int endian)
 {
-	return (this->get_int16(this) / (1 << 14));
+	this->endian = endian;
 }

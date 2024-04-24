@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binary_reader.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 16:52:35 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/24 14:06:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,18 @@
 
 typedef struct s_binary_reader	t_binary_reader;
 
+enum e_endian
+{
+	READER_BIG_ENDIAN		= 0X00,
+	READER_LITTLE_ENDIAN	= 0X01
+};
+
 struct s_binary_reader
 {
 	uint32_t			_pos;
 	unsigned char		*data;
 	uint32_t			size;
+	int					endian;
 
 	uint32_t			((*seek)(t_binary_reader *, uint32_t));
 	uint32_t			(*tell)(t_binary_reader *);
@@ -50,6 +57,8 @@ struct s_binary_reader
 	uint64_t			(*get_date)(t_binary_reader *);
 
 	t_binary_reader		*(*slice)(t_binary_reader *, uint32_t, uint32_t);
+
+	void				(*set_endian)(t_binary_reader *, int);
 };
 
 /* create new nibary reader */
@@ -89,7 +98,6 @@ int32_t			br_get_int32(t_binary_reader *this);
 int64_t			br_get_int64(t_binary_reader *this);
 
 int16_t			br_get_fword(t_binary_reader *this);
-int16_t			br_get_2dot14(t_binary_reader *this);
 int32_t			br_get_fixed(t_binary_reader *this);
 
 char			*br_get_string(t_binary_reader *this, uint16_t length);
@@ -99,5 +107,7 @@ uint64_t		br_get_date(t_binary_reader *this);
 
 t_binary_reader	*br_slice(t_binary_reader *this, uint32_t start,
 					uint32_t length);
+
+void			br_set_endian(t_binary_reader *this, int endian);
 
 #endif /* BINARY_READER_H */
