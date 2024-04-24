@@ -141,7 +141,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		elf_file->e_shoff = reader->get_uint64(reader);
 	}
 
-	(void)reader->get_uint32(reader); 						// avoid the `e_flag`
+	(void)reader->get_uint32(reader); // avoid the `e_flag`
 	elf_file->e_ehsize = reader->get_uint16(reader);
 	elf_file->e_phentsize = reader->get_uint16(reader);
 	elf_file->e_phnum = reader->get_uint16(reader);
@@ -160,8 +160,13 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 
 void	delete_elf_file(t_elf_file *elf_file)
 {
-	free(elf_file->e_ident_mag);
-	free(elf_file->section_tables);
+	if (elf_file == NULL)
+		return ;
+
+	if (elf_file->e_ident_mag)
+		free(elf_file->e_ident_mag);
+	if (elf_file->section_tables)
+		free(elf_file->section_tables);
 	free(elf_file);
 }
 
