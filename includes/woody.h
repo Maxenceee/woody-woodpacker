@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 18:42:06 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/25 00:16:48 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,27 @@ static const char *g_elf_section_table_type[] = {
 	"GROUP",
 	"SYMTAB_SHNDX",
 	"NUM"
+};
+
+static const char *g_elf_osabi_name[] = {
+	"UNIX - System V",
+	"HP-UX",
+	"NetBSD",
+	"Linux",
+	"GNU Hurd",
+	"Solaris",
+	"AIX (Monterey)",
+	"IRIX",
+	"FreeBSD",
+	"Tru64",
+	"Novell Modesto",
+	"OpenBSD",
+	"OpenVMS",
+	"NonStop Kernel",
+	"AROS",
+	"FenixOS",
+	"Nuxi CloudABI",
+	"Stratus Technologies OpenVOS"
 };
 
 /**

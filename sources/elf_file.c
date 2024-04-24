@@ -176,7 +176,7 @@ void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 	printf("Class:                             %s%d\n", elf_file->e_ident_mag, elf_file->e_ident_class);
 	printf("Data:                              2's complement, %s\n", elf_file->e_ident_data_type);
 	printf("Version:                           1 (current)\n");
-	printf("OS/ABI:                            %#x\n", elf_file->e_ident_osabi);
+	printf("OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident_osabi]);
 	printf("Type:                              %s\n", elf_file->e_type_name);
 	printf("Entry point:                       %#lx\n", elf_file->e_entry);
 	printf("Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
