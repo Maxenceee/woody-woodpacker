@@ -6,14 +6,18 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 14:06:36 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 17:13:09 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BINARY_READER_H
 # define BINARY_READER_H
 
-# include "woody.h"
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <stdint.h>
+# include <fcntl.h>
 # include "utils/utils.h"
 
 # ifndef BUFFER_SIZE

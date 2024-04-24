@@ -6,23 +6,23 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 16:48:28 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 17:15:43 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WOODY_H
 # define WOODY_H
 
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <stdint.h>
-# include <fcntl.h>
-# include  "reader/binary_reader.h"
+# include "reader/binary_reader.h"
 
 #define WD_PREFIX "woody: "
 
 #define WD_MAGIC 0x7F454C46
+
+enum e_class {
+	WD_32BITS = 1,
+	WD_64BITS = 2
+};
 
 /*
  * Structures
@@ -40,7 +40,7 @@ struct s_elf_file {
 	int			e_type;						// object type
 	char		*e_type_name;
 	int			e_ident_osabi;				// operating system target
-	void		*e_entry;					// address where the execution starts
+	uint64_t	e_entry;					// address where the execution starts
 	uint64_t	e_phoff;					// program headers' offset
 	uint64_t	e_shoff;					// section headers' offset
 	uint64_t	e_ehsize;					// elf header size
@@ -49,6 +49,7 @@ struct s_elf_file {
 	uint16_t	e_shentsize;				// size of single section header
 	uint16_t	e_shnum; 					// count of section headers
 	uint16_t	e_shstrndx;					// index of name's section in the table
+	t_elf_section_table	*section_tables;
 };
 
 struct s_elf_section_table {
@@ -65,5 +66,6 @@ struct s_elf_section_table {
 
 t_elf_file		*new_elf_file(t_binary_reader *reader);
 void			delete_elf_file(t_elf_file *file_format);
+void			print_elf_file(t_elf_file *elf_file);
 
 #endif /* WOODY_H */

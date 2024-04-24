@@ -12,7 +12,7 @@
 
 #include "woody.h"
 
-static void get_Type(t_binary_reader *reader, t_elf_file *elf_file)
+static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 {
 	reader->seek(reader, 16);
 	elf_file->e_type = reader->get_uint8(reader);
@@ -49,7 +49,35 @@ static void get_Type(t_binary_reader *reader, t_elf_file *elf_file)
     }
 }
 
-t_elf_file *new_elf_file(t_binary_reader *reader)
+int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
+{
+	reader->seek(reader, elf_file->e_shoff);
+	elf_file->section_tables = ft_calloc(1, sizeof(t_elf_section_table));
+	if (elf_file->section_tables == NULL)
+		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+	for (int i = 0; i < elf_file->e_shnum; i++)
+	{
+		(void)reader->get_uint32(reader);
+		elf_file->section_tables[i].sh_type = reader->get_uint32(reader);
+		if (elf_file->e_ident_class == WD_32BITS)
+		{
+			elf_file->section_tables[i].sh_flags = reader->get_uint32(reader);
+			elf_file->section_tables[i].sh_address = reader->get_uint32(reader);
+			elf_file->section_tables[i].sh_offset = reader->get_uint32(reader);
+			elf_file->section_tables[i].sh_size = reader->get_uint32(reader);
+		}
+		else
+		{
+			elf_file->section_tables[i].sh_flags = reader->get_uint64(reader);
+			elf_file->section_tables[i].sh_address = reader->get_uint64(reader);
+			elf_file->section_tables[i].sh_offset = reader->get_uint64(reader);
+			elf_file->section_tables[i].sh_size = reader->get_uint64(reader);
+		}
+	}
+	return (0);
+}
+
+t_elf_file	*new_elf_file(t_binary_reader *reader)
 {
 	t_elf_file *elf_file = ft_calloc(1, sizeof(t_elf_file));
 	if (elf_file == NULL)
@@ -61,10 +89,6 @@ t_elf_file *new_elf_file(t_binary_reader *reader)
 	if (ft_strcmp(elf_file->e_ident_mag, "ELF") == 0)
 	{
 		elf_file->correcte_ident_mag = 1;
-	}
-	else
-	{
-		elf_file->correcte_ident_mag = 0;
 	}
 
 	elf_file->e_ident_data = reader->get_uint8(reader);
@@ -89,10 +113,10 @@ t_elf_file *new_elf_file(t_binary_reader *reader)
 		delete_elf_file(elf_file);
 		return (ft_error(WD_PREFIX"Invlide ABI.\n"), NULL);
 	}
+	get_type_name(reader, elf_file);
 
-	get_Type(reader ,elf_file);
 	reader->seek(reader, 0x18);
-	if (elf_file->e_ident_class == 32)
+	if (elf_file->e_ident_class == WD_32BITS)
 	{
 		elf_file->e_entry += reader->get_uint32(reader);
 		elf_file->e_shoff = reader->get_uint32(reader);
@@ -111,13 +135,38 @@ t_elf_file *new_elf_file(t_binary_reader *reader)
 	elf_file->e_phnum = reader->get_uint16(reader);
 	elf_file->e_shentsize = reader->get_uint16(reader);
 	elf_file->e_shnum = reader->get_uint16(reader);
+	elf_file->e_shstrndx = reader->get_uint16(reader);
+
+	if (get_elf_tables_offset(elf_file, reader))
+	{
+		delete_elf_file(elf_file);
+		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
+	}
 
 	return (elf_file);
 }
 
-void delete_elf_file(t_elf_file *elf_file)
+void	delete_elf_file(t_elf_file *elf_file)
 {
 	free(elf_file->e_ident_mag);
 	free(elf_file);
 }
 
+void	print_elf_file(t_elf_file *elf_file)
+{
+	printf("Magic:                             %s\n", elf_file->e_ident_mag);
+	printf("Class:                             %s%d\n", elf_file->e_ident_mag, elf_file->e_ident_class);
+	printf("Data:                              2's complement, %s\n", elf_file->e_ident_data_type);
+	printf("Version:                           1 (current)\n");
+	printf("OS/ABI:                            %#x\n", elf_file->e_ident_osabi);
+	printf("Type:                              %s\n", elf_file->e_type_name);
+	printf("Entry point:                       %#llx\n", elf_file->e_entry);
+	printf("Start of program headers:          %lld (bytes into file)\n", elf_file->e_phoff);
+	printf("Start of section headers:          %lld (bytes into file)\n", elf_file->e_shoff);
+	printf("Size of this header:               %lld (bytes)\n", elf_file->e_ehsize);
+	printf("Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
+	printf("Number of program headers:         %d\n", elf_file->e_phnum);
+	printf("Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
+	printf("Number of section headers:         %d\n", elf_file->e_shnum);
+	printf("Section header string table index: %d\n", elf_file->e_shstrndx);
+}

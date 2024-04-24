@@ -6,12 +6,10 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/24 16:46:25 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 17:12:53 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <fcntl.h>
 #include "woody.h"
 
 int	main(int ac, char **av)
@@ -45,9 +43,6 @@ int	main(int ac, char **av)
 		printf("Error: File %s is not an ELF file\n", av[1]);
 		return (1);
 	}
-
-	// Skip the first byte of the file (check before)
-	// reader->get_uint8(reader) != 0x7F
 	
 	// Get the file e_type reading 3 bytes as a string
 	t_elf_file *file_format = new_elf_file(reader);
@@ -56,18 +51,9 @@ int	main(int ac, char **av)
 		printf("Error: Cannot get format for file %s\n", av[1]);
 		return (1);
 	}
-	printf("File e_type: '%s' with %i bits, %s, e_type of file: %s, e_entry: %p\n", file_format->e_ident_mag, file_format->e_ident_class, file_format->e_ident_data_type, file_format->e_type_name, file_format->e_entry);
-	printf("Offset of programm header: %ld\n", file_format->e_shoff);
-	printf("Offset of section header : %ld\n", file_format->e_phoff); 
-	printf("Header size              : %ld\n", file_format->e_ehsize); 
-	printf("e_phentsize              : %d\n", file_format->e_phentsize); 
-	printf("e_phnum                  : %d\n", file_format->e_phnum); 
-	printf("e_shentsize              : %d\n", file_format->e_shentsize); 
-	printf("e_shnum                  : %d\n", file_format->e_shnum); 
-	// size_t str = reader->get_date(reader);
-	// printf("Date: '%zu'\n", str);
-	// free(file_format);
-	// free(reader);
+
+	print_elf_file(file_format);
+
 	delete_binary_reader(reader);
 	delete_elf_file(file_format);
 }

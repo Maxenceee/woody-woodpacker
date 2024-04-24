@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 14:06:33 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 17:14:09 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ t_binary_reader	*new_binary_reader(int fd)
 
 	reader = ft_calloc(1, sizeof(t_binary_reader));
 	if (!reader)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
+		return (NULL);
 	reader->data = ft_read_file(fd, reader->data, &reader->size);
 	if (!reader->data)
-		return (free(reader), ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
+		return (free(reader), NULL);
 	init_binary_reader(reader);
 	return (reader);
 }
