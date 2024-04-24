@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/24 15:45:42 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/24 16:46:25 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	main(int ac, char **av)
 	// reader->get_uint8(reader) != 0x7F
 	
 	// Get the file e_type reading 3 bytes as a string
-	t_file_format *file_format = new_file_format(reader);
+	t_elf_file *file_format = new_elf_file(reader);
 	if (file_format == NULL)
 	{
 		printf("Error: Cannot get format for file %s\n", av[1]);
@@ -69,5 +69,5 @@ int	main(int ac, char **av)
 	// free(file_format);
 	// free(reader);
 	delete_binary_reader(reader);
-	delete_file_format(file_format);
+	delete_elf_file(file_format);
 }

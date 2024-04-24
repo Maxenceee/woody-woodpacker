@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   woody.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 15:46:13 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/24 16:48:28 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@
  * Structures
  */
 
-struct s_file_format {
+typedef struct s_elf_file			t_elf_file;
+typedef struct s_elf_section_table	t_elf_section_table;
+
+struct s_elf_file {
 	char		*e_ident_mag;				// magic number
 	int			correcte_ident_mag;
 	int			e_ident_class;				// 32 bits or 64 bits
@@ -48,13 +51,19 @@ struct s_file_format {
 	uint16_t	e_shstrndx;					// index of name's section in the table
 };
 
-typedef struct s_file_format t_file_format;
+struct s_elf_section_table {
+	uint32_t	sh_type;
+	uint64_t	sh_flags;
+	uint64_t	sh_address;
+	uint64_t	sh_offset;
+	uint64_t	sh_size;
+};
 
 /**
  * Function definitions
  */
 
-t_file_format	*new_file_format(t_binary_reader *reader);
-void			delete_file_format(t_file_format *file_format);
+t_elf_file		*new_elf_file(t_binary_reader *reader);
+void			delete_elf_file(t_elf_file *file_format);
 
 #endif /* WOODY_H */
