@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 16:11:26 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/24 16:46:25 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 17:09:42 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 {
 	reader->seek(reader, elf_file->e_shoff);
-	elf_file->section_tables = ft_calloc(1, sizeof(t_elf_section_table));
+	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section_table));
 	if (elf_file->section_tables == NULL)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
 	for (int i = 0; i < elf_file->e_shnum; i++)
@@ -119,23 +119,22 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident_class == WD_32BITS)
 	{
 		elf_file->e_entry += reader->get_uint32(reader);
-		elf_file->e_shoff = reader->get_uint32(reader);
 		elf_file->e_phoff = reader->get_uint32(reader);
+		elf_file->e_shoff = reader->get_uint32(reader);
 	}
 	else
 	{
 		elf_file->e_entry += reader->get_uint64(reader);
-		elf_file->e_shoff = reader->get_uint64(reader);
 		elf_file->e_phoff = reader->get_uint64(reader);
+		elf_file->e_shoff = reader->get_uint64(reader);
 	}
 
-	(void)reader->get_uint32(reader);
+	(void)reader->get_uint32(reader); 						// avoid the `e_flag`
 	elf_file->e_ehsize = reader->get_uint16(reader);
 	elf_file->e_phentsize = reader->get_uint16(reader);
 	elf_file->e_phnum = reader->get_uint16(reader);
 	elf_file->e_shentsize = reader->get_uint16(reader);
 	elf_file->e_shnum = reader->get_uint16(reader);
-	elf_file->e_shstrndx = reader->get_uint16(reader);
 
 	if (get_elf_tables_offset(elf_file, reader))
 	{
@@ -149,6 +148,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 void	delete_elf_file(t_elf_file *elf_file)
 {
 	free(elf_file->e_ident_mag);
+	free(elf_file->section_tables);
 	free(elf_file);
 }
 
@@ -160,10 +160,10 @@ void	print_elf_file(t_elf_file *elf_file)
 	printf("Version:                           1 (current)\n");
 	printf("OS/ABI:                            %#x\n", elf_file->e_ident_osabi);
 	printf("Type:                              %s\n", elf_file->e_type_name);
-	printf("Entry point:                       %#llx\n", elf_file->e_entry);
-	printf("Start of program headers:          %lld (bytes into file)\n", elf_file->e_phoff);
-	printf("Start of section headers:          %lld (bytes into file)\n", elf_file->e_shoff);
-	printf("Size of this header:               %lld (bytes)\n", elf_file->e_ehsize);
+	printf("Entry point:                       %#lx\n", elf_file->e_entry);
+	printf("Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
+	printf("Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
+	printf("Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
 	printf("Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
 	printf("Number of program headers:         %d\n", elf_file->e_phnum);
 	printf("Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
