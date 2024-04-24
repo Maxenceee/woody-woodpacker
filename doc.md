@@ -31,6 +31,7 @@ step :
 * look if file is here/openable/permission with open --> return false if wrong
 * look if ELF64.
 	* header of ELF64: 7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+	* if big endian, reverse the reading process./t	
   * mafic number: 0x7F 'E' 'L' 'F'
 * parse the executable
 	* extract the section

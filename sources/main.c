@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/23 17:50:40 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 15:45:42 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,25 @@ int	main(int ac, char **av)
 	// Skip the first byte of the file (check before)
 	// reader->get_uint8(reader) != 0x7F
 	
-	// Get the file type reading 3 bytes as a string
-	struct s_file_Format *fileFormat = new_file_format(reader);
-	if (fileFormat == NULL)
+	// Get the file e_type reading 3 bytes as a string
+	t_file_format *file_format = new_file_format(reader);
+	if (file_format == NULL)
 	{
 		printf("Error: Cannot get format for file %s\n", av[1]);
 		return (1);
 	}
-	printf("File type: '%s' with %i bits, %s, type of file: %s, entry: %p\n", fileFormat->filetype, fileFormat->fileformat, fileFormat->endianness, fileFormat->type_Name, fileFormat->entry);
-	printf("Offset of section header: %#x\nOffset of programm header: %#x\n", fileFormat->offset_Header_Section, fileFormat->offset_Header_Program);
+	printf("File e_type: '%s' with %i bits, %s, e_type of file: %s, e_entry: %p\n", file_format->e_ident_mag, file_format->e_ident_class, file_format->e_ident_data_type, file_format->e_type_name, file_format->e_entry);
+	printf("Offset of programm header: %ld\n", file_format->e_shoff);
+	printf("Offset of section header : %ld\n", file_format->e_phoff); 
+	printf("Header size              : %ld\n", file_format->e_ehsize); 
+	printf("e_phentsize              : %d\n", file_format->e_phentsize); 
+	printf("e_phnum                  : %d\n", file_format->e_phnum); 
+	printf("e_shentsize              : %d\n", file_format->e_shentsize); 
+	printf("e_shnum                  : %d\n", file_format->e_shnum); 
 	// size_t str = reader->get_date(reader);
 	// printf("Date: '%zu'\n", str);
-	// free(fileFormat);
+	// free(file_format);
 	// free(reader);
 	delete_binary_reader(reader);
-	delete_file_format(fileFormat);
+	delete_file_format(file_format);
 }
