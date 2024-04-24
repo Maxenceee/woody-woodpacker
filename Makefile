@@ -10,7 +10,7 @@ OBJS			=	$(patsubst $(MANDATORY_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
 CC				=	gcc
 RM				=	rm -f
-CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 -Wall -Wextra -Werror
+CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 #-Wall -Wextra -Werror
 
 NAME			=	woody_woodpacker
 

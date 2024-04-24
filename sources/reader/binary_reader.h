@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 17:13:09 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 18:53:06 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ struct s_binary_reader
 	int32_t				(*get_fixed)(t_binary_reader *);
 
 	char				*(*get_string)(t_binary_reader *, uint16_t);
+	int					(*get_rstring)(t_binary_reader *, uint16_t);
 	char				*(*get_unicode_string)(t_binary_reader *, uint16_t);
 
 	uint64_t			(*get_date)(t_binary_reader *);
@@ -105,6 +106,7 @@ int16_t			br_get_fword(t_binary_reader *this);
 int32_t			br_get_fixed(t_binary_reader *this);
 
 char			*br_get_string(t_binary_reader *this, uint16_t length);
+int				br_get_rstring(t_binary_reader *this, uint16_t max);
 char			*br_get_unicode_string(t_binary_reader *this, uint16_t length);
 
 uint64_t		br_get_date(t_binary_reader *this);

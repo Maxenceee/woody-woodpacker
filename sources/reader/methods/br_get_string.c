@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/22 15:16:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 17:43:36 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 18:54:24 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,22 @@ char	*br_get_string(t_binary_reader *this, uint16_t length)
 		res[i] = this->get_uint8(this);
 	res[i] = 0;
 	return (res);
+}
+
+int	br_get_rstring(t_binary_reader *this, uint16_t max)
+{
+	char	i;
+	int		j = 0;
+
+	while ((i = this->get_uint8(this)) != 0 && j < max)
+	{
+		printf("%c", i);
+		j++;
+	}
+	while (j < max)
+	{
+		printf(" ");
+		j++;
+	}
+	return (j);
 }

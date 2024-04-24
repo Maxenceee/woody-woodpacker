@@ -57,7 +57,7 @@ int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
 	for (int i = 0; i < elf_file->e_shnum; i++)
 	{
-		(void)reader->get_uint32(reader);
+		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
 		elf_file->section_tables[i].sh_type = reader->get_uint32(reader);
 		if (elf_file->e_ident_class == WD_32BITS)
 		{
@@ -72,6 +72,18 @@ int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			elf_file->section_tables[i].sh_address = reader->get_uint64(reader);
 			elf_file->section_tables[i].sh_offset = reader->get_uint64(reader);
 			elf_file->section_tables[i].sh_size = reader->get_uint64(reader);
+		}
+		(void)reader->get_uint32(reader); // sh_link
+		(void)reader->get_uint32(reader); // sh_info
+		if (elf_file->e_ident_class == WD_32BITS)
+		{
+			(void)reader->get_uint32(reader); // sh_addralign
+			(void)reader->get_uint32(reader); // sh_entize
+		}
+		else
+		{
+			(void)reader->get_uint64(reader); // sh_addralign
+			(void)reader->get_uint64(reader); // sh_entize
 		}
 	}
 	return (0);
@@ -140,7 +152,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (get_elf_tables_offset(elf_file, reader))
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
+		return (NULL);
 	}
 
 	return (elf_file);
@@ -153,7 +165,7 @@ void	delete_elf_file(t_elf_file *elf_file)
 	free(elf_file);
 }
 
-void	print_elf_file(t_elf_file *elf_file)
+void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 {
 	printf("Magic:                             %s\n", elf_file->e_ident_mag);
 	printf("Class:                             %s%d\n", elf_file->e_ident_mag, elf_file->e_ident_class);
@@ -170,4 +182,22 @@ void	print_elf_file(t_elf_file *elf_file)
 	printf("Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
 	printf("Number of section headers:         %d\n", elf_file->e_shnum);
 	printf("Section header string table index: %d\n", elf_file->e_shstrndx);
+
+	printf("\nSection Headers:\n");
+	printf("  [Nr] Name               Type               Address            Offset             Size\n");
+	uint64_t	old_addr;
+	for (int i = 0; i < elf_file->e_shnum; i++)
+	{
+		printf("  [%2d] ", i);
+		old_addr = reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
+		reader->get_rstring(reader, 18);
+		reader->seek(reader, old_addr);
+		if (elf_file->section_tables[i].sh_type < 0x13)
+			printf(" %-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
+		else
+			printf(" %#-18lx ", elf_file->section_tables[i].sh_type);
+		printf("%#018lx ", elf_file->section_tables[i].sh_address);
+		printf("%#018lx ", elf_file->section_tables[i].sh_offset);
+		printf("%#018lx\n", elf_file->section_tables[i].sh_size);
+	}
 }

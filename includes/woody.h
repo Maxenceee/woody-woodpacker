@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 17:15:43 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/24 18:42:06 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ struct s_elf_file {
 };
 
 struct s_elf_section_table {
+	uint32_t	sh_name_offset;
 	uint32_t	sh_type;
 	uint64_t	sh_flags;
 	uint64_t	sh_address;
@@ -61,11 +62,36 @@ struct s_elf_section_table {
 };
 
 /**
+ * Lists
+ */
+
+static const char *g_elf_section_table_type[] = {
+	"NULL",
+	"PROGBITS",
+	"SYMTAB",
+	"STRTAB",
+	"RELA",
+	"HASH",
+	"DYNAMIC",
+	"NOTE",
+	"NOBITS",
+	"REL",
+	"SHLIB",
+	"DYNSYM",
+	"INIT_ARRAY",
+	"FINI_ARRAY",
+	"PREINIT_ARRAY",
+	"GROUP",
+	"SYMTAB_SHNDX",
+	"NUM"
+};
+
+/**
  * Function definitions
  */
 
 t_elf_file		*new_elf_file(t_binary_reader *reader);
 void			delete_elf_file(t_elf_file *file_format);
-void			print_elf_file(t_elf_file *elf_file);
+void			print_elf_file(t_elf_file *elf_file, t_binary_reader *reader);
 
 #endif /* WOODY_H */
