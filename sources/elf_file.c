@@ -195,7 +195,7 @@ void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 		if (elf_file->section_tables[i].sh_type < 0x13)
 			printf(" %-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
 		else
-			printf(" %#-18lx ", elf_file->section_tables[i].sh_type);
+			printf(" %#-18x ", elf_file->section_tables[i].sh_type);
 		printf("%#018lx ", elf_file->section_tables[i].sh_address);
 		printf("%#018lx ", elf_file->section_tables[i].sh_offset);
 		printf("%#018lx\n", elf_file->section_tables[i].sh_size);
