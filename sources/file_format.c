@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 16:11:26 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/24 15:49:01 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/04/24 16:42:34 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,4 +120,3 @@ void delete_file_format(t_file_format *file_format)
 	free(file_format->e_ident_mag);
 	free(file_format);
 }
-
