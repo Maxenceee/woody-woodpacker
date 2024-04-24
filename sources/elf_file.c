@@ -18,31 +18,31 @@ static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 	elf_file->e_type = reader->get_uint8(reader);
 	 switch(elf_file->e_type) {
 		case 0x00 :
-			elf_file->e_type_name = "ET_NONE";
+			elf_file->e_type_name = "NONE";
 			break;
 		case 0x01 :
-			elf_file->e_type_name = "ET_REL";
+			elf_file->e_type_name = "REL";
 			break;
 		case 0x02 :
-			elf_file->e_type_name = "ET_EXEC";
+			elf_file->e_type_name = "EXEC";
 			break;
 		case 0x03 :
-			elf_file->e_type_name = "ET_DYN";
+			elf_file->e_type_name = "DYN";
 			break;
 		case 0x04 :
-			elf_file->e_type_name = "ET_CORE";
+			elf_file->e_type_name = "CORE";
 			break;
 		case 0xFE00 :
-			elf_file->e_type_name = "ET_LOOS";
+			elf_file->e_type_name = "LOOS";
 			break;
 		case 0xFEFF :
-			elf_file->e_type_name = "ET_HIOS";
+			elf_file->e_type_name = "HIOS";
 			break;
 		case 0xFF00 :
-			elf_file->e_type_name = "ET_LOPROC";
+			elf_file->e_type_name = "LOPROC";
 			break;
 		case 0xFFFF :
-			elf_file->e_type_name = "ET_HIPROC";
+			elf_file->e_type_name = "HIPROC";
             break;
         default:
 			elf_file->e_type_name = "Error";
