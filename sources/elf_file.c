@@ -97,7 +97,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 
 	reader->set_endian(reader, READER_LITTLE_ENDIAN);
 	elf_file->e_ident_magic = reader->get_uint32(reader);
-	if (elf_file->e_ident_magic != 0x464C457F) // 0x7F 'E' 'L' 'F'
+	if (elf_file->e_ident_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
 	{
 		delete_elf_file(elf_file);
 		return (ft_error(WD_PREFIX"Invalid file format.\n"), NULL);
