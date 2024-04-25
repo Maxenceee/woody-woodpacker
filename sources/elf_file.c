@@ -178,24 +178,25 @@ void	delete_elf_file(t_elf_file *elf_file)
 
 void	print_elf_file(t_elf_file *elf_file, t_binary_reader *reader)
 {
-	printf("Magic: ");
+	printf("ELF Header:\n");
+	printf("  Magic:   ");
 	for (int i = 0; i < 16; i++)
 		printf("%02X ", elf_file->e_ident[i]);
 	printf("\n");
-	printf("Class:                             ELF%d\n", elf_file->e_ident_class * 32);
-	printf("Data:                              2's complement, %s\n", elf_file->e_ident_data_type);
-	printf("Version:                           1 (current)\n");
-	printf("OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident_osabi]);
-	printf("Type:                              %s\n", elf_file->e_type_name);
-	printf("Entry point:                       %#lx\n", elf_file->e_entry);
-	printf("Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
-	printf("Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
-	printf("Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
-	printf("Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
-	printf("Number of program headers:         %d\n", elf_file->e_phnum);
-	printf("Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
-	printf("Number of section headers:         %d\n", elf_file->e_shnum);
-	printf("Section header string table index: %d\n", elf_file->e_shstrndx);
+	printf("  Class:                             ELF%d\n", elf_file->e_ident_class * 32);
+	printf("  Data:                              2's complement, %s\n", elf_file->e_ident_data_type);
+	printf("  Version:                           1 (current)\n");
+	printf("  OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident_osabi]);
+	printf("  Type:                              %s\n", elf_file->e_type_name);
+	printf("  Entry point:                       %#lx\n", elf_file->e_entry);
+	printf("  Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
+	printf("  Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
+	printf("  Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
+	printf("  Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
+	printf("  Number of program headers:         %d\n", elf_file->e_phnum);
+	printf("  Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
+	printf("  Number of section headers:         %d\n", elf_file->e_shnum);
+	printf("  Section header string table index: %d\n", elf_file->e_shstrndx);
 
 	printf("\nSection Headers:\n");
 	printf("  [Nr] Name               Type               Address            Offset             Size\n");
