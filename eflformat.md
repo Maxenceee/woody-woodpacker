@@ -50,6 +50,26 @@ After the ELF header, the file contains a series of sections. Each section has a
 - `.symtab`: Contains symbol table information.
 - `.strtab`: Contains string table information.
 
+Importtant sections:
+
+Section d'interpréteur :
+* .interp : Cette section spécifie le nom du programme interpréteur utilisé pour exécuter le fichier. Elle est essentielle pour lancer le programme.
+
+Sections de programme :
+* .text : Contient le code exécutable du programme.
+* .init : Contient le code d'initialisation du programme.
+* .fini : Contient le code de finalisation du programme.
+* .plt, .plt.got, .plt.sec : Sections utilisées pour la procédure de liaison dynamique, généralement nécessaires pour les appels de fonctions externes.
+
+Sections de données :
+* .rodata : Contient des données en lecture seule nécessaires à l'exécution du programme.
+
+Table des en-têtes de section :
+* Cette section (généralement appelée .shstrtab) contient les noms de toutes les sections. Bien qu'elle ne soit pas directement utilisée lors de l'exécution du programme, elle est souvent requise par le système d'exploitation pour lire et analyser le fichier ELF.
+
+Table de symboles :
+* .symtab : Contient les symboles du programme. Bien que vous souhaitiez supprimer les informations de débogage, cette section est souvent nécessaire pour le lien dynamique.
+
 ## Program Headers
 
 After the sections, the file may contain program headers. Program headers describe the segments of the executable file that need to be loaded into memory. Each program header entry contains information such as the virtual address, file offset, and size of the segment.
@@ -62,3 +82,18 @@ ELF files also support dynamic linking, which allows the executable to use share
 
 Relocation is the process of adjusting the addresses in an executable file so that it can be loaded at a different address in memory. Relocation information is stored in a section called `.rela.text` or `.rel.text`, depending on the architecture.
 
+# File Structure
+
++------------------------------------+
+|          En-tête ELF               |
++------------------------------------+
+|          En-têtes de programme     |
++------------------------------------+
+|          En-têtes de section       |
++------------------------------------+
+|          Données de section        |
++------------------------------------+
+|          Segments                  |
++------------------------------------+
+|          Données de segment        |
++------------------------------------+

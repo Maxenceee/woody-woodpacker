@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/25 00:26:09 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/25 17:03:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,33 @@ enum e_class {
 
 typedef struct s_elf_file			t_elf_file;
 typedef struct s_elf_section_table	t_elf_section_table;
+typedef struct s_elf_program_header	t_elf_program_header;
 
 struct s_elf_file {
 	char		e_ident[16];
 	uint32_t	e_ident_magic;				// magic number
 	int			e_ident_class;				// 32 bits or 64 bits
 	int 		e_ident_data;				// little of big endian
+	uint8_t		e_ident_version;			// elf version
 	char		*e_ident_data_type;
-	int			e_type;						// object type
+	uint8_t		e_ident_osabi;				// operating system target
+	uint8_t		e_ident_abi_version;		// abi version
+	uint16_t	e_type;						// object type
 	char		*e_type_name;
-	int			e_ident_osabi;				// operating system target
+	uint16_t	e_machine;					// machine type
+	uint32_t	e_version;					// object version
 	uint64_t	e_entry;					// address where the execution starts
 	uint64_t	e_phoff;					// program headers' offset
 	uint64_t	e_shoff;					// section headers' offset
+	uint32_t	e_flags;					// architecture-specific flags
 	uint64_t	e_ehsize;					// elf header size
 	uint16_t	e_phentsize; 				// size of a single program header
 	uint16_t	e_phnum; 					// count of program headers
 	uint16_t	e_shentsize;				// size of single section header
 	uint16_t	e_shnum; 					// count of section headers
 	uint16_t	e_shstrndx;					// index of name's section in the table
-	t_elf_section_table	*section_tables;
+	t_elf_section_table		*section_tables;
+	t_elf_program_header	*program_headers;
 };
 
 struct s_elf_section_table {
@@ -59,7 +66,21 @@ struct s_elf_section_table {
 	uint64_t	sh_address;
 	uint64_t	sh_offset;
 	uint64_t	sh_size;
+	char		*sh_name;
 };
+
+struct s_elf_program_header
+{
+	uint32_t	p_type;
+	uint32_t	p_flags;
+	uint64_t	p_offset;
+	uint64_t	p_vaddr;
+	uint64_t	p_paddr;
+	uint64_t	p_filesz;
+	uint64_t	p_memsz;
+	uint64_t	p_align;
+};
+
 
 /**
  * Lists
@@ -107,12 +128,36 @@ static const char *g_elf_osabi_name[] = {
 	"Stratus Technologies OpenVOS"
 };
 
+static const char *g_elf_program_header_type[] = {
+	"NULL",
+	"LOAD",
+	"DYNAMIC",
+	"INTERP",
+	"NOTE",
+	"SHLIB",
+	"PHDR",
+	"TLS",
+	"NUM",
+	"LOOS",
+	"GNU_EH_FRAME",
+	"GNU_STACK",
+	"GNU_RELRO",
+	"LOSUNW",
+	"SUNWBSS",
+	"SUNWSTACK",
+	"HIOS",
+	"LOPROC",
+	"HIPROC"
+};
+
 /**
  * Function definitions
  */
 
 t_elf_file		*new_elf_file(t_binary_reader *reader);
 void			delete_elf_file(t_elf_file *file_format);
-void			print_elf_file(t_elf_file *elf_file, t_binary_reader *reader);
+void			print_elf_file(t_elf_file *elf_file);
+
+int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader);
 
 #endif /* WOODY_H */

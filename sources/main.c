@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/25 00:30:13 by mgama            ###   ########.fr       */
+/*   Updated: 2024/04/25 17:03:39 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,26 @@ int	main(int ac, char **av)
 	}
 	
 	// Get the file e_type reading 3 bytes as a string
-	t_elf_file *file_format = new_elf_file(reader);
-	if (file_format == NULL)
+	t_elf_file *elf_file = new_elf_file(reader);
+	if (elf_file == NULL)
 	{
 		printf("Error: Cannot get format for file %s\n", av[1]);
 		return (1);
 	}
 
-	print_elf_file(file_format, reader);
+	print_elf_file(elf_file);
+
+	/**
+	 * We copy the content of the original elf file to the new one.
+	 * This is done to keep the original file intact.
+	 */
+	t_elf_file *new_elf_file = malloc(sizeof(t_elf_file));
+	if (!new_elf_file)
+		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+	ft_memcpy(new_elf_file, elf_file, sizeof(t_elf_file));
+
+	packer(elf_file, new_elf_file, reader);
 
 	delete_binary_reader(reader);
-	delete_elf_file(file_format);
+	delete_elf_file(elf_file);
 }
