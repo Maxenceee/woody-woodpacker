@@ -2,11 +2,11 @@ MANDATORY_DIR	=	sources
 HEADERS_DIR		=	includes
 OBJ_DIR			=	.objs
 
-# fonts
 SRCS			=	$(shell find $(MANDATORY_DIR) -name "*.c")
 
-# objects
 OBJS			=	$(patsubst $(MANDATORY_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
+
+HEADERS			=	$(shell find $(HEADERS_DIR) -name "*.h") $(shell find $(MANDATORY_DIR) -name "*.h")
 
 CC				=	gcc
 RM				=	rm -f
@@ -22,7 +22,7 @@ DEFAULT			=	\033[0m
 UP				=	"\033[A"
 CUT				=	"\033[K"
 
-$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c Makefile
+$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c $(HEADERS) Makefile
 	@mkdir -p $(@D)
 	@echo "$(YELLOW)Compiling [$<]$(DEFAULT)"
 	@$(CC) $(CFLAGS) -c $< -o $@
