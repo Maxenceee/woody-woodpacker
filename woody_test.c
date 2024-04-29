@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-int is_image_valid(Elf32_Ehdr *hdr)
+int is_image_valid(Elf64_Ehdr *hdr)
 {
     // Check that the file starts with the magic ELF number
     // 0x7F followed by ELF(45 4c 46) in ASCII
@@ -36,11 +36,11 @@ void* resolve(const char* sym)
     return resolved_sym;
 }
 
-void relocate(Elf32_Shdr* shdr, const Elf32_Sym* syms, const char* strings, const char* src, char* dst)
+void relocate(Elf64_Shdr* shdr, const Elf64_Sym* syms, const char* strings, const char* src, char* dst)
 {
-    Elf32_Rel* rel = (Elf32_Rel*)(src + shdr->sh_offset);
+    Elf64_Rel* rel = (Elf64_Rel*)(src + shdr->sh_offset);
 
-    for(int j = 0; j < shdr->sh_size / sizeof(Elf32_Rel); j += 1)
+    for(int j = 0; j < shdr->sh_size / sizeof(Elf64_Rel); j += 1)
     {
         const char* sym = strings + syms[ELF32_R_SYM(rel[j].r_info)].st_name;
         
@@ -48,13 +48,13 @@ void relocate(Elf32_Shdr* shdr, const Elf32_Sym* syms, const char* strings, cons
         {
             case R_386_JMP_SLOT:
             case R_386_GLOB_DAT:
-                *(Elf32_Word*)(dst + rel[j].r_offset) = (Elf32_Word)resolve(sym);
+                *(Elf64_Word*)(dst + rel[j].r_offset) = (Elf64_Word)resolve(sym);
                 break;
         }
     }
 }
 
-int find_global_symbol_table(Elf32_Ehdr* hdr, Elf32_Shdr* shdr)
+int find_global_symbol_table(Elf64_Ehdr* hdr, Elf64_Shdr* shdr)
 {
     for (int i = 0; i < hdr->e_shnum; i++)
     {
@@ -68,7 +68,7 @@ int find_global_symbol_table(Elf32_Ehdr* hdr, Elf32_Shdr* shdr)
     return -1;
 }
 
-int find_symbol_table(Elf32_Ehdr* hdr, Elf32_Shdr* shdr)
+int find_symbol_table(Elf64_Ehdr* hdr, Elf64_Shdr* shdr)
 {
     for (int i = 0; i < hdr->e_shnum; i++)
     {
@@ -81,12 +81,12 @@ int find_symbol_table(Elf32_Ehdr* hdr, Elf32_Shdr* shdr)
     return -1;
 }
 
-void* find_sym(const char* name, Elf32_Shdr* shdr, Elf32_Shdr* shdr_sym, const char* src, char* dst)
+void* find_sym(const char* name, Elf64_Shdr* shdr, Elf64_Shdr* shdr_sym, const char* src, char* dst)
 {
-    Elf32_Sym* syms = (Elf32_Sym*)(src + shdr_sym->sh_offset);
+    Elf64_Sym* syms = (Elf64_Sym*)(src + shdr_sym->sh_offset);
     const char* strings = src + shdr[shdr_sym->sh_link].sh_offset;
     
-    for (int i = 0; i < shdr_sym->sh_size / sizeof(Elf32_Sym); i += 1)
+    for (int i = 0; i < shdr_sym->sh_size / sizeof(Elf64_Sym); i += 1)
     {
         if (strcmp(name, strings + syms[i].st_name) == 0)
         {
@@ -99,16 +99,16 @@ void* find_sym(const char* name, Elf32_Shdr* shdr, Elf32_Shdr* shdr_sym, const c
 
 void* image_load(char *elf_start, unsigned int size)
 {
-    Elf32_Ehdr      *hdr     = NULL;
-    Elf32_Phdr      *phdr    = NULL;
-    Elf32_Shdr      *shdr    = NULL;
+    Elf64_Ehdr      *hdr     = NULL;
+    Elf64_Phdr      *phdr    = NULL;
+    Elf64_Shdr      *shdr    = NULL;
     char            *start   = NULL;
     char            *taddr   = NULL;
     void            *entry   = NULL;
     int i = 0;
     char *exec = NULL;
 
-    hdr = (Elf32_Ehdr *) elf_start;
+    hdr = (Elf64_Ehdr *) elf_start;
     
     if (!is_image_valid(hdr))
     {
@@ -128,7 +128,7 @@ void* image_load(char *elf_start, unsigned int size)
     memset(exec, 0x0, size);
 
     // Entries in the program header table
-    phdr = (Elf32_Phdr *)(elf_start + hdr->e_phoff);
+    phdr = (Elf64_Phdr *)(elf_start + hdr->e_phoff);
 
     // Go over all the entries in the ELF
     for (i = 0; i < hdr->e_phnum; ++i)
@@ -170,12 +170,12 @@ void* image_load(char *elf_start, unsigned int size)
     }
 
     // Section table
-    shdr = (Elf32_Shdr *)(elf_start + hdr->e_shoff);
+    shdr = (Elf64_Shdr *)(elf_start + hdr->e_shoff);
 
     // Find the global symbol table
     int global_symbol_table_index = find_global_symbol_table(hdr, shdr);
     // Symbols and names of the dynamic symbols (for relocation)
-    Elf32_Sym* global_syms = (Elf32_Sym*)(elf_start + shdr[global_symbol_table_index].sh_offset);
+    Elf64_Sym* global_syms = (Elf64_Sym*)(elf_start + shdr[global_symbol_table_index].sh_offset);
     char* global_strings = elf_start + shdr[shdr[global_symbol_table_index].sh_link].sh_offset;
     
     // Relocate global dynamic symbols
