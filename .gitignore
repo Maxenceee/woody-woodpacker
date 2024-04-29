@@ -4,3 +4,5 @@ woody_woodpacker
 test*
 test.*
 test/*
+*.dSYM
+elf.h

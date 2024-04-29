@@ -4,6 +4,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "elf.h"
 
 int main() {
     // Ouvrir le fichier ELF chiffré en lecture
@@ -49,26 +50,30 @@ int main() {
     close(fd);
 
     // Charger les données déchiffrées en mémoire avec autorisations d'exécution
-    void *adresse_memoire = mmap(NULL, taille_fichier, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (adresse_memoire == MAP_FAILED) {
+    void *adresse_debut_page = mmap(NULL, taille_fichier, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (adresse_debut_page == MAP_FAILED) {
         perror("Erreur lors du chargement des données en mémoire");
         free(donnees_chiffrees);
         return 1;
     }
 
     // Copier les données déchiffrées dans la mémoire allouée
-    memcpy(adresse_memoire, donnees_chiffrees, taille_fichier);
+    memcpy(adresse_debut_page, donnees_chiffrees, taille_fichier);
 
 	// Autoriser l'exécution du code en mémoire
-    if (mprotect(adresse_memoire, taille_fichier, PROT_READ | PROT_EXEC) == -1) {
+    if (mprotect(adresse_debut_page, taille_fichier, PROT_READ | PROT_EXEC) == -1) {
         perror("Erreur lors de la modification des autorisations de mémoire");
-        munmap(adresse_memoire, taille_fichier);
+        munmap(adresse_debut_page, taille_fichier);
         free(donnees_chiffrees);
         return 1;
     }
 
     // Exécuter le code en lançant le pointeur vers le point d'entrée du programme
-    void (*entry_point)() = (void (*)())adresse_memoire;
+    Elf64_Ehdr *entete_elf = (Elf64_Ehdr *)donnees_chiffrees;
+    Elf64_Addr offset_point_entree = entete_elf->e_entry;
+
+    void *adresse_memoire = adresse_debut_page + offset_point_entree;
+    void (*entry_point)() = (void (*)())(adresse_memoire);
 	printf("%p\n", entry_point);
 	printf("...Woody...\n");
     entry_point();
