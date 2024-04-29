@@ -213,7 +213,7 @@ int main(int argc, char** argv, char** envp)
             printf("Run the loaded program:\n");
 
             // Run the main function of the loaded program
-            printf("...Woody...\n");
+            // printf("...Woody...\n");
             ptr(argc, argv, envp);
         }
         else
