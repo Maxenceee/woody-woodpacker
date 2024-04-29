@@ -1,7 +1,15 @@
 #include <stdio.h>
 
-int main(int argc, char const *argv[])
+int square(int x)
 {
-	printf("Hello, World!\n");
-	return 0;
+    return x*x;
+}
+
+int main(int argc, char** argv)
+{
+    fprintf(stdout, "Hello world!\n");
+    fprintf(stdout, "fprintf=%p, stdout=%p\n", fprintf, stdout);
+    fprintf(stdout, "square(10) = %d\n", square(10));
+
+    return 0;
 }
