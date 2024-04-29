@@ -1,86 +1,231 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <elf.h>
 #include <sys/mman.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include "elf.h"
+#include <dlfcn.h>
+#include <assert.h>
+#include <stdbool.h>
 
-int main() {
-    // Ouvrir le fichier ELF chiffré en lecture
-    int fd = open("fichier", O_RDONLY);
-    if (fd == -1) {
-        perror("Erreur lors de l'ouverture du fichier");
-        return 1;
+int is_image_valid(Elf32_Ehdr *hdr)
+{
+    // Check that the file starts with the magic ELF number
+    // 0x7F followed by ELF(45 4c 46) in ASCII
+    assert(hdr->e_ident[EI_MAG0] == 0x7F);
+    assert(hdr->e_ident[EI_MAG1] == 0x45);
+    assert(hdr->e_ident[EI_MAG2] == 0x4c);
+    assert(hdr->e_ident[EI_MAG3] == 0x46);
+
+    return 1;
+}
+
+void* resolve(const char* sym)
+{
+    static void *handle = NULL;
+
+    if (handle == NULL)
+    {
+        handle = dlopen("libc.so.6", RTLD_NOW);
     }
 
-    // Obtenir la taille du fichier
-    off_t taille_fichier = lseek(fd, 0, SEEK_END);
-    if (taille_fichier == -1) {
-        perror("Erreur lors de la détermination de la taille du fichier");
-        close(fd);
-        return 1;
+    assert(handle != NULL);
+
+    void* resolved_sym = dlsym(handle, sym);
+
+    // assert(resolved_sym != NULL);
+
+    return resolved_sym;
+}
+
+void relocate(Elf32_Shdr* shdr, const Elf32_Sym* syms, const char* strings, const char* src, char* dst)
+{
+    Elf32_Rel* rel = (Elf32_Rel*)(src + shdr->sh_offset);
+
+    for(int j = 0; j < shdr->sh_size / sizeof(Elf32_Rel); j += 1)
+    {
+        const char* sym = strings + syms[ELF32_R_SYM(rel[j].r_info)].st_name;
+        
+        switch (ELF32_R_TYPE(rel[j].r_info))
+        {
+            case R_386_JMP_SLOT:
+            case R_386_GLOB_DAT:
+                *(Elf32_Word*)(dst + rel[j].r_offset) = (Elf32_Word)resolve(sym);
+                break;
+        }
+    }
+}
+
+int find_global_symbol_table(Elf32_Ehdr* hdr, Elf32_Shdr* shdr)
+{
+    for (int i = 0; i < hdr->e_shnum; i++)
+    {
+        if (shdr[i].sh_type == SHT_DYNSYM)
+        {
+            return i;
+            break;
+        }
     }
 
-    // Revenir au début du fichier
-    if (lseek(fd, 0, SEEK_SET) == -1) {
-        perror("Erreur lors du retour au début du fichier");
-        close(fd);
-        return 1;
+    return -1;
+}
+
+int find_symbol_table(Elf32_Ehdr* hdr, Elf32_Shdr* shdr)
+{
+    for (int i = 0; i < hdr->e_shnum; i++)
+    {
+        if (shdr[i].sh_type == SHT_SYMTAB)
+        {
+            return i;
+            break;
+        }
     }
 
-    // Allouer de la mémoire pour stocker les données du fichier
-    void *donnees_chiffrees = malloc(taille_fichier);
-    if (!donnees_chiffrees) {
-        perror("Erreur lors de l'allocation de mémoire pour les données chiffrées");
-        close(fd);
-        return 1;
+    return -1;
+}
+
+void* find_sym(const char* name, Elf32_Shdr* shdr, Elf32_Shdr* shdr_sym, const char* src, char* dst)
+{
+    Elf32_Sym* syms = (Elf32_Sym*)(src + shdr_sym->sh_offset);
+    const char* strings = src + shdr[shdr_sym->sh_link].sh_offset;
+    
+    for (int i = 0; i < shdr_sym->sh_size / sizeof(Elf32_Sym); i += 1)
+    {
+        if (strcmp(name, strings + syms[i].st_name) == 0)
+        {
+            return dst + syms[i].st_value;
+        }
     }
 
-    // Lire les données du fichier
-    ssize_t bytes_lus = read(fd, donnees_chiffrees, taille_fichier);
-    if (bytes_lus != taille_fichier) {
-        perror("Erreur lors de la lecture du fichier");
-        close(fd);
-        free(donnees_chiffrees);
-        return 1;
+    return NULL;
+}
+
+void* image_load(char *elf_start, unsigned int size)
+{
+    Elf32_Ehdr      *hdr     = NULL;
+    Elf32_Phdr      *phdr    = NULL;
+    Elf32_Shdr      *shdr    = NULL;
+    char            *start   = NULL;
+    char            *taddr   = NULL;
+    void            *entry   = NULL;
+    int i = 0;
+    char *exec = NULL;
+
+    hdr = (Elf32_Ehdr *) elf_start;
+    
+    if (!is_image_valid(hdr))
+    {
+        printf("Invalid ELF image\n");
+        return 0;
     }
 
-    // Fermer le fichier
-    close(fd);
+    exec = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
 
-    // Charger les données déchiffrées en mémoire avec autorisations d'exécution
-    void *adresse_debut_page = mmap(NULL, taille_fichier, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (adresse_debut_page == MAP_FAILED) {
-        perror("Erreur lors du chargement des données en mémoire");
-        free(donnees_chiffrees);
-        return 1;
+    if (!exec)
+    {
+        printf("Error allocating memory\n");
+        return 0;
     }
 
-    // Copier les données déchiffrées dans la mémoire allouée
-    memcpy(adresse_debut_page, donnees_chiffrees, taille_fichier);
+    // Start with clean memory.
+    memset(exec, 0x0, size);
 
-	// Autoriser l'exécution du code en mémoire
-    if (mprotect(adresse_debut_page, taille_fichier, PROT_READ | PROT_EXEC) == -1) {
-        perror("Erreur lors de la modification des autorisations de mémoire");
-        munmap(adresse_debut_page, taille_fichier);
-        free(donnees_chiffrees);
-        return 1;
+    // Entries in the program header table
+    phdr = (Elf32_Phdr *)(elf_start + hdr->e_phoff);
+
+    // Go over all the entries in the ELF
+    for (i = 0; i < hdr->e_phnum; ++i)
+    {
+        if (phdr[i].p_type != PT_LOAD)
+        {
+            continue;
+        }
+
+        if (phdr[i].p_filesz > phdr[i].p_memsz)
+        {
+            printf("image_load:: p_filesz > p_memsz\n");
+            munmap(exec, size);
+            return 0;
+        }
+
+        if (!phdr[i].p_filesz)
+        {
+            continue;
+        }
+
+        // p_filesz can be smaller than p_memsz,
+        // the difference is zeroe'd out.
+        start = elf_start + phdr[i].p_offset;
+        taddr = phdr[i].p_vaddr + exec;
+        memmove(taddr, start, phdr[i].p_filesz);
+
+        if (!(phdr[i].p_flags & PF_W))
+        {
+            // Read-only.
+            mprotect((unsigned char *) taddr, phdr[i].p_memsz, PROT_READ);
+        }
+
+        if (phdr[i].p_flags & PF_X)
+        {
+            // Executable.
+            mprotect((unsigned char *) taddr, phdr[i].p_memsz, PROT_EXEC);
+        }
     }
 
-    // Exécuter le code en lançant le pointeur vers le point d'entrée du programme
-    Elf64_Ehdr *entete_elf = (Elf64_Ehdr *)donnees_chiffrees;
-    Elf64_Addr offset_point_entree = entete_elf->e_entry;
+    // Section table
+    shdr = (Elf32_Shdr *)(elf_start + hdr->e_shoff);
 
-    void *adresse_memoire = adresse_debut_page + offset_point_entree;
-    void (*entry_point)() = (void (*)())(adresse_memoire);
-	printf("%p\n", entry_point);
-	printf("...Woody...\n");
-    entry_point();
+    // Find the global symbol table
+    int global_symbol_table_index = find_global_symbol_table(hdr, shdr);
+    // Symbols and names of the dynamic symbols (for relocation)
+    Elf32_Sym* global_syms = (Elf32_Sym*)(elf_start + shdr[global_symbol_table_index].sh_offset);
+    char* global_strings = elf_start + shdr[shdr[global_symbol_table_index].sh_link].sh_offset;
+    
+    // Relocate global dynamic symbols
+    for (i = 0; i < hdr->e_shnum; ++i)
+    {
+        if (shdr[i].sh_type == SHT_REL)
+        {
+            relocate(shdr + i, global_syms, global_strings, elf_start, exec);
+        }
+    }
 
-    // Libérer la mémoire utilisée
-    munmap(adresse_memoire, taille_fichier);
-    free(donnees_chiffrees);
+    // Find the main function in the symbol table
+    int symbol_table_index = find_symbol_table(hdr, shdr);
+    entry = find_sym("main", shdr, shdr + symbol_table_index, elf_start, exec);
 
-    return 0;
+   return entry;
+}
+
+int main(int argc, char** argv, char** envp)
+{
+    char buf[1048576]; // Allocate 1MB for the program
+    memset(buf, 0x0, sizeof(buf));
+
+    FILE* elf = fopen(argv[1], "rb");
+
+    if (elf != NULL)
+    {
+        int (*ptr)(int, char **, char**);
+
+        fread(buf, sizeof(buf), 1, elf);
+        ptr = image_load(buf, sizeof(buf));
+
+        if (ptr != NULL)
+        {
+            printf("Run the loaded program:\n");
+
+            // Run the main function of the loaded program
+            printf("...Woody...\n");
+            ptr(argc, argv, envp);
+        }
+        else
+        {
+            printf("Loading unsuccessful...\n");
+        }
+
+        fclose(elf);
+
+        return 0;
+    }
+    
+    return 1;
 }
