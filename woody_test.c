@@ -11,9 +11,9 @@ int is_image_valid(Elf64_Ehdr *hdr)
     // Check that the file starts with the magic ELF number
     // 0x7F followed by ELF(45 4c 46) in ASCII
     assert(hdr->e_ident[EI_MAG0] == 0x7F);
-    assert(hdr->e_ident[EI_MAG1] == 0x45);
-    assert(hdr->e_ident[EI_MAG2] == 0x4c);
-    assert(hdr->e_ident[EI_MAG3] == 0x46);
+    assert(hdr->e_ident[EI_MAG1] == 'E');
+    assert(hdr->e_ident[EI_MAG2] == 'L');
+    assert(hdr->e_ident[EI_MAG3] == 'F');
 
     return 1;
 }
@@ -31,23 +31,21 @@ void* resolve(const char* sym)
 
     void* resolved_sym = dlsym(handle, sym);
 
-    // assert(resolved_sym != NULL);
-
     return resolved_sym;
 }
 
 void relocate(Elf64_Shdr* shdr, const Elf64_Sym* syms, const char* strings, const char* src, char* dst)
 {
-    Elf64_Rel* rel = (Elf64_Rel*)(src + shdr->sh_offset);
+    Elf64_Rela* rel = (Elf64_Rela*)(src + shdr->sh_offset);
 
-    for(int j = 0; j < shdr->sh_size / sizeof(Elf64_Rel); j += 1)
+    for(int j = 0; j < shdr->sh_size / sizeof(Elf64_Rela); j += 1)
     {
-        const char* sym = strings + syms[ELF32_R_SYM(rel[j].r_info)].st_name;
+        const char* sym = strings + syms[ELF64_R_SYM(rel[j].r_info)].st_name;
         
-        switch (ELF32_R_TYPE(rel[j].r_info))
+        switch (ELF64_R_TYPE(rel[j].r_info))
         {
-            case R_386_JMP_SLOT:
-            case R_386_GLOB_DAT:
+            case R_X86_64_JUMP_SLOT:
+            case R_X86_64_GLOB_DAT:
                 *(Elf64_Word*)(dst + rel[j].r_offset) = (Elf64_Word)resolve(sym);
                 break;
         }
@@ -75,6 +73,7 @@ int find_symbol_table(Elf64_Ehdr* hdr, Elf64_Shdr* shdr)
         if (shdr[i].sh_type == SHT_SYMTAB)
         {
             return i;
+            break;
         }
     }
 
@@ -213,7 +212,6 @@ int main(int argc, char** argv, char** envp)
             printf("Run the loaded program:\n");
 
             // Run the main function of the loaded program
-            printf("...Woody...\n");
             ptr(argc, argv, envp);
         }
         else
