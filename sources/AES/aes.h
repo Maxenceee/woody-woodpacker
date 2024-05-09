@@ -3,6 +3,9 @@
 # include <stdlib.h>
 # include <stdint.h>
 
+# include <string.h>
+# include <stdio.h>
+
 
 # define LOAD32LE(p) ( \
     ((uint32_t)(((uint8_t *)(p))[0]) << 0) | \
@@ -10,11 +13,33 @@
     ((uint32_t)(((uint8_t *)(p))[2]) << 16) | \
     ((uint32_t)(((uint8_t *)(p))[3]) << 24))
 
-	char *AES_encrypt(char *plaintext, char *key);
-	uint8_t **AddRoundKey(uint8_t **state, int keyCypher[60]);
-	uint8_t **SubBytes(uint8_t** state);
-	uint8_t **InvSubBytes(uint8_t** state);
-	uint8_t **_SubBytes(uint8_t** state, const uint8_t* box);
+	uint8_t **AES_encrypt(char *plaintext, char *key);
+	uint8_t **AES_decrypt(char *plaintext, char *key);
+	void AddRoundKey(uint8_t ***state, uint8_t *keyCypher);
+	void SubBytes(uint8_t ***state);
+	void InvSubBytes(uint8_t ***state);
+	void _SubBytes(uint8_t ***state, const uint8_t* box);
+	void _ShiftRows(uint8_t ***state, int multiplier);
+	void ShiftRows(uint8_t ***state);
+	void InvShiftRows(uint8_t ***state);
+	void MixColumns(uint8_t ***state);
+	void InvMixColumns(uint8_t ***state);
+	int8_t galoisMultiply(uint8_t a, uint8_t b);
+	uint8_t ***toState(uint8_t *input);
+	uint8_t** fromState(uint8_t ***state);
+	void stringToBytes(char* str, uint8_t* bytes);
+	void BytesToString(uint8_t* bytes, char* str);
+
+
+	void get_key_schedule(uint8_t* key, uint8_t* key_schedule);
+	uint8_t* getWord(uint8_t* w, int i);
+
+	
+	void freeState(uint8_t **state);
+
+
+
+
 
 
 static const uint8_t sbox[256] =
