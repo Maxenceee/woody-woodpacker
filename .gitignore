@@ -1,6 +1,7 @@
 .vscode
 .objs
 woody_woodpacker
+woody
 test*
 test.*
 test/*
