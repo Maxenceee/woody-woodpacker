@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/11 14:49:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/11 14:59:24 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static int strip_program_headers(t_elf_file *old_elf_file, t_elf_file *new_elf_f
 		{
 			// if (new_elf_file->section_tables[k].sh_type == 0x0) continue;
 
+			// if (new_elf_file->section_tables[k].sh_address >= old_elf_file->program_headers[i].p_vaddr &&
 			if (new_elf_file->section_tables[k].sh_address > old_elf_file->program_headers[i].p_vaddr &&
 				new_elf_file->section_tables[k].sh_address + new_elf_file->section_tables[k].sh_size <=
 					old_elf_file->program_headers[i].p_vaddr + old_elf_file->program_headers[i].p_memsz)
