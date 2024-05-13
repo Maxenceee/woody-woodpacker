@@ -7,7 +7,8 @@
  //take the plaintext and the key as arguments, fixed size of each, will die otherwise
 uint8_t **AES_encrypt(char *plaintext, char *key)
 {
-	int		 len;
+	if (!plaintext || !key)
+		return (NULL);
 	uint8_t *key_schedule = calloc(1, 240 * sizeof(uint8_t));
 
 	uint8_t *keyBytes = calloc(1, 32);
@@ -45,7 +46,8 @@ uint8_t **AES_encrypt(char *plaintext, char *key)
 
 uint8_t **AES_decrypt(char *plaintext, char *key)
 {
-	int		 len;
+	if (!plaintext || !key)
+		return (NULL);
 	uint8_t *key_schedule = calloc(1, 240 * sizeof(uint8_t));
 
 	uint8_t *keyBytes = calloc(1, 32);
