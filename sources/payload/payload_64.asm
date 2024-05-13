@@ -37,7 +37,3 @@ _payload_64:
 .encrypted_data_len: dq 0
 .start_encode: dq 0
 _payload_size_64: dq $-_payload_64
-
-; section .bss
-; Define a temporary placeholder address
-; temporary_placeholder: resq 1
