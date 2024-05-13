@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/11 14:20:28 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 17:52:44 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,5 +166,9 @@ void			delete_elf_file(t_elf_file *file_format);
 void			print_elf_file(t_elf_file *elf_file);
 
 int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader);
+
+/* payload */
+
+void			payload(void);
 
 #endif /* WOODY_H */
