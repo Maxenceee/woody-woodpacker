@@ -10,10 +10,10 @@ OBJS_ASM		=	$(patsubst $(MANDATORY_DIR)%.asm, $(OBJ_DIR)%.o, $(SRCS_ASM))
 
 HEADERS			=	$(shell find $(HEADERS_DIR) -name "*.h") $(shell find $(MANDATORY_DIR) -name "*.h")
 
-CC				=	clang
+CC				=	gcc
 ASM				=	nasm
 RM				=	rm -f
-CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 #-Wall -Wextra -Werror
+CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 # -Wall -Wextra -Werror
 
 ifeq ($(shell uname), Darwin)
 	ASMFLAGS	=	-f macho64
@@ -39,12 +39,14 @@ $(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c $(HEADERS)
 
 $(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.asm $(HEADERS)
 	@mkdir -p $(@D)
-	$(ASM) $(ASMFLAGS) $< -o $@
+	@echo "$(YELLOW)Compiling [$<]$(DEFAULT)"
+	@$(ASM) $(ASMFLAGS) $< -o $@
+	@printf ${UP}${CUT}
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(OBJS_ASM)
-	@$(CC) -Wl,--gc-sections $(CFLAGS) $^ -o $(NAME)
+	@$(CC) $(CFLAGS) $^ -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled!$(DEFAULT)"
 
 clean:

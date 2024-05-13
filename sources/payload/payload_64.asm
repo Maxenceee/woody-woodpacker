@@ -1,8 +1,8 @@
-[BITS 64]
-
 global _payload_64
 global _payload_size_64
 extern puts
+
+[BITS 64]
 
 segment .text
 _payload_64:
