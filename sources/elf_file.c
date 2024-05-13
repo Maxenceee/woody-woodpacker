@@ -90,7 +90,6 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 	{
 		reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
 		elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
-		printf("%s\n", elf_file->section_tables[i].sh_name);
 		if (elf_file->section_tables[i].sh_name == NULL)
 			return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
 	}
