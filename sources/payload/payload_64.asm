@@ -20,16 +20,24 @@ _payload_64:
 	lea rsi, [rel .displayed_str]
 	mov rdx, 15
 	syscall
+.encrypt:
+	mov rax, [rel .encrypted_data_start]
+	mov rdi, [rel .encrypted_data_len]
+	mov rsi, [rel .start_encode]
+	add rdi, rax
 
 	pop rdi
 	pop rsi
 	pop rdx
 	pop rax
 	popf
-	jmp temporary_placeholder
+	jmp [rel .encrypt]
 
+.encrypted_data_start: dq 0
+.encrypted_data_len: dq 0
+.start_encode: dq 0
 _payload_size_64: dq $-_payload_64
 
-section .bss
+; section .bss
 ; Define a temporary placeholder address
-temporary_placeholder: resq 1
+; temporary_placeholder: resq 1
