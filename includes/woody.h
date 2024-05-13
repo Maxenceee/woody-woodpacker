@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/13 19:43:10 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 19:46:25 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,10 @@ int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reade
 
 /* payload */
 
+/**
+ * On MacOS the symbol name must not be prefixed with an underscore when 
+ * using extern symbole.
+ */
 #ifndef __APPLE__
 #define CDECL_NORM(x) _ ## x
 #else

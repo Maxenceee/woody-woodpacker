@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/13 19:43:18 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 19:46:58 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	main(int ac, char **av)
 		printf("Error: Cannot read file %s\n", av[1]);
 		return (1);
 	}
-	
+
 	// Get the file e_type reading 3 bytes as a string
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)
