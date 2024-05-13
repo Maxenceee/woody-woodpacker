@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_file.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 21:46:34 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 12:16:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 18:36:10 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ unsigned char	*ft_read_file(int fd, unsigned char *file, uint32_t *rsize)
 		if (!file)
 			return (free(buff), NULL);
 		size += read_bytes;
-		*rsize += size;
 	}
+	*rsize = size;
 	free(buff);
 	return (file);
 }
