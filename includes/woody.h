@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/13 17:52:44 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 18:16:42 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,7 @@ int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reade
 
 /* payload */
 
-void			payload(void);
+extern uint8_t _payload_64;
+extern uint64_t _payload_size_64;
 
 #endif /* WOODY_H */

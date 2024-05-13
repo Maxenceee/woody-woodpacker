@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/13 17:53:51 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 18:07:14 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int	main(int ac, char **av)
 
 	print_elf_file(elf_file);
 
-	printf("\nPayload: %p %lu\n", payload, sizeof(payload));
 
 	/**
 	 * We copy the content of the original elf file to the new one.
