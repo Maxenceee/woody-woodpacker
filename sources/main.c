@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/13 18:46:04 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/13 18:53:46 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ int	main(int ac, char **av)
 	}
 
 	print_elf_file(elf_file);
-
 
 	printf("=================+++++=====\n%#x %#llx\n", _payload_64, _payload_size_64);
 

@@ -10,7 +10,7 @@ OBJS_ASM		=	$(patsubst $(MANDATORY_DIR)%.asm, $(OBJ_DIR)%.o, $(SRCS_ASM))
 
 HEADERS			=	$(shell find $(HEADERS_DIR) -name "*.h") $(shell find $(MANDATORY_DIR) -name "*.h")
 
-CC				=	gcc
+CC				=	clang
 ASM				=	nasm
 RM				=	rm -f
 CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 #-Wall -Wextra -Werror
@@ -44,7 +44,7 @@ $(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.asm $(HEADERS)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(OBJS_ASM)
-	@$(CC) $(CFLAGS) $^ -o $(NAME)
+	@$(CC) -Wl,--gc-sections $(CFLAGS) $^ -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled!$(DEFAULT)"
 
 clean:
