@@ -31,13 +31,13 @@ DEFAULT			=	\033[0m
 UP				=	"\033[A"
 CUT				=	"\033[K"
 
-$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c $(HEADERS) Makefile
+$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c $(HEADERS)
 	@mkdir -p $(@D)
 	@echo "$(YELLOW)Compiling [$<]$(DEFAULT)"
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf ${UP}${CUT}
 
-$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.asm $(HEADERS) Makefile
+$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.asm $(HEADERS)
 	@mkdir -p $(@D)
 	$(ASM) $(ASMFLAGS) $< -o $@
 

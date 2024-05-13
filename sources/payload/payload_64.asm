@@ -26,6 +26,10 @@ _payload_64:
 	pop rdx
 	pop rax
 	popf
-	jmp 0xFFFFFFFF
+	jmp temporary_placeholder
 
 _payload_size_64: dq $-_payload_64
+
+section .bss
+; Define a temporary placeholder address
+temporary_placeholder: resq 1
