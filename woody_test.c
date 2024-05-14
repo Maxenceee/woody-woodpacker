@@ -233,6 +233,11 @@
 
 int main(int argc, char** argv, char** envp)
 {
+#ifdef __APPLE__
+	printf("Because OSX is more secure than linux we cannot simply open /dev/fd/%%d and execute it. We'll need to use some fancy hack using NSCreateObjectFileImageFromMemory :/\n");
+	return 0;
+
+#else
 	if (argc != 2)
 	{
 		printf("Usage: %s <file>\n", argv[0]);
@@ -252,12 +257,7 @@ int main(int argc, char** argv, char** envp)
 
 	close(fd);
 
-#ifdef __APPLE__
-	fd = open("/tmp/woody", O_CREAT | O_WRONLY | O_TRUNC, 0755);
-#else
 	fd = syscall(SYS_memfd_create, "", FD_CLOEXEC);
-#endif
-
 	if (fd == -1)
 	{
 		printf("Error: Cannot open file %s\n", argv[1]);
@@ -269,10 +269,12 @@ int main(int argc, char** argv, char** envp)
 	char buff[1024];
 	sprintf(buff, "/proc/self/fd/%d", fd);
 
+
 	printf("....WOODY....\n");
 
 	execve(buff, argv, envp);
 	perror("execve");
+#endif /* __APPLE__ */
 
 	return 0;
 }
