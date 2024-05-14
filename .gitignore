@@ -2,9 +2,7 @@
 .objs
 woody_woodpacker
 woody
-test*
 test.*
 test/*
 *.dSYM
-elf.h
 fichier
