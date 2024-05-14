@@ -255,7 +255,7 @@ int main(int argc, char** argv, char** envp)
 #ifdef __APPLE__
 	fd = open("/tmp/woody", O_CREAT | O_WRONLY | O_TRUNC, 0755);
 #else
-	fd = memfd_create("", MFD_CLOEXEC);
+	fd = syscall(SYS_memfd_create, "", FD_CLOEXEC);
 #endif
 
 	if (fd == -1)
