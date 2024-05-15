@@ -235,7 +235,6 @@ int main(int argc, char** argv, char** envp)
 {
 #ifdef __APPLE__
 	printf("Because OSX is more secure than linux we cannot simply open /dev/fd/%%d and execute it.\nWe'll need to use some fancy hack using NSCreateObjectFileImageFromMemory and lie to the system about the nature of the file :/\n");
-	return 0;
 
 #else
 	if (argc != 2)
