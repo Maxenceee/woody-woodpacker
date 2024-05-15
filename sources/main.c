@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/15 15:09:38 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 17:53:28 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,13 @@ int	main(int ac, char **av)
 {
 	char *target;
 	int ch, option = 0;
-	while ((ch = ft_getopt(ac, av, "e:d:")) != -1) {
+	char key[] = "0123456789abcdef0123456789abcdef";
+	
+	while ((ch = ft_getopt(ac, av, "e:d:k:h")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
+				memmove(key, optarg, 32);
 				break;
 			case 'h':
 				option |= F_HEADER;
@@ -98,32 +101,10 @@ int	main(int ac, char **av)
 		printf("Option k: %s\n", optarg);
 	}
 
-	// if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e')
-	// 	(void)AES_file(av[2], av[3], 1);
-	// else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd')
-	// 	(void)AES_file(av[2], av[3], 2);
-	// else if (ac != 2)
-	// {
-	// 	printf("Usage: %s <file>\n", av[0]);
-	// 	return (1);
-	// }
-
-	char text[] = "testouiopoiuytru";
-	printbytes(text, sizeof(text) - 1);
-
-	char *res = *AES_encrypt(text, "qwertyuiopasdfghjklqwertyuiopasd");
-	printbytes(res, sizeof(text) - 1);
-
-	char *res2 = *AES_decrypt(res, "qwertyuiopasdfghjklqwertyuiopasd");
-	printbytes(res2, sizeof(text) - 1);
-
-
-	return (0);
-
-	int fd = open(av[1], O_RDONLY);
+	int fd = open(target, O_RDONLY);
 	if (fd == -1)
 	{
-		printf("Error: Cannot open file %s\n", av[1]);
+		printf("Error: Cannot open file %s\n", target);
 		return (1);
 	}
 
@@ -133,18 +114,59 @@ int	main(int ac, char **av)
 	t_binary_reader *reader = new_binary_reader(fd);
 	if (!reader)
 	{
-		printf("Error: Cannot read file %s\n", av[1]);
+		printf("Error: Cannot read file %s\n", target);
 		return (1);
 	}
 	// Get the file e_type reading 3 bytes as a string
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)
 	{
-		printf("Error: Cannot get format for file %s\n", av[1]);
+		printf("Error: Cannot get format for file %s\n", target);
 		return (1);
 	}
 
-	print_elf_file(elf_file);
+	/**
+	 * 
+	 * olalaaaaaa ke sai pa bo !!!!!!!!!!
+	 *
+	 */
+	
+	int ffd = open("woody_encrypted", O_CREAT | O_RDWR | O_TRUNC, 0755);
+
+	uint8_t input[16];
+	reader->seek(reader, 0x0);
+	while (reader->get_bytes(reader, input, 16))
+	{
+		char *res = *AES_encrypt(input, key);
+		write(ffd, res, 16);
+	}
+
+	int ffdd = open("woody_decrypted", O_CREAT | O_WRONLY | O_TRUNC, 0755);
+
+	reader = new_binary_reader(ffd);
+	reader->seek(reader, 0x0);
+	while (reader->get_bytes(reader, input, 16))
+	{
+		char *res = *AES_decrypt(input, key);
+		write(ffdd, res, 16);
+	}
+
+	close(ffd);
+	close(ffdd);
+	
+	return (0);
+
+	/**
+	 * 
+	 * oufff c'est enfin fini !!!
+	 * 
+	 */
+
+
+	if (option & F_HEADER)
+	{
+		print_elf_file(elf_file);
+	}
 
 	printf("=================+++++=====\n%#x %#lx\n", payload_64, payload_size_64);
 

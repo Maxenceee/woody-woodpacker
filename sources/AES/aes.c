@@ -3,20 +3,18 @@
 #include <stdint.h>
 #include <stdio.h>
 
+void	printbytes(uint8_t *bytes, size_t size);
+
 //take the plaintext and the key as arguments, fixed size of each, will die otherwise
-uint8_t **AES_encrypt(char *plaintext, char *key)
+uint8_t **AES_encrypt(uint8_t *plaintext, char *key)
 {
 	if (!plaintext || !key)
 		return (NULL);
+
 	uint8_t *key_schedule = calloc(240, sizeof(uint8_t));
+	get_key_schedule(key, key_schedule);
 
-	uint8_t *keyBytes = calloc(1, 32);
-	uint8_t *input = calloc(1, 16);
-	stringToBytes(plaintext, input);
-	stringToBytes(key, keyBytes);
-	get_key_schedule(keyBytes, key_schedule);
-	uint8_t ***state = toState(input);
-
+	uint8_t ***state = toState(plaintext);
 	AddRoundKey(state, getWord(key_schedule, 0));
 
 	for (int i = 1; i < 14; i++)
@@ -34,31 +32,27 @@ uint8_t **AES_encrypt(char *plaintext, char *key)
 
     uint8_t** ciphertext;
 	ciphertext = fromState(state);
+
 	freeState(*state);
 	free(state);
 	free(key_schedule);
-	free(keyBytes);
-	free(input);
 	return (ciphertext);
 }
 
-uint8_t **AES_decrypt(char *plaintext, char *key)
+uint8_t **AES_decrypt(uint8_t *plaintext, char *key)
 {
-	if (!plaintext || !key)
+    if (!plaintext || !key)
 		return (NULL);
+
 	uint8_t *key_schedule = calloc(240, sizeof(uint8_t));
+	get_key_schedule(key, key_schedule);
 
-	uint8_t *keyBytes = calloc(1, 32);
-	get_key_schedule(keyBytes, key_schedule);
-	uint8_t *input = calloc(1, 16);
-	stringToBytes(plaintext, input);
-	stringToBytes(key, keyBytes);
-	uint8_t ***state = toState(input);
-
+	uint8_t ***state = toState(plaintext);
 	AddRoundKey(state, getWord(key_schedule, 56));
 
-	for (int i = 13; i >= 1; i--)
+	for (int i = 13; i > 0; i--)
 	{
+
 		InvShiftRows(state);
 		InvSubBytes(state);
 		AddRoundKey(state, getWord(key_schedule, i * 4));
@@ -71,10 +65,9 @@ uint8_t **AES_decrypt(char *plaintext, char *key)
 
     uint8_t** ciphertext;
 	ciphertext = fromState(state);
+
 	freeState(*state);
 	free(state);
 	free(key_schedule);
-	free(keyBytes);
-	free(input);
 	return (ciphertext);
 }

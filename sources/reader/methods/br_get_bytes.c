@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 14:00:32 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/11 14:03:37 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 17:43:59 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ size_t	br_get_bytes(t_binary_reader *this, char *target, size_t length)
 
 	if (!target)
 		return (i);
+	if (this->_pos + length > this->size)
+		length = this->size - this->_pos;
 
 	for (; i < length; i++)
 	{

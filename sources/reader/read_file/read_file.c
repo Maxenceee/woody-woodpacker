@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 21:46:34 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/15 14:08:02 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 17:49:22 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ unsigned char	*ft_read_file(int fd, unsigned char *file, uint32_t *rsize)
 	if (!buff)
 		return (NULL);
 	read_bytes = 1;
+	lseek(fd, 0, SEEK_SET);
 	while (read_bytes != 0)
 	{
 		read_bytes = read(fd, buff, BUFFER_SIZE);

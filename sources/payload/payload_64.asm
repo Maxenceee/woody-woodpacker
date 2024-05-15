@@ -6,7 +6,7 @@ extern puts
 
 segment .text
 _payload_64:
-    pushf
+	pushf
 	push rax
 	push rdx
 	push rsi
