@@ -59,7 +59,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 	{
 		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
 		elf_file->section_tables[i].sh_type = reader->get_uint32(reader);
-		if (elf_file->e_ident_class == WD_32BITS)
+		if (elf_file->e_ident.ei_class == WD_32BITS)
 		{
 			elf_file->section_tables[i].sh_flags = reader->get_uint32(reader);
 			elf_file->section_tables[i].sh_address = reader->get_uint32(reader);
@@ -75,7 +75,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		}
 		(void)reader->get_uint32(reader); // sh_link
 		(void)reader->get_uint32(reader); // sh_info
-		if (elf_file->e_ident_class == WD_32BITS)
+		if (elf_file->e_ident.ei_class == WD_32BITS)
 		{
 			(void)reader->get_uint32(reader); // sh_addralign
 			(void)reader->get_uint32(reader); // sh_entize
@@ -105,7 +105,7 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 	for (int i = 0; i < elf_file->e_phnum; i++)
 	{
 		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
-		if (elf_file->e_ident_class == WD_32BITS)
+		if (elf_file->e_ident.ei_class == WD_32BITS)
 		{
 			elf_file->program_headers[i].p_offset = reader->get_uint32(reader);
 			elf_file->program_headers[i].p_vaddr = reader->get_uint32(reader);
@@ -135,24 +135,19 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file == NULL)
 		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
 
+	/**
+	 * By default we set en endianness to little endian because it's the endianness of the header
+	 */
 	reader->set_endian(reader, READER_LITTLE_ENDIAN);
-	elf_file->e_ident_magic = reader->get_uint32(reader);
-	if (elf_file->e_ident_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
+	reader->get_bytes(reader, elf_file->e_ident.raw, 16);
+
+	if (elf_file->e_ident.ei_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
 	{
 		delete_elf_file(elf_file);
 		return (ft_error(WD_PREFIX"Invalid file format.\n"), NULL);
 	}
-	/**
-	 * Put the magic number in the e_ident field
-	 */
-	*(uint32_t *)elf_file->e_ident = elf_file->e_ident_magic;
 
-	elf_file->e_ident_class = reader->get_uint8(reader);
-	elf_file->e_ident[4] = elf_file->e_ident_class;
-	elf_file->e_ident_data = reader->get_uint8(reader);
-	elf_file->e_ident[5] = elf_file->e_ident_data;
-	elf_file->e_ident_data_type = elf_file->e_ident_data - 1 ? "big endian" : "little endian";
-	if (elf_file->e_ident_data == 2)
+	if (elf_file->e_ident.ei_data == 2)
 	{
 		reader->set_endian(reader, READER_BIG_ENDIAN);
 	}
@@ -160,27 +155,26 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	/**
 	 * We check that the e_ident version is 1, if not the file is not valid
 	 */
-	if ((elf_file->e_ident_version = reader->get_uint8(reader)) != 1)
+	if (elf_file->e_ident.ei_version != 1)
 	{
 		delete_elf_file(elf_file);
 		return (ft_error(WD_PREFIX"Wrong version.\n"), NULL);
 	}
-	elf_file->e_ident[6] = 1;
 
-	elf_file->e_ident_osabi =  reader->get_uint8(reader);
-	if (elf_file->e_ident_osabi != 0x00 && elf_file->e_ident_osabi != 0x03)
+	/**
+	 * We ensure that the format of the binary matches the current system
+	 */
+	if (elf_file->e_ident.ei_osabi != 0x00 && elf_file->e_ident.ei_osabi != 0x03)
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Invlide ABI.\n"), NULL);
+		return (ft_error(WD_PREFIX"Incompatible ABI.\n"), NULL);
 	}
-	elf_file->e_ident[7] = elf_file->e_ident_osabi;
-	elf_file->e_ident_abi_version = reader->get_uint8(reader);
-	elf_file->e_ident[8] = elf_file->e_ident_abi_version;
+
 	get_type_name(reader, elf_file);
 	elf_file->e_machine = reader->get_uint16(reader);
 	elf_file->e_version = reader->get_uint32(reader);
 
-	if (elf_file->e_ident_class == WD_32BITS)
+	if (elf_file->e_ident.ei_class == WD_32BITS)
 	{
 		elf_file->e_entry += reader->get_uint32(reader);
 		elf_file->e_phoff = reader->get_uint32(reader);
@@ -222,6 +216,7 @@ void	delete_elf_file(t_elf_file *elf_file)
 
 	if (elf_file->program_headers)
 		free(elf_file->program_headers);
+
 	if (elf_file->section_tables)
 	{
 		for (int i = 0; i < elf_file->e_shnum; i++)
@@ -250,13 +245,13 @@ void	print_elf_file(t_elf_file *elf_file)
 	printf("ELF Header:\n");
 	printf("  Magic:   ");
 	for (int i = 0; i < 16; i++)
-		printf("%02X ", elf_file->e_ident[i]);
+		printf("%02X ", elf_file->e_ident.raw[i]);
 	printf("\n");
-	printf("  Class:                             ELF%d\n", elf_file->e_ident_class * 32);
-	printf("  Data:                              2's complement, %s\n", elf_file->e_ident_data_type);
-	printf("  Version:                           %u (current)\n", elf_file->e_ident_version);
-	printf("  OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident_osabi]);
-	printf("  ABI Version:                       %u\n", elf_file->e_ident_abi_version);
+	printf("  Class:                             ELF%d\n", elf_file->e_ident.ei_class * 32);
+	printf("  Data:                              2's complement, %s\n", elf_file->e_ident.ei_data - 1 ? "big endian" : "little endian");
+	printf("  Version:                           %u (current)\n", elf_file->e_ident.ei_version);
+	printf("  OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident.ei_osabi]);
+	printf("  ABI Version:                       %u\n", elf_file->e_ident.ei_abi_version);
 	printf("  Type:                              %s\n", elf_file->e_type_name);
 	printf("  Version:                           %#x\n", elf_file->e_version);
 	printf("  Entry point:                       %#lx\n", elf_file->e_entry);
@@ -310,8 +305,8 @@ void	print_elf_file(t_elf_file *elf_file)
 		for (int j = 1; j < elf_file->e_shnum; j++)
 		{
 			if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
-           		elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
-                elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_filesz)
+				elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
+				elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_filesz)
 			{
 				printf("%s ", elf_file->section_tables[j].sh_name);
 			}

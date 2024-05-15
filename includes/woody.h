@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   woody.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/13 14:29:16 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/05/15 14:07:48 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,21 @@ typedef struct s_elf_section_table	t_elf_section_table;
 typedef struct s_elf_program_header	t_elf_program_header;
 
 struct s_elf_file {
-	char		e_ident[16];
-	uint32_t	e_ident_magic;				// magic number
-	int			e_ident_class;				// 32 bits or 64 bits
-	int 		e_ident_data;				// little of big endian
-	uint8_t		e_ident_version;			// elf version
-	char		*e_ident_data_type;
-	uint8_t		e_ident_osabi;				// operating system target
-	uint8_t		e_ident_abi_version;		// abi version
+	union u_elf_e_ident
+	{
+		struct {
+			uint32_t	ei_magic;				// magic number
+			uint8_t		ei_class;				// 32 bits or 64 bits
+			uint8_t		ei_data;				// little of big endian
+			uint8_t		ei_version;				// elf version
+			uint8_t		ei_osabi;				// operating system target
+			uint8_t		ei_abi_version;			// abi version
+			char		ei_pad[7];				// Reserved padding bytes
+		};
+
+		char		raw[16];
+	} e_ident;
+
 	uint16_t	e_type;						// object type
 	char		*e_type_name;
 	uint16_t	e_machine;					// machine type
@@ -160,5 +167,23 @@ void			delete_elf_file(t_elf_file *file_format);
 void			print_elf_file(t_elf_file *elf_file);
 
 int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader);
+
+/* payload */
+
+/**
+ * On MacOS the symbol name must not be prefixed with an underscore when 
+ * using extern symbole.
+ */
+#ifndef __APPLE__
+#define CDECL_NORM(x) _ ## x
+#else
+#define CDECL_NORM(x) x
+#endif /* __APPLE__ */
+
+extern uint8_t	CDECL_NORM(payload_64);
+extern uint64_t	CDECL_NORM(payload_size_64);
+
+#define payload_64 CDECL_NORM(payload_64)
+#define payload_size_64 CDECL_NORM(payload_size_64)
 
 #endif /* WOODY_H */

@@ -1,20 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   br_get_uint8.c                                     :+:      :+:    :+:   */
+/*   br_get_bytes.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/21 22:25:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/13 16:43:10 by mgama            ###   ########.fr       */
+/*   Created: 2024/05/11 14:00:32 by mgama             #+#    #+#             */
+/*   Updated: 2024/05/11 14:03:37 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "reader/binary_reader.h"
 
-uint8_t	br_get_uint8(t_binary_reader *this)
+size_t	br_get_bytes(t_binary_reader *this, char *target, size_t length)
 {
-	if (this->_pos >= this->size)
-		return (0);
-	return (this->data[this->_pos++]);
+	size_t	i = 0;
+
+	if (!target)
+		return (i);
+
+	for (; i < length; i++)
+	{
+		target[i] = this->get_uint8(this);
+	}
+	return (i);
 }

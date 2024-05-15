@@ -1,8 +1,8 @@
 .vscode
 .objs
 woody_woodpacker
-test*
+woody
 test.*
 test/*
 *.dSYM
-elf.h
+fichier

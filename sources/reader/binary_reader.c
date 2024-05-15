@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/24 18:50:00 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/11 14:05:34 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	init_binary_reader(t_binary_reader *reader)
 	reader->get_string = &br_get_string;
 	reader->get_rstring = &br_get_rstring;
 	reader->get_unicode_string = &br_get_unicode_string;
+	reader->get_bytes = &br_get_bytes;
 	reader->get_date = &br_get_date;
 	reader->slice = &br_slice;
 	reader->set_endian = &br_set_endian;

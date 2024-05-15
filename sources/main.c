@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/14 18:44:16 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/05/15 14:07:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,17 +66,20 @@ int	main(int ac, char **av)
 
 	print_elf_file(elf_file);
 
+	printf("=================+++++=====\n%#x %#llx\n", payload_64, payload_size_64);
+
 	/**
 	 * We copy the content of the original elf file to the new one.
 	 * This is done to keep the original file intact.
 	 */
-	t_elf_file *new_elf_file = malloc(sizeof(t_elf_file));
-	if (!new_elf_file)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
-	ft_memcpy(new_elf_file, elf_file, sizeof(t_elf_file));
+	// t_elf_file *new_elf_file = malloc(sizeof(t_elf_file));
+	// if (!new_elf_file)
+	// 	return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+	// ft_memcpy(new_elf_file, elf_file, sizeof(t_elf_file));
 
-	packer(elf_file, new_elf_file, reader);
+	// packer(elf_file, new_elf_file, reader);
 
-	delete_binary_reader(reader);
-	delete_elf_file(elf_file);
+	// delete_binary_reader(reader);
+	// delete_elf_file(elf_file);
+	// delete_elf_file(new_elf_file);
 }
