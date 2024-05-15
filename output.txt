@@ -1,0 +1,3 @@
+Target: test.out
+Option k: 0123456789abcdef0123456789abcdef
+key -> 0123456789abcdef0123456789abcdef

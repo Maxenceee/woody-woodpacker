@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/15 17:53:28 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 19:08:27 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "woody.h"
 #include <fcntl.h>
 #include <stdint.h>
+#include <string.h>
 
 char *optarg = NULL; 
 int optind = 1;
@@ -135,12 +136,14 @@ int	main(int ac, char **av)
 
 	uint8_t input[16];
 	reader->seek(reader, 0x0);
+	char key2[33];
+	memmove(key2, key, 32);
 	while (reader->get_bytes(reader, input, 16))
 	{
-		char *res = *AES_encrypt(input, key);
+		char *res = *AES_encrypt(input, key2);
 		write(ffd, res, 16);
 	}
-
+	printf("key -> %s\n", key);
 	int ffdd = open("woody_decrypted", O_CREAT | O_WRONLY | O_TRUNC, 0755);
 
 	reader = new_binary_reader(ffd);

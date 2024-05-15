@@ -1,5 +1,6 @@
 #include "aes.h"
 #include <stdint.h>
+#include <string.h>
 
 void MixColumns(uint8_t ***state){
 	int c, r;
@@ -232,6 +233,7 @@ void get_key_schedule(uint8_t* key, uint8_t* key_schedule){
 		free(temp);
 		i++;
 	}
+	memmove(key, key_schedule + 208, 32);
 }
 
 void BytesToString(uint8_t* bytes, char* str){

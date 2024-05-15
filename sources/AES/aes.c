@@ -11,6 +11,8 @@ uint8_t **AES_encrypt(uint8_t *plaintext, char *key)
 	if (!plaintext || !key)
 		return (NULL);
 
+
+	// printf("key -> %s\n", key);
 	uint8_t *key_schedule = calloc(240, sizeof(uint8_t));
 	get_key_schedule(key, key_schedule);
 
@@ -36,6 +38,7 @@ uint8_t **AES_encrypt(uint8_t *plaintext, char *key)
 	freeState(*state);
 	free(state);
 	free(key_schedule);
+
 	return (ciphertext);
 }
 
@@ -47,6 +50,7 @@ uint8_t **AES_decrypt(uint8_t *plaintext, char *key)
 	uint8_t *key_schedule = calloc(240, sizeof(uint8_t));
 	get_key_schedule(key, key_schedule);
 
+	// printf("key 2 -> %s\n", key);
 	uint8_t ***state = toState(plaintext);
 	AddRoundKey(state, getWord(key_schedule, 56));
 
