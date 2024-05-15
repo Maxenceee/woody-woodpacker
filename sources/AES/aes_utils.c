@@ -242,8 +242,8 @@ void get_key_schedule(uint8_t* key, uint8_t* key_schedule){
 
 
 void BytesToString(uint8_t* bytes, char* str){
-	int i;
-	for(i = 0; i < 16; i++){
+	for(int i = 0; i < 16; i++){
 		sprintf(str + (i * 2), "%02x", bytes[i]);
 	}
 }
+

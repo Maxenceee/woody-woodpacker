@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/13 19:17:10 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/05/14 18:44:16 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,70 +25,10 @@ int	main(int ac, char **av)
 
 	int file_id ;
 	file_id = 1;
-
-	if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e'){
-		file_id = 2;
-		int tmp_fd = open(av[file_id], O_RDONLY);
-		int crashtest_fd = open("encoded", O_RDONLY | O_WRONLY | O_CREAT | O_TRUNC, 0777);
-		t_binary_reader *reader_tmp = new_binary_reader(tmp_fd);
-		if (!reader_tmp)
-		{
-			printf("Error: Cannot read file %s\n", av[1]);
-			return (1);
-		}
-		uint8_t tm[65];
-		size_t round = 0;
-		while (round * 64 < 64){
-			
-		for (int i = 0; i < 64; i++)
-			tm[i] = reader_tmp->get_uint8(reader_tmp);
-		tm[65] = 0;
-		char *tmp = calloc(1, 256);
-		BytesToString(tm, tmp);
-		uint8_t **encoded = AES_encrypt(tmp, av[3]);
-		if (encoded == NULL)
-		{
-			printf("error\n");
-			return(0);
-		}
-		for(int i = 0; i < 16; i++){
-			dprintf(crashtest_fd, "%02x", (*encoded)[i]);
-		}
-		round ++;
-		}
-	}
-	else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd'){
-		file_id = 2;
-		int tmp_fd = open("encoded", O_RDONLY);
-		int crashtest_fd = open("decoded", O_RDONLY | O_WRONLY | O_CREAT | O_TRUNC, 0777);
-		t_binary_reader *reader_tmp = new_binary_reader(tmp_fd);
-
-		if (!reader_tmp)
-		{
-			printf("Error: Cannot read file %s\n", av[1]);
-			return (1);
-		}
-		uint8_t tm[65];
-	size_t round = 0;
-		while (round * 64 < 64){
-		for (int i = 0; i < 64; i++)
-			tm[i] = reader_tmp->get_uint8(reader_tmp);
-		tm[65] = 0;
-		char *tmp = calloc(1, 256);
-			
-		BytesToString(tm, tmp);
-		// printf("init    : ");
-		// for(int i = 0; i < 16; i++)
-		// 	printf("%02x", tmp[i]);
-		// printf("\n");
-		uint8_t **decoded = AES_decrypt(tmp, av[3]);
-			round ++;
-		BytesToString(*decoded, tmp);
-		for(int i = 0; i < 16; i++){
-			printf( "%02x", (* decoded)[i]);
-		}
-			}
-		}
+	if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e')
+		(void)AES_file(av[2], av[3], 1);
+	else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd')
+		(void)AES_file(av[2], av[3], 2);
 	else if (ac != 2)
 	{
 		printf("Usage: %s <file>\n", av[0]);

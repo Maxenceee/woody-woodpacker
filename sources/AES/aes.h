@@ -37,6 +37,7 @@
 	
 	void freeState(uint8_t **state);
 
+	int AES_file(char *file, char *key, int mode);
 
 
 
@@ -98,4 +99,4 @@ static const uint32_t rcon[11] =
     0x00000036
  };
 
-#endif
+#endif /* !AES_H */

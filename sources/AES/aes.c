@@ -51,10 +51,10 @@ uint8_t **AES_decrypt(char *plaintext, char *key)
 	uint8_t *key_schedule = calloc(1, 240 * sizeof(uint8_t));
 
 	uint8_t *keyBytes = calloc(1, 32);
-	stringToBytes(key, keyBytes);
 	get_key_schedule(keyBytes, key_schedule);
 	uint8_t *input = calloc(1, 16);
 	stringToBytes(plaintext, input);
+	stringToBytes(key, keyBytes);
 	uint8_t ***state = toState(input);
 	
 

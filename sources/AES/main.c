@@ -10,7 +10,15 @@
 // 	// printf("before  : ");
 // 	// printf("%s\n", argv[1]);
 // 	// printf("before : %s | %s\n", argv[1], argv[2]);
-// 	uint8_t **encoded = AES_encrypt(argv[1], argv[2]);
+// 	uint8_t stro[17] ="\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+// 	char str2[32];
+// 	BytesToString(stro, str2);
+	
+// 			for (int i = 0; i < 16; i++)
+// 			{
+// 				printf("%02x ", str2[i]);
+// 			}
+// 	uint8_t **encoded = AES_encrypt(str2, argv[2]);
 // 	if (encoded == NULL)
 // 	{
 // 		printf("error\n");
