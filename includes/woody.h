@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/13 19:46:25 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 14:07:48 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define WOODY_H
 
 # include "reader/binary_reader.h"
+# include "AES/aes.h"
 
 #define WD_PREFIX "woody: "
 

@@ -6,21 +6,41 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/13 19:46:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 14:07:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "AES/aes.h"
 #include "woody.h"
+#include <fcntl.h>
+#include <stdint.h>
 
 int	main(int ac, char **av)
 {
-	if (ac != 2)
+
+
+
+
+
+
+	int file_id ;
+	file_id = 1;
+	if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e')
+		(void)AES_file(av[2], av[3], 1);
+	else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd')
+		(void)AES_file(av[2], av[3], 2);
+	else if (ac != 2)
 	{
 		printf("Usage: %s <file>\n", av[0]);
 		return (1);
 	}
 
-	int fd = open(av[1], O_RDONLY);
+
+	exit(1);
+	
+	
+
+	int fd = open(av[file_id], O_RDONLY);
 	if (fd == -1)
 	{
 		printf("Error: Cannot open file %s\n", av[1]);
@@ -36,7 +56,6 @@ int	main(int ac, char **av)
 		printf("Error: Cannot read file %s\n", av[1]);
 		return (1);
 	}
-
 	// Get the file e_type reading 3 bytes as a string
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)
