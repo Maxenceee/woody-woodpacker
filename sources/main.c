@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/15 14:07:32 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 14:10:33 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,6 @@
 
 int	main(int ac, char **av)
 {
-
-
-
-
-
 
 	int file_id ;
 	file_id = 1;
@@ -35,10 +30,7 @@ int	main(int ac, char **av)
 		return (1);
 	}
 
-
 	exit(1);
-	
-	
 
 	int fd = open(av[file_id], O_RDONLY);
 	if (fd == -1)
