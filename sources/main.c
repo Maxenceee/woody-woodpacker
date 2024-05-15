@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/15 14:10:33 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 14:40:42 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,68 @@
 #include <fcntl.h>
 #include <stdint.h>
 
+char *optarg = NULL; 
+int optind = 1;
+
+static void	usage(void)
+{
+	(void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-e key] [-d key] file");
+	exit(64);
+}
+
+int ft_getopt(int argc, char * const argv[], const char *optstring) {
+	char *optchar;
+
+	if (optind >= argc || argv[optind][0] != '-') {
+		return -1; // Pas plus d'options ou ce n'est pas une option
+	}
+
+	optchar = strchr(optstring, argv[optind][1]);
+	if (optchar == NULL) {
+		fprintf(stderr, "Unknown option: %c\n", argv[optind][1]);
+		optind++;
+		return '?';
+	}
+
+	if (optchar[1] == ':') { // L'option nécessite un argument
+		if (optind + 1 < argc) {
+			optarg = argv[optind + 1];
+			optind += 2;
+			return optchar[0];
+		} else {
+			fprintf(stderr, "Option requires an argument.\n");
+			optind++;
+			return '?';
+		}
+	} else { // L'option ne nécessite pas d'argument
+		optind++;
+		return optchar[0];
+	}
+}
+
 int	main(int ac, char **av)
 {
+	char *target;
+	int ch;
+	while ((ch = ft_getopt(ac, av, "e:d:")) != -1) {
+        switch (ch) {
+            case 'e':
+				printf("Option e: %s\n", optarg);
+                break;
+            case 'd':
+                printf("Option d: %s\n", optarg);
+                break;
+			default:
+				usage();
+        }
+    }
 
-	int file_id ;
-	file_id = 1;
+	if (ac - optind != 1)
+		usage();
+	target = av[optind];
+
+	printf("Target: %s\n", target);
+
 	if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e')
 		(void)AES_file(av[2], av[3], 1);
 	else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd')
@@ -30,9 +87,9 @@ int	main(int ac, char **av)
 		return (1);
 	}
 
-	exit(1);
+	return (0);
 
-	int fd = open(av[file_id], O_RDONLY);
+	int fd = open(av[1], O_RDONLY);
 	if (fd == -1)
 	{
 		printf("Error: Cannot open file %s\n", av[1]);
