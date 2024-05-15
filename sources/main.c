@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/15 14:40:42 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 15:09:38 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,22 +54,39 @@ int ft_getopt(int argc, char * const argv[], const char *optstring) {
 	}
 }
 
+void	printbytes(uint8_t *bytes, size_t size)
+{
+	size_t i = 0;
+	while (i < size)
+	{
+		printf("%02x ", bytes[i]);
+		i++;
+	}
+	printf("\n");
+}
+
 int	main(int ac, char **av)
 {
 	char *target;
-	int ch;
+	int ch, option = 0;
 	while ((ch = ft_getopt(ac, av, "e:d:")) != -1) {
-        switch (ch) {
-            case 'e':
-				printf("Option e: %s\n", optarg);
-                break;
-            case 'd':
-                printf("Option d: %s\n", optarg);
-                break;
+		switch (ch) {
+			case 'k':
+				option |= F_KEY;
+				break;
+			case 'h':
+				option |= F_HEADER;
+				break;
+			case 'e':
+				option |= F_ENCRYPT;
+				break;
+			case 'd':
+				option |= F_DECRYPT;
+				break;
 			default:
 				usage();
-        }
-    }
+		}
+	}
 
 	if (ac - optind != 1)
 		usage();
@@ -77,15 +94,29 @@ int	main(int ac, char **av)
 
 	printf("Target: %s\n", target);
 
-	if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e')
-		(void)AES_file(av[2], av[3], 1);
-	else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd')
-		(void)AES_file(av[2], av[3], 2);
-	else if (ac != 2)
-	{
-		printf("Usage: %s <file>\n", av[0]);
-		return (1);
+	if (option & F_KEY) {
+		printf("Option k: %s\n", optarg);
 	}
+
+	// if (ac > 2 && av[1][0] == '-' && av[1][1] == 'e')
+	// 	(void)AES_file(av[2], av[3], 1);
+	// else if (ac > 2 && av[1][0] == '-' && av[1][1] == 'd')
+	// 	(void)AES_file(av[2], av[3], 2);
+	// else if (ac != 2)
+	// {
+	// 	printf("Usage: %s <file>\n", av[0]);
+	// 	return (1);
+	// }
+
+	char text[] = "testouiopoiuytru";
+	printbytes(text, sizeof(text) - 1);
+
+	char *res = *AES_encrypt(text, "qwertyuiopasdfghjklqwertyuiopasd");
+	printbytes(res, sizeof(text) - 1);
+
+	char *res2 = *AES_decrypt(res, "qwertyuiopasdfghjklqwertyuiopasd");
+	printbytes(res2, sizeof(text) - 1);
+
 
 	return (0);
 
@@ -115,7 +146,7 @@ int	main(int ac, char **av)
 
 	print_elf_file(elf_file);
 
-	printf("=================+++++=====\n%#x %#llx\n", payload_64, payload_size_64);
+	printf("=================+++++=====\n%#x %#lx\n", payload_64, payload_size_64);
 
 	/**
 	 * We copy the content of the original elf file to the new one.

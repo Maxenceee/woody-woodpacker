@@ -49,8 +49,6 @@ int AES_file(char *file, char *key, int mode)
 			}
 			round++;
 
-
-
 			//this work
 			int tmp_fd2 = open("encoded", O_RDONLY);
 			t_binary_reader *reader_tmp2 = new_binary_reader(tmp_fd2);

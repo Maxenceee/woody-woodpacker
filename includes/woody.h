@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/15 14:07:48 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/15 14:46:15 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,16 @@
 #define WD_PREFIX "woody: "
 
 #define WD_MAGIC 0x7F454C46
+
+/**
+ * Options
+ */
+
+#define F_KEY		0x01
+#define F_HEADER	0x02
+#define F_ENCRYPT	0x10
+#define F_DECRYPT	0x20
+
 
 enum e_class {
 	WD_32BITS = 1,

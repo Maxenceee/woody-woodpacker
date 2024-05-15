@@ -75,7 +75,6 @@ void _ShiftRows(uint8_t ***state, int multiplier)
 		}
 		memcpy(state[0][i], temp, 4);
 	}
-
 }
 
 void ShiftRows(uint8_t ***state)
@@ -114,7 +113,6 @@ int8_t galoisMultiply(uint8_t a, uint8_t b)
 	return p;
 }
 
-
 void stringToBytes(char* str, uint8_t* bytes)
 {
 	char pair[3];
@@ -125,7 +123,6 @@ void stringToBytes(char* str, uint8_t* bytes)
 		bytes[i/2] = strtol(pair, NULL, 16);
 	}
 }
-
 
 uint8_t ***toState(uint8_t* input)
 {
@@ -145,7 +142,6 @@ uint8_t ***toState(uint8_t* input)
 	return stateptr;
 }
 
-
 uint8_t** fromState(uint8_t ***state)
 {
 	int i, j;
@@ -161,7 +157,6 @@ uint8_t** fromState(uint8_t ***state)
 
 	return outputptr;
 }
-
 
 static uint8_t* Rcon(int a)
 {
@@ -194,7 +189,6 @@ static uint8_t* copyWord(uint8_t* start)
 	}
 	return word;
 }
-
 
 static uint8_t* SubWord(uint8_t* a)
 {
@@ -240,10 +234,8 @@ void get_key_schedule(uint8_t* key, uint8_t* key_schedule){
 	}
 }
 
-
 void BytesToString(uint8_t* bytes, char* str){
 	for(int i = 0; i < 16; i++){
 		sprintf(str + (i * 2), "%02x", bytes[i]);
 	}
 }
-
