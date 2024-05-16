@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/11 14:59:24 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/16 20:40:51 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *
 		return (1);
 	}
 
-	print_elf_file(new_elf_file);
+	print_elf_file(new_elf_file, PELF_HEADER);
 
 	close(fd);
 	return (0);

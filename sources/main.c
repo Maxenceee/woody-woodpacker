@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/16 10:45:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/16 20:45:57 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	main(int ac, char **av)
 	int ch, option = 0;
 	char key[] = "0123456789abcdef0123456789abcdef";
 	
-	while ((ch = ft_getopt(ac, av, "e:d:k:h")) != -1) {
+	while ((ch = ft_getopt(ac, av, "e:d:k:hs")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
@@ -80,6 +80,9 @@ int	main(int ac, char **av)
 				break;
 			case 'h':
 				option |= F_HEADER;
+				break;
+			case 's':
+				option |= F_SECTION;
 				break;
 			case 'e':
 				option |= F_ENCRYPT;
@@ -124,8 +127,15 @@ int	main(int ac, char **av)
 
 	if (option & F_HEADER)
 	{
-		print_elf_file(elf_file);
+		print_elf_file(elf_file, PELF_HEADER);
 	}
+
+	if (option & F_SECTION)
+	{
+		print_elf_file(elf_file, PELF_SECTION);
+	}
+
+	return (0);
 
 	/**
 	 * 

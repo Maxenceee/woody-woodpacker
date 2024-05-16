@@ -240,77 +240,83 @@ static void	print_elf_program_flag(uint32_t flag)
 	printf("%*s%s", 3 - res, "", "    ");
 }
 
-void	print_elf_file(t_elf_file *elf_file)
+void	print_elf_file(t_elf_file *elf_file, short level)
 {
-	printf("ELF Header:\n");
-	printf("  Magic:   ");
-	for (int i = 0; i < 16; i++)
-		printf("%02X ", elf_file->e_ident.raw[i]);
-	printf("\n");
-	printf("  Class:                             ELF%d\n", elf_file->e_ident.ei_class * 32);
-	printf("  Data:                              2's complement, %s\n", elf_file->e_ident.ei_data - 1 ? "big endian" : "little endian");
-	printf("  Version:                           %u (current)\n", elf_file->e_ident.ei_version);
-	printf("  OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident.ei_osabi]);
-	printf("  ABI Version:                       %u\n", elf_file->e_ident.ei_abi_version);
-	printf("  Type:                              %s\n", elf_file->e_type_name);
-	printf("  Version:                           %#x\n", elf_file->e_version);
-	printf("  Entry point:                       %#lx\n", elf_file->e_entry);
-	printf("  Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
-	printf("  Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
-	printf("  Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
-	printf("  Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
-	printf("  Number of program headers:         %d\n", elf_file->e_phnum);
-	printf("  Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
-	printf("  Number of section headers:         %d\n", elf_file->e_shnum);
-	printf("  Section header string table index: %d\n", elf_file->e_shstrndx);
-
-	printf("\nSection Headers:\n");
-	printf("  [Nr] Name               Type               Address            Offset             Size\n");
-	for (int i = 0; i < elf_file->e_shnum; i++)
+	if (level == PELF_ALL || level == PELF_HEADER)
 	{
-		printf("  [%2d] ", i);
-		printf("%-18s ", elf_file->section_tables[i].sh_name);
-		if (elf_file->section_tables[i].sh_type < 0x13)
-			printf("%-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
-		else
-			printf("%#-18x ", elf_file->section_tables[i].sh_type);
-		printf("%#018lx ", elf_file->section_tables[i].sh_address);
-		printf("%#018lx ", elf_file->section_tables[i].sh_offset);
-		printf("%#018lx\n", elf_file->section_tables[i].sh_size);
-	}
-
-	printf("\nProgram Headers:\n");
-	printf("  Type           Offset             VirtAddr           PhysAddr           FileSiz            MemSiz             Flags  Align\n");
-	for (int i = 0; i < elf_file->e_phnum; i++)
-	{
-		printf("  ");
-		if (elf_file->program_headers[i].p_type < 0x08)
-			printf("%-14s ", g_elf_program_header_type[elf_file->program_headers[i].p_type]);
-		else
-			printf("%#-14x ", elf_file->program_headers[i].p_type);
-		printf("%#018lx ", elf_file->program_headers[i].p_offset);
-		printf("%#018lx ", elf_file->program_headers[i].p_vaddr);
-		printf("%#018lx ", elf_file->program_headers[i].p_paddr);
-		printf("%#018lx ", elf_file->program_headers[i].p_filesz);
-		printf("%#018lx ", elf_file->program_headers[i].p_memsz);
-		print_elf_program_flag(elf_file->program_headers[i].p_flags);
-		printf("%#lx\n", elf_file->program_headers[i].p_align);
-	}
-
-	printf("\nSection to Segment mapping:\n");
-	printf("  Segment Sections...\n");
-	for (int i = 0; i < elf_file->e_phnum; i++)
-	{
-		printf("   %02d     ", i);
-		for (int j = 1; j < elf_file->e_shnum; j++)
-		{
-			if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
-				elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
-				elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_filesz)
-			{
-				printf("%s ", elf_file->section_tables[j].sh_name);
-			}
-		}
+		printf("ELF Header:\n");
+		printf("  Magic:   ");
+		for (int i = 0; i < 16; i++)
+			printf("%02X ", elf_file->e_ident.raw[i]);
 		printf("\n");
+		printf("  Class:                             ELF%d\n", elf_file->e_ident.ei_class * 32);
+		printf("  Data:                              2's complement, %s\n", elf_file->e_ident.ei_data - 1 ? "big endian" : "little endian");
+		printf("  Version:                           %u (current)\n", elf_file->e_ident.ei_version);
+		printf("  OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident.ei_osabi]);
+		printf("  ABI Version:                       %u\n", elf_file->e_ident.ei_abi_version);
+		printf("  Type:                              %s\n", elf_file->e_type_name);
+		printf("  Version:                           %#x\n", elf_file->e_version);
+		printf("  Entry point:                       %#lx\n", elf_file->e_entry);
+		printf("  Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
+		printf("  Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
+		printf("  Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
+		printf("  Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
+		printf("  Number of program headers:         %d\n", elf_file->e_phnum);
+		printf("  Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
+		printf("  Number of section headers:         %d\n", elf_file->e_shnum);
+		printf("  Section header string table index: %d\n", elf_file->e_shstrndx);
+	}
+
+	if (level == PELF_ALL || level == PELF_SECTION)
+	{
+		printf("\nSection Headers:\n");
+		printf("  [Nr] Name               Type               Address            Offset             Size\n");
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			printf("  [%2d] ", i);
+			printf("%-18s ", elf_file->section_tables[i].sh_name);
+			if (elf_file->section_tables[i].sh_type < 0x13)
+				printf("%-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
+			else
+				printf("%#-18x ", elf_file->section_tables[i].sh_type);
+			printf("%#018lx ", elf_file->section_tables[i].sh_address);
+			printf("%#018lx ", elf_file->section_tables[i].sh_offset);
+			printf("%#018lx\n", elf_file->section_tables[i].sh_size);
+		}
+
+		printf("\nProgram Headers:\n");
+		printf("  Type           Offset             VirtAddr           PhysAddr           FileSiz            MemSiz             Flags  Align\n");
+		for (int i = 0; i < elf_file->e_phnum; i++)
+		{
+			printf("  ");
+			if (elf_file->program_headers[i].p_type < 0x08)
+				printf("%-14s ", g_elf_program_header_type[elf_file->program_headers[i].p_type]);
+			else
+				printf("%#-14x ", elf_file->program_headers[i].p_type);
+			printf("%#018lx ", elf_file->program_headers[i].p_offset);
+			printf("%#018lx ", elf_file->program_headers[i].p_vaddr);
+			printf("%#018lx ", elf_file->program_headers[i].p_paddr);
+			printf("%#018lx ", elf_file->program_headers[i].p_filesz);
+			printf("%#018lx ", elf_file->program_headers[i].p_memsz);
+			print_elf_program_flag(elf_file->program_headers[i].p_flags);
+			printf("%#lx\n", elf_file->program_headers[i].p_align);
+		}
+
+		printf("\nSection to Segment mapping:\n");
+		printf("  Segment Sections...\n");
+		for (int i = 0; i < elf_file->e_phnum; i++)
+		{
+			printf("   %02d     ", i);
+			for (int j = 1; j < elf_file->e_shnum; j++)
+			{
+				if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
+					elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
+					elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_filesz)
+				{
+					printf("%s ", elf_file->section_tables[j].sh_name);
+				}
+			}
+			printf("\n");
+		}
 	}
 }
