@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/15 19:08:27 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/05/16 10:45:22 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,10 +98,6 @@ int	main(int ac, char **av)
 
 	printf("Target: %s\n", target);
 
-	if (option & F_KEY) {
-		printf("Option k: %s\n", optarg);
-	}
-
 	int fd = open(target, O_RDONLY);
 	if (fd == -1)
 	{
@@ -124,6 +120,11 @@ int	main(int ac, char **av)
 	{
 		printf("Error: Cannot get format for file %s\n", target);
 		return (1);
+	}
+
+	if (option & F_HEADER)
+	{
+		print_elf_file(elf_file);
 	}
 
 	/**
@@ -165,13 +166,7 @@ int	main(int ac, char **av)
 	 * 
 	 */
 
-
-	if (option & F_HEADER)
-	{
-		print_elf_file(elf_file);
-	}
-
-	printf("=================+++++=====\n%#x %#lx\n", payload_64, payload_size_64);
+	// printf("=================+++++=====\n%#x %#lx\n", payload_64, payload_size_64);
 
 	/**
 	 * We copy the content of the original elf file to the new one.
