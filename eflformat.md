@@ -106,4 +106,4 @@ the section content must be replaced by its encrypted version.
 
 Then a custom section must be added with the decryption code, the one will load the `.text` section decrypt it, load it in memory and run its code.
 
-To identify where we need to place our custom section we first need to identify the last loadable segment (PT_LOAD), the in that segment we need to find the last section and add our cutom one right after.
+To identify where we need to place our custom section we first need to identify the last loadable segment (PT_LOAD), the in that segment we need to find the last section `.mgb` and add our cutom one right after.
