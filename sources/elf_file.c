@@ -240,7 +240,7 @@ static void	print_elf_program_flag(uint32_t flag)
 	printf("%*s%s", 3 - res, "", "    ");
 }
 
-void	print_elf_file(t_elf_file *elf_file, short level)
+void	print_elf_file(t_elf_file *elf_file, int level)
 {
 	if (level == PELF_ALL || level == PELF_HEADER)
 	{

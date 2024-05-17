@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/16 20:47:23 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/16 20:59:40 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void			delete_elf_file(t_elf_file *file_format);
 #define PELF_HEADER		0x01
 #define PELF_SECTION	0x02
 
-void			print_elf_file(t_elf_file *elf_file, short level);
+void			print_elf_file(t_elf_file *elf_file, int level);
 
 int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader);
 
