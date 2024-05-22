@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/16 20:59:47 by mgama            ###   ########.fr       */
+/*   Updated: 2024/05/22 18:39:18 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,15 @@ static void	usage(void)
 int ft_getopt(int argc, char * const argv[], const char *optstring) {
 	char *optchar;
 
+	optarg = NULL;
 	if (optind >= argc || argv[optind][0] != '-') {
 		return -1; // Pas plus d'options ou ce n'est pas une option
 	}
 
 	optchar = strchr(optstring, argv[optind][1]);
 	if (optchar == NULL) {
-		fprintf(stderr, "Unknown option: %c\n", argv[optind][1]);
 		optind++;
-		return '?';
+		return -1;
 	}
 
 	if (optchar[1] == ':') { // L'option nécessite un argument
@@ -45,9 +45,8 @@ int ft_getopt(int argc, char * const argv[], const char *optstring) {
 			optind += 2;
 			return optchar[0];
 		} else {
-			fprintf(stderr, "Option requires an argument.\n");
 			optind++;
-			return '?';
+			return -1;
 		}
 	} else { // L'option ne nécessite pas d'argument
 		optind++;
