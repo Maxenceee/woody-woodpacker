@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/05/22 18:39:18 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/09 10:22:27 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	main(int ac, char **av)
 {
 	char *target;
 	int ch, option = 0;
-	char key[] = "0123456789abcdef0123456789abcdef";
+	static const char key[] = "0123456789abcdef0123456789abcdef";
 	
 	while ((ch = ft_getopt(ac, av, "e:d:k:hs")) != -1) {
 		switch (ch) {
