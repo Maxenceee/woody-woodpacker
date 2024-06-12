@@ -2,60 +2,28 @@
 // #include <stdio.h>
 
 
+// void AES_256_Key_Expansion (const unsigned char *userkey, unsigned char *key);
+// void AES_CTR_encrypt (const unsigned char *in, unsigned char *out, const unsigned char ivec[8], const unsigned char nonce[4], unsigned long length, const unsigned char *key, int nr);
 // int main(int argc, char **argv)
 // {
-// 	if (argc != 3)
-// 		return (0);
 
-// 	// printf("before  : ");
-// 	// printf("%s\n", argv[1]);
-// 	// printf("before : %s | %s\n", argv[1], argv[2]);
-// 	uint8_t stro[17] ="\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-// 	char str2[32];
-// 	BytesToString(stro, str2);
-	
-// 			for (int i = 0; i < 16; i++)
-// 			{
-// 				printf("%02x ", str2[i]);
-// 			}
-// 	uint8_t **encoded = AES_encrypt(str2, argv[2]);
-// 	if (encoded == NULL)
-// 	{
-// 		printf("error\n");
-// 		return(0);
-// 	}
-// 	// printf("encrypted : %s | %s\n", argv[1], argv[2]);
-// 	// decrypt(argv[1], argv[2]);
-// 	// printf("decrypted : %s | %s\n", argv[1], argv[2]);
-// 	printf("encoded : ");
-//     for(int i = 0; i < 16; i++){
-//         printf("%02x", (*encoded)[i]);
-//     }
-// 	printf("\n");
-// 	// return(0);
-// 	char *str = calloc(1, 256);
-// 	BytesToString(*encoded, str);
-// 	uint8_t **decoded = AES_decrypt(str, argv[2]);
-// 	// 	if (encoded == NULL)
-// 	// {
-// 	// 	printf("error\n");
-// 	// 	return(0);
-// 	// }
-// 	// printf("decoded : ");
-// 	// for (int i = 0; i < 16; i++)
-// 	// {
-// 	// 	printf("%02x ", encoded[i]);
-// 	// }
-// 	// printf("\n");
-// 	printf("decoded : ");
-//     for(int i = 0; i < 16; i++){
-//         printf("%02x", (*decoded)[i]);
-//     }
-// 	printf("\n");
-// 	free(encoded[0]);
-// 	free(encoded);
-// 	free(decoded[0]);
-// 	free(decoded);
-// 	free(str);
-// 	return (0);
+// 	unsigned char *key;
+// 	unsigned char *cypher;
+// 	key = calloc(1, sizeof(unsigned char) * 256);
+// 	cypher = calloc(1, sizeof(unsigned char) * 256);
+// 	printf("'%s'\n", key);
+// 	AES_256_Key_Expansion((const unsigned char *)argv[1], key);
+// 	printf("'%s'\n", key);
+// 	unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
+// 	unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
+// 	AES_CTR_encrypt((unsigned char *)argv[2], cypher, IV , nonce, 64, key, 64);
+
+// 	printf("'%s'\n", cypher);
+// 	AES_CTR_encrypt(cypher, cypher, IV , nonce, 64, key, 64);
+// 	printf("'%s'\n", cypher);
+// 	free(key);
+// 	free(cypher);
 // }
+
+
+// mandatory part and how it work
