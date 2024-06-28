@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 14:56:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/28 15:00:38 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,13 +145,13 @@ int	main(int ac, char **av)
 	strcpy(text, av[1]);
 	unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
 	unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
-	AES_CTR_encrypt((unsigned char *)text, cypher, IV , nonce, 64, f_key, 64);
+	AES_CTR_encrypt((unsigned char *)text, cypher, IV , nonce, strlen(text), f_key, 64);
 
 	printf("'%s'\n", cypher);
 	i = -1;
 	while (cypher[++i]) printf("%02x ", cypher[i]);
 	printf("\n");
-	AES_CTR_encrypt(cypher, cypher, IV , nonce, 64, f_key, 64);
+	AES_CTR_encrypt(cypher, cypher, IV , nonce, strlen(text), f_key, 64);
 	printf("'%s'\n", cypher);
 	free(f_key);
 	free(cypher);
