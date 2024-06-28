@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 15:03:54 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/28 15:05:44 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,11 +142,11 @@ int	main(int ac, char **av)
 	while (f_key[++i]) printf("%02x ", f_key[i]);
 	printf("\n");
 	
-	char *text = reader->data;
+	// char *text = reader->data;
 
 	unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
 	unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
-	AES_CTR_encrypt((unsigned char *)text, cypher, IV , nonce, reader->size, f_key, 64);
+	AES_CTR_encrypt((unsigned char *)reader->data, cypher, IV , nonce, reader->size, f_key, 64);
 
 	printf("'%s'\n", cypher);
 	i = -1;
