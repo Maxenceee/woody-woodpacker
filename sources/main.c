@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 14:12:25 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/06/28 14:56:58 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@
 
 char *optarg = NULL; 
 int optind = 1;
-
-
-void AES_256_Key_Expansion (const unsigned char *userkey, unsigned char *key);
-void AES_CTR_encrypt (const unsigned char *in, unsigned char *out, const unsigned char ivec[8], const unsigned char nonce[4], unsigned long length, const unsigned char *key, int nr);
 
 static void	usage(void)
 {
@@ -73,7 +69,7 @@ int	main(int ac, char **av)
 {
 	char *target;
 	int ch, option = 0;
-	static const char key[] = "0123456789abcdef0123456789abcdef";
+	static char key[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 	
 	while ((ch = ft_getopt(ac, av, "e:d:k:hs")) != -1) {
 		switch (ch) {
@@ -138,6 +134,28 @@ int	main(int ac, char **av)
 		print_elf_file(elf_file, PELF_SECTION);
 	}
 
+	unsigned char *cypher = calloc(1, sizeof(unsigned char) * 256);
+	unsigned char *f_key = calloc(1, sizeof(unsigned char) * 256);
+
+	AES_256_Key_Expansion((unsigned char *)key, f_key);
+	int i = -1;
+	while (f_key[++i]) printf("%02x ", f_key[i]);
+	printf("\n");
+	char *text = calloc(1,sizeof(char) * 65);
+	strcpy(text, av[1]);
+	unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
+	unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
+	AES_CTR_encrypt((unsigned char *)text, cypher, IV , nonce, 64, f_key, 64);
+
+	printf("'%s'\n", cypher);
+	i = -1;
+	while (cypher[++i]) printf("%02x ", cypher[i]);
+	printf("\n");
+	AES_CTR_encrypt(cypher, cypher, IV , nonce, 64, f_key, 64);
+	printf("'%s'\n", cypher);
+	free(f_key);
+	free(cypher);
+	free(text);
 
 	return (0);
 
@@ -147,32 +165,32 @@ int	main(int ac, char **av)
 	 *
 	 */
 	
-	int ffd = open("woody_encrypted", O_CREAT | O_RDWR | O_TRUNC, 0755);
+	// int ffd = open("woody_encrypted", O_CREAT | O_RDWR | O_TRUNC, 0755);
 
-	uint8_t input[16];
-	reader->seek(reader, 0x0);
-	char key2[33];
-	memmove(key2, key, 32);
-	while (reader->get_bytes(reader, input, 16))
-	{
-		char *res = *AES_encrypt(input, key2);
-		write(ffd, res, 16);
-	}
-	printf("key -> %s\n", key);
-	int ffdd = open("woody_decrypted", O_CREAT | O_WRONLY | O_TRUNC, 0755);
+	// uint8_t input[16];
+	// reader->seek(reader, 0x0);
+	// char key2[33];
+	// memmove(key2, key, 32);
+	// while (reader->get_bytes(reader, input, 16))
+	// {
+	// 	char *res = *AES_encrypt(input, key2);
+	// 	write(ffd, res, 16);
+	// }
+	// printf("key -> %s\n", key);
+	// int ffdd = open("woody_decrypted", O_CREAT | O_WRONLY | O_TRUNC, 0755);
 
-	reader = new_binary_reader(ffd);
-	reader->seek(reader, 0x0);
-	while (reader->get_bytes(reader, input, 16))
-	{
-		char *res = *AES_decrypt(input, key);
-		write(ffdd, res, 16);
-	}
+	// reader = new_binary_reader(ffd);
+	// reader->seek(reader, 0x0);
+	// while (reader->get_bytes(reader, input, 16))
+	// {
+	// 	char *res = *AES_decrypt(input, key);
+	// 	write(ffdd, res, 16);
+	// }
 
-	close(ffd);
-	close(ffdd);
+	// close(ffd);
+	// close(ffdd);
 	
-	return (0);
+	// return (0);
 
 	/**
 	 * 

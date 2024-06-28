@@ -2,8 +2,9 @@
 
  ; //void AES_256_Key_Expansion (const unsigned char *userkey,
  ; // unsigned char *key)
-global AES_256_Key_Expansion
-AES_256_Key_Expansion:	; basic label
+section .text
+global _AES_256_Key_Expansion
+_AES_256_Key_Expansion:	; basic label
 ; # 	[parameter 1: %rdi]
 ; # 	[parameter 2: %rsi]
 movdqu 	xmm1,	[rdi]
