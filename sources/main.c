@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 15:07:55 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/28 15:13:08 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,30 +134,42 @@ int	main(int ac, char **av)
 		print_elf_file(elf_file, PELF_SECTION);
 	}
 
-	unsigned char *cypher = calloc(1, sizeof(unsigned char) * reader->size);
+	int csize = (reader->size + reader->size % 256);
+	unsigned char *cypher = calloc(1, sizeof(unsigned char) * csize);
 	unsigned char *f_key = calloc(1, sizeof(unsigned char) * 256);
 
 	AES_256_Key_Expansion((unsigned char *)key, f_key);
 	int i = -1;
 	while (f_key[++i]) printf("%02x ", f_key[i]);
 	printf("\n");
-	
-	// char *text = reader->data;
 
 	unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
 	unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
+	
 	AES_CTR_encrypt((unsigned char *)reader->data, cypher, IV , nonce, reader->size, f_key, 64);
 
 	printf("'%s'\n", cypher);
-	i = -1;
-	while (cypher[++i]) printf("%02x ", cypher[i]);
-	printf("\n");
-	AES_CTR_encrypt(cypher, cypher, IV , nonce, reader->size, f_key, 64);
 
+	i = -1;
+	printf("'");
+	while (++i < csize)
+		printf("%02x ", cypher[i]);
+	printf("'\n");
+	
+	AES_CTR_encrypt(cypher, cypher, IV , nonce, csize, f_key, 64);
+
+	i = -1;
+	printf("'");
+	while (++i < csize)
+		printf("%02x ", cypher[i]);
+	printf("'\n");
+	
 	int iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
 	dprintf(iiii, "%s", cypher);
+	i = -1;
+	while (++i < csize)
+		dprintf(iiii, "%c", cypher[i]);
 
-	printf("'%s'\n", cypher);
 	free(f_key);
 	free(cypher);
 
