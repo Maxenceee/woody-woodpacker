@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 15:02:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/28 15:03:54 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ int	main(int ac, char **av)
 		print_elf_file(elf_file, PELF_SECTION);
 	}
 
-	unsigned char *cypher = calloc(1, sizeof(unsigned char) * 256);
+	unsigned char *cypher = calloc(1, sizeof(unsigned char) * reader->size);
 	unsigned char *f_key = calloc(1, sizeof(unsigned char) * 256);
 
 	AES_256_Key_Expansion((unsigned char *)key, f_key);
@@ -156,7 +156,6 @@ int	main(int ac, char **av)
 	printf("'%s'\n", cypher);
 	free(f_key);
 	free(cypher);
-	free(text);
 
 	return (0);
 
