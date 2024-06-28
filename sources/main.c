@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 15:05:44 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/28 15:07:55 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,10 @@ int	main(int ac, char **av)
 	while (cypher[++i]) printf("%02x ", cypher[i]);
 	printf("\n");
 	AES_CTR_encrypt(cypher, cypher, IV , nonce, reader->size, f_key, 64);
+
+	int iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
+	dprintf(iiii, "%s", cypher);
+
 	printf("'%s'\n", cypher);
 	free(f_key);
 	free(cypher);
