@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/09 10:22:27 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/28 14:12:25 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 
 char *optarg = NULL; 
 int optind = 1;
+
+
+void AES_256_Key_Expansion (const unsigned char *userkey, unsigned char *key);
+void AES_CTR_encrypt (const unsigned char *in, unsigned char *out, const unsigned char ivec[8], const unsigned char nonce[4], unsigned long length, const unsigned char *key, int nr);
 
 static void	usage(void)
 {
@@ -133,6 +137,7 @@ int	main(int ac, char **av)
 	{
 		print_elf_file(elf_file, PELF_SECTION);
 	}
+
 
 	return (0);
 
