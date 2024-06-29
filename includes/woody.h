@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 16:56:35 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/29 17:21:56 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,10 @@ struct s_elf_section_table {
 	uint64_t	sh_address;
 	uint64_t	sh_offset;
 	uint64_t	sh_size;
+	uint32_t	sh_link;
+	uint32_t	sh_info;
+	uint64_t	sh_addralign;
+	uint64_t	sh_entsize;
 	char		*sh_name;
 };
 
