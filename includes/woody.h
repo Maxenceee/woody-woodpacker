@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 12:42:32 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/29 16:56:35 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,25 @@
 enum e_class {
 	WD_32BITS = 1,
 	WD_64BITS = 2
+};
+
+enum e_program_header_type {
+	PH_NULL				= 0,
+	PH_LOAD				= 1,
+	PH_DYNAMIC			= 2,
+	PH_INTERP			= 3,
+	PH_NOTE				= 4,
+	PH_SHLIB			= 5,
+	PH_TLS				= 7,
+	PH_PHDR				= 6,
+	PH_NUM				= 8,
+	PH_LOOS				= 9,
+	PH_LOSUNW			= 0x6ffffffa,
+	PH_SUNWBSS			= 0x6ffffffb,
+	PH_SUNWSTACK		= 0x6ffffffc,
+	PH_HIOS				= 0x6fffffff,
+	PH_LOPROC			= 0x70000000,
+	PH_HIPROC			= 0x7fffffff
 };
 
 /*
