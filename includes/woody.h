@@ -6,14 +6,18 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/28 14:16:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/29 12:42:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WOODY_H
 # define WOODY_H
 
+#include <fcntl.h>
+#include <stdint.h>
+#include <string.h>
 # include "reader/binary_reader.h"
+# include "writer/binary_writer.h"
 # include "AES/aes.h"
 
 #define WD_PREFIX "woody: "

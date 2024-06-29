@@ -3,18 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/28 15:49:27 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/06/29 12:53:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "AES/aes.h"
 #include "woody.h"
-#include <fcntl.h>
-#include <stdint.h>
-#include <string.h>
 
 char *optarg = NULL; 
 int optind = 1;
@@ -107,6 +103,36 @@ int	main(int ac, char **av)
 		return (1);
 	}
 
+
+	/**
+	 * test writer
+	 * 
+	 */
+
+
+	uint8_t * tt = malloc(100);
+	t_binary_writer *writer = new_binary_writer(tt, 100);
+	
+	writer->set_uint8(writer, 0x01);
+	writer->set_uint16(writer, 0x0203);
+	writer->set_uint32(writer, 0x04050607);
+	writer->set_uint64(writer, 0x08090a0b0c0d0e0f);
+	writer->set_string(writer, "Hello World");
+	uint8_t d[8] = {0x10, 0x09, 0x08, 0x07, 0x06, 0x05,0x04, 0x03};
+	writer->set_bytes(writer, d, 8);
+	writer->set_endian(writer, WRITER_BIG_ENDIAN);
+	writer->set_padding(writer, 10);
+	writer->set_string(writer, "Hello World");
+	writer->set_bytes(writer, d, 8);
+	writer->set_padding(writer, 3);
+	writer->set_uint8(writer, 0x01);
+	writer->set_uint16(writer, 0x0203);
+	writer->set_uint32(writer, 0x04050607);
+	writer->set_uint64(writer, 0x08090a0b0c0d0e0f);
+	writer->write_file(writer, "test.out");
+
+	return (0);
+
 	/**
 	 * Create new reader
 	 */
@@ -134,54 +160,54 @@ int	main(int ac, char **av)
 		print_elf_file(elf_file, PELF_SECTION);
 	}
 
-	int csize = (reader->size + reader->size % 256);
-	unsigned char *cypher = ft_calloc(1, sizeof(unsigned char) * csize);
-	unsigned char *f_key = calloc(1, sizeof(unsigned char) * 256);
+	// int csize = (reader->size + reader->size % 256);
+	// unsigned char *cypher = ft_calloc(1, sizeof(unsigned char) * csize);
+	// unsigned char *f_key = calloc(1, sizeof(unsigned char) * 256);
 
-	AES_256_Key_Expansion((unsigned char *)key, f_key);
-	int i = -1;
-	while (f_key[++i]) printf("%02x ", f_key[i]);
-	printf("\n");
-	printf("%i\n", csize%256);
+	// AES_256_Key_Expansion((unsigned char *)key, f_key);
+	// int i = -1;
+	// while (f_key[++i]) printf("%02x ", f_key[i]);
+	// printf("\n");
+	// printf("%i\n", csize%256);
 
-	unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
-	unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
+	// unsigned char nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
+	// unsigned char IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
 	
-	AES_CTR_encrypt((unsigned char *)reader->data, cypher, IV , nonce, reader->size, f_key, 64);
-	int iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
-	i = -1;
-	while (++i < reader->size)
-		dprintf(iiii, "%c", cypher[i]);
+	// AES_CTR_encrypt((unsigned char *)reader->data, cypher, IV , nonce, reader->size, f_key, 64);
+	// int iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
+	// i = -1;
+	// while (++i < reader->size)
+	// 	dprintf(iiii, "%c", cypher[i]);
 
-	t_binary_reader *reader2 = new_binary_reader(iiii);
-
-	i = -1;
-	// printf("'");
-	// while (++i < csize)
-	// 	printf("%02x ", cypher[i]);
-	// printf("'\n");
-	csize = (reader2->size + reader2->size % 256);
-	printf("%i\n", csize);
-	unsigned char *res = malloc(csize);
-	
-	AES_CTR_encrypt(cypher, res, IV , nonce, reader2->size, f_key, 64);
+	// t_binary_reader *reader2 = new_binary_reader(iiii);
 
 	// i = -1;
 	// // printf("'");
 	// // while (++i < csize)
-	// // 	printf("%02x ", res[i]);
+	// // 	printf("%02x ", cypher[i]);
 	// // printf("'\n");
+	// csize = (reader2->size + reader2->size % 256);
+	// printf("%i\n", csize);
+	// unsigned char *res = malloc(csize);
 	
-	iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
-	i = -1;
-	while (++i < reader2->size)
-		dprintf(iiii, "%c", res[i]);
-	free(res);
+	// AES_CTR_encrypt(cypher, res, IV , nonce, reader2->size, f_key, 64);
 
-	free(f_key);
-	free(cypher);
+	// // i = -1;
+	// // // printf("'");
+	// // // while (++i < csize)
+	// // // 	printf("%02x ", res[i]);
+	// // // printf("'\n");
+	
+	// iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
+	// i = -1;
+	// while (++i < reader2->size)
+	// 	dprintf(iiii, "%c", res[i]);
+	// free(res);
 
-	return (0);
+	// free(f_key);
+	// free(cypher);
+
+	// return (0);
 
 	/**
 	 * 
