@@ -5,6 +5,7 @@ extern puts
 [BITS 64]
 
 segment .text
+
 _payload_64:
 	pushf
 	push rax
@@ -33,6 +34,7 @@ _payload_64:
 	popf
 	jmp [rel .encrypt]
 
+.key: dq "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 .encrypted_data_start: dq 0
 .encrypted_data_len: dq 0
 .start_encode: dq 0
