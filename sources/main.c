@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/29 15:19:33 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/29 17:00:41 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,8 @@ int	main(int ac, char **av)
 	{
 		print_elf_file(elf_file, PELF_SECTION);
 	}
+
+	elf_insert_section(elf_file);
 
 	// int csize = (reader->size + reader->size % 256);
 	// unsigned char *cypher = ft_calloc(1, sizeof(unsigned char) * csize);

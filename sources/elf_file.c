@@ -45,7 +45,7 @@ static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 			elf_file->e_type_name = "HIPROC";
             break;
         default:
-			elf_file->e_type_name = "Error";
+			elf_file->e_type_name = "Error"; 
     }
 }
 
@@ -73,17 +73,17 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			elf_file->section_tables[i].sh_offset = reader->get_uint64(reader);
 			elf_file->section_tables[i].sh_size = reader->get_uint64(reader);
 		}
-		(void)reader->get_uint32(reader); // sh_link
-		(void)reader->get_uint32(reader); // sh_info
+		elf_file->section_tables[i].sh_link = reader->get_uint32(reader);
+		elf_file->section_tables[i].sh_info = reader->get_uint32(reader);
 		if (elf_file->e_ident.ei_class == WD_32BITS)
 		{
-			(void)reader->get_uint32(reader); // sh_addralign
-			(void)reader->get_uint32(reader); // sh_entize
+			elf_file->section_tables[i].sh_addralign = reader->get_uint32(reader);
+			elf_file->section_tables[i].sh_entsize = reader->get_uint32(reader);
 		}
 		else
 		{
-			(void)reader->get_uint64(reader); // sh_addralign
-			(void)reader->get_uint64(reader); // sh_entize
+			elf_file->section_tables[i].sh_addralign = reader->get_uint64(reader);
+			elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
 		}
 	}
 	for (int i = 0; i < elf_file->e_shnum; i++)

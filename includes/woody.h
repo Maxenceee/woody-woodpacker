@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 17:21:56 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/29 17:23:16 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,22 +41,22 @@ enum e_class {
 };
 
 enum e_program_header_type {
-	PH_NULL				= 0,
-	PH_LOAD				= 1,
-	PH_DYNAMIC			= 2,
-	PH_INTERP			= 3,
-	PH_NOTE				= 4,
-	PH_SHLIB			= 5,
-	PH_TLS				= 7,
-	PH_PHDR				= 6,
-	PH_NUM				= 8,
-	PH_LOOS				= 9,
-	PH_LOSUNW			= 0x6ffffffa,
-	PH_SUNWBSS			= 0x6ffffffb,
-	PH_SUNWSTACK		= 0x6ffffffc,
-	PH_HIOS				= 0x6fffffff,
-	PH_LOPROC			= 0x70000000,
-	PH_HIPROC			= 0x7fffffff
+	PT_NULL				= 0,
+	PT_LOAD				= 1,
+	PT_DYNAMIC			= 2,
+	PT_INTERP			= 3,
+	PT_NOTE				= 4,
+	PT_SHLIB			= 5,
+	PT_TLS				= 7,
+	PT_PHDR				= 6,
+	PT_NUM				= 8,
+	PT_LOOS				= 9,
+	PT_LOSUNW			= 0x6ffffffa,
+	PT_SUNWBSS			= 0x6ffffffb,
+	PT_SUNWSTACK		= 0x6ffffffc,
+	PT_HIOS				= 0x6fffffff,
+	PT_LOPROC			= 0x70000000,
+	PT_HIPROC			= 0x7fffffff
 };
 
 /*
@@ -210,6 +210,12 @@ void			delete_elf_file(t_elf_file *file_format);
 void			print_elf_file(t_elf_file *elf_file, int level);
 
 int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader);
+
+/**
+ * Insertion
+ */
+
+void	elf_insert_section(t_elf_file *elf);
 
 /* payload */
 
