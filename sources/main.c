@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/29 12:53:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/06/29 13:09:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,25 +110,35 @@ int	main(int ac, char **av)
 	 */
 
 
-	uint8_t * tt = malloc(100);
-	t_binary_writer *writer = new_binary_writer(tt, 100);
+	uint8_t * tt = malloc(200);
+	t_binary_writer *writer = new_binary_writer(tt, 200);
 	
 	writer->set_uint8(writer, 0x01);
+	writer->set_padding(writer, 15);
 	writer->set_uint16(writer, 0x0203);
+	writer->set_padding(writer, 14);
 	writer->set_uint32(writer, 0x04050607);
+	writer->set_padding(writer, 12);
 	writer->set_uint64(writer, 0x08090a0b0c0d0e0f);
+	writer->set_padding(writer, 8);
 	writer->set_string(writer, "Hello World");
+	writer->set_padding(writer, 5);
 	uint8_t d[8] = {0x10, 0x09, 0x08, 0x07, 0x06, 0x05,0x04, 0x03};
 	writer->set_bytes(writer, d, 8);
+	writer->set_padding(writer, 8);
 	writer->set_endian(writer, WRITER_BIG_ENDIAN);
-	writer->set_padding(writer, 10);
 	writer->set_string(writer, "Hello World");
+	writer->set_padding(writer, 5);
 	writer->set_bytes(writer, d, 8);
-	writer->set_padding(writer, 3);
+	writer->set_padding(writer, 8);
 	writer->set_uint8(writer, 0x01);
+	writer->set_padding(writer, 15);
 	writer->set_uint16(writer, 0x0203);
+	writer->set_padding(writer, 14);
 	writer->set_uint32(writer, 0x04050607);
+	writer->set_padding(writer, 12);
 	writer->set_uint64(writer, 0x08090a0b0c0d0e0f);
+	writer->set_padding(writer, 8);
 	writer->write_file(writer, "test.out");
 
 	return (0);
