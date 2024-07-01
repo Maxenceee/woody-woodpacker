@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 12:28:31 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 12:31:51 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/01 11:26:54 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,3 +25,4 @@ void	bw_set_uint32(t_binary_writer *this, uint32_t value)
 		this->set_uint16(this, value & 0xFFFF);
 	}
 }
+
