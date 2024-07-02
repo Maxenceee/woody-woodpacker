@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 12:43:19 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 19:14:40 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ enum e_endian_reader
 
 struct s_binary_reader
 {
-	uint32_t			_pos;
+	uint64_t			_pos;
 	unsigned char		*data;
-	uint32_t			size;
+	uint64_t			size;
 	int					endian;
 
-	uint32_t			((*seek)(t_binary_reader *, uint32_t));
-	uint32_t			(*tell)(t_binary_reader *);
+	uint64_t			((*seek)(t_binary_reader *, uint64_t));
+	uint64_t			(*tell)(t_binary_reader *);
 
 	uint8_t				(*get_uint8)(t_binary_reader *);
 	uint16_t			(*get_uint16)(t_binary_reader *);
@@ -92,8 +92,8 @@ unsigned char	*ft_memjoin(unsigned char *s1, unsigned char *s2,
 
 /* binary reader methods */
 
-uint32_t		br_seek(t_binary_reader *this, uint32_t pos);
-uint32_t		br_tell(t_binary_reader *this);
+uint64_t		br_seek(t_binary_reader *this, uint64_t pos);
+uint64_t		br_tell(t_binary_reader *this);
 
 uint8_t			br_get_uint8(t_binary_reader *this);
 uint16_t		br_get_uint16(t_binary_reader *this);

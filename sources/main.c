@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/06/29 17:00:41 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 19:24:37 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,12 @@ int	main(int ac, char **av)
 	char *target;
 	int ch, option = 0;
 	static char key[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+	
+	/**
+	 * TODO:
+	 * rm the following line and add the option
+	 */
+	option |= F_DATA;
 	
 	while ((ch = ft_getopt(ac, av, "e:d:k:hs")) != -1) {
 		switch (ch) {
@@ -168,6 +174,11 @@ int	main(int ac, char **av)
 	if (option & F_SECTION)
 	{
 		print_elf_file(elf_file, PELF_SECTION);
+	}
+
+	if (option & F_DATA)
+	{
+		print_elf_file(elf_file, PELF_DATA);
 	}
 
 	elf_insert_section(elf_file);

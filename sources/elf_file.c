@@ -93,6 +93,25 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		if (elf_file->section_tables[i].sh_name == NULL)
 			return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
 	}
+
+	size_t elf_section_data_size;
+	for (int i = 0; i < elf_file->e_shnum; i++)
+	{
+		if (elf_file->section_tables[i].sh_type != SHT_NOBITS) {
+			elf_section_data_size = elf_file->section_tables[i].sh_size;
+
+			elf_file->section_tables[i].data = malloc(elf_section_data_size);
+			if (elf_file->section_tables[i].data == NULL) {
+				free(elf_file->section_tables[i].data);
+				return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+			}
+
+			ft_memset(elf_file->section_tables[i].data, 0, elf_section_data_size);
+			reader->seek(reader, elf_file->section_tables[i].sh_offset);
+			reader->get_bytes(reader, elf_file->section_tables[i].data, elf_section_data_size);
+		}
+	}
+
 	return (0);
 }
 
@@ -315,6 +334,56 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				{
 					printf("%s ", elf_file->section_tables[j].sh_name);
 				}
+			}
+			printf("\n");
+		}
+	}
+
+	if (level & PELF_DATA)
+	{
+		int tab = 6;
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			int j = 1, l = elf_file->section_tables[i].sh_size;
+			while (l > 10)
+			{
+				j++;
+				l /= 10;
+			}
+			if (j > tab)
+				tab = j;
+		}
+
+		printf("\nSection data mapping:\n");
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			if (elf_file->section_tables[i].sh_type != PT_NULL)
+				printf("  Section %s:\n", elf_file->section_tables[i].sh_name);
+			else
+				printf("  Section %s:\n", "(null)");
+
+			if (elf_file->section_tables[i].sh_size == 0 || elf_file->section_tables[i].sh_type == SHT_NOBITS)
+			{
+				printf("    (null)\n\n");
+				continue;
+			}
+
+			int j = 0;
+			for (; j < elf_file->section_tables[i].sh_size; j++)
+			{
+				if (j % 16 == 0)
+				{
+					printf("    %0*X: ", tab, j);
+				}
+				printf("%02x ", elf_file->section_tables[i].data[j]);
+				if ((j + 1) % 16 == 0)
+				{
+					printf("\n");
+				}
+			}
+			if (j % 16 != 0)
+			{
+				printf("\n");
 			}
 			printf("\n");
 		}

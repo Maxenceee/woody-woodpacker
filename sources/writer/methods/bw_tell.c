@@ -6,13 +6,13 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 12:26:52 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 12:28:23 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 19:15:42 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "writer/binary_writer.h"
 
-uint32_t	bw_tell(t_binary_writer *this)
+uint64_t	bw_tell(t_binary_writer *this)
 {
 	return (this->_pos);
 }

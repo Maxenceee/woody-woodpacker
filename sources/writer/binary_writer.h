@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 12:43:14 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 19:14:57 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ enum e_endian_writer
 
 struct s_binary_writer
 {
-	uint32_t			_pos;
+	uint64_t			_pos;
 	unsigned char		*data;
-	uint32_t			size;
+	uint64_t			size;
 	int					endian;
 
-	uint32_t			(*seek)(t_binary_writer *, uint32_t);
-	uint32_t			(*tell)(t_binary_writer *);
+	uint64_t			(*seek)(t_binary_writer *, uint64_t);
+	uint64_t			(*tell)(t_binary_writer *);
 
 	void				(*set_uint8)(t_binary_writer *, uint8_t);
 	void				(*set_uint16)(t_binary_writer *, uint16_t);
@@ -82,8 +82,8 @@ unsigned char	*ft_memjoin(unsigned char *s1, unsigned char *s2,
 
 /* binary reader methods */
 
-uint32_t		bw_seek(t_binary_writer *this, uint32_t pos);
-uint32_t		bw_tell(t_binary_writer *this);
+uint64_t		bw_seek(t_binary_writer *this, uint64_t pos);
+uint64_t		bw_tell(t_binary_writer *this);
 
 void			bw_set_uint8(t_binary_writer *this, uint8_t value);
 void			bw_set_uint16(t_binary_writer *this, uint16_t value);
