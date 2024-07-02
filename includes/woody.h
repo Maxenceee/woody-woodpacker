@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/02 19:27:19 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 22:43:56 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 
 #include <fcntl.h>
 #include <string.h>
-# include "reader/binary_reader.h"
-# include "writer/binary_writer.h"
-# include "AES/aes.h"
-# include "elf.h"
+#include "reader/binary_reader.h"
+#include "writer/binary_writer.h"
+#include "AES/aes.h"
+#include "elf.h"
+#include "payload/payload.h"
 
 #define WD_PREFIX "woody: "
 

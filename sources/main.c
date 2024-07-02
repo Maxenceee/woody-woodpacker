@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/02 19:24:37 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 22:36:20 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,7 @@ int	main(int ac, char **av)
 	int ch, option = 0;
 	static char key[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 	
-	/**
-	 * TODO:
-	 * rm the following line and add the option
-	 */
-	option |= F_DATA;
-	
-	while ((ch = ft_getopt(ac, av, "e:d:k:hs")) != -1) {
+	while ((ch = ft_getopt(ac, av, "k:hsd")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
@@ -85,11 +79,14 @@ int	main(int ac, char **av)
 			case 's':
 				option |= F_SECTION;
 				break;
-			case 'e':
-				option |= F_ENCRYPT;
-				break;
+			// case 'e':
+			// 	option |= F_ENCRYPT;
+			// 	break;
+			// case 'd':
+			// 	option |= F_DECRYPT;
+			// 	break;
 			case 'd':
-				option |= F_DECRYPT;
+				option |= F_DATA;
 				break;
 			default:
 				usage();
@@ -182,6 +179,11 @@ int	main(int ac, char **av)
 	}
 
 	elf_insert_section(elf_file);
+
+	/**
+	 * INFO:
+	 * ne pas supprimer c'est la version complete du chiffrement !!!
+	 */
 
 	// int csize = (reader->size + reader->size % 256);
 	// unsigned char *cypher = ft_calloc(1, sizeof(unsigned char) * csize);

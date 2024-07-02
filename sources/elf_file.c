@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "woody.h"
+#include "ctype.h"
 
 static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 {
@@ -354,6 +355,8 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				tab = j;
 		}
 
+		char ascii_line[17];
+		ascii_line[16] = '\0';
 		printf("\nSection data mapping:\n");
 		for (int i = 0; i < elf_file->e_shnum; i++)
 		{
@@ -375,15 +378,36 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				{
 					printf("    %0*X: ", tab, j);
 				}
-				printf("%02x ", elf_file->section_tables[i].data[j]);
+				else if (j % 4 == 0)
+				{
+					printf(" ");
+				}
+				printf("%02x", elf_file->section_tables[i].data[j]);
+
+				// Stocker le caractère ASCII correspondant
+				if (isprint(elf_file->section_tables[i].data[j]))
+				{
+					ascii_line[j % 16] = elf_file->section_tables[i].data[j];
+				}
+				else
+				{
+					ascii_line[j % 16] = '.';
+				}
+
 				if ((j + 1) % 16 == 0)
 				{
-					printf("\n");
+					printf("  %s\n", ascii_line);
 				}
 			}
 			if (j % 16 != 0)
 			{
-				printf("\n");
+				int remaining = 16 - (j % 16);
+				printf("%*s", remaining * 2 + remaining / 4, "");
+				for (int k = j % 16; k < 16; k++)
+				{
+					ascii_line[k] = ' ';
+				}
+				printf("  %s\n", ascii_line);
 			}
 			printf("\n");
 		}

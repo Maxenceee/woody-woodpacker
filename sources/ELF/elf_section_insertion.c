@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/06/29 17:27:10 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/02 22:46:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,29 @@ int	create_new_elf_section(t_elf_file *elf, int last_load_prog, int last_section
 	if (!elf->section_tables)
 		return (-1);
 
+	t_elf_section_table *new_section = ft_calloc(1, sizeof(t_elf_section_table));
+	if (!new_section)
+		return (-1);
+
+	new_section->sh_type = SHT_PROGBITS;
+	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
+    new_section->sh_addralign = 16;
+
+	new_section->sh_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
+	new_section->sh_address = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
 	
-	
+	new_section->sh_size = sizeof(wd_playload_64);
+	/**
+	 * TODO:
+	 * finish implementing the new section
+	 */
 }
 
 void	elf_insert_section(t_elf_file *elf)
 {
 	int progi = efl_find_last_prog_header(elf);
+	int sectioni = efl_find_last_section_header(elf, progi);
 	printf("last PT_LOAD header: %d\n", progi);
-	printf("last section in header: %d\n", efl_find_last_section_header(elf, progi));
+	printf("last section in header: %d\n", sectioni);
+	create_new_elf_section(elf, progi, sectioni);
 }
