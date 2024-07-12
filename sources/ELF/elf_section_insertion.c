@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 18:27:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 18:28:31 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_section)
 {
-	if (elf->e_shstrndx == -1) {
+	if (elf->e_shstrndx == 0) {
 		dprintf(2, "No section string table found\n");
 		return (0);
 	}
