@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 18:28:31 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 18:39:08 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,6 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_section)
 {
-	if (elf->e_shstrndx == 0) {
-		dprintf(2, "No section string table found\n");
-		return (0);
-	}
 	char *section_name = WB_SECTION_NAME;
 	size_t section_name_len = ft_strlen(section_name);
 
@@ -116,14 +112,21 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 	last_section_in_prog += 1;
 
-	if (elf->e_shstrndx >= last_section_in_prog) {
-		elf->e_shstrndx += 1;
-	}
-
-	if (set_new_elf_section_string_table(elf, new_section) == -1)
+	if (elf->e_shstrndx != 0)
 	{
-		free(new_section);
-		return (-1);
+		if (elf->e_shstrndx >= last_section_in_prog) {
+			elf->e_shstrndx += 1;
+		}
+
+		if (set_new_elf_section_string_table(elf, new_section) == -1)
+		{
+			free(new_section);
+			return (-1);
+		}
+	}
+	else
+	{
+		dprintf(2, "No section string table found\n");
 	}
 
 	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section_table));
