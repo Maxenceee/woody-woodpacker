@@ -282,7 +282,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		printf("  Entry point:                       %#lx\n", elf_file->e_entry);
 		printf("  Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
 		printf("  Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
-		printf("  Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
+		printf("  Size of this header:               %d (bytes)\n", elf_file->e_ehsize);
 		printf("  Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
 		printf("  Number of program headers:         %d\n", elf_file->e_phnum);
 		printf("  Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);

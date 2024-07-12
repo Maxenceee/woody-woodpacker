@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 21:46:51 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 21:52:40 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int	packer(t_elf_file *elf, t_binary_reader *reader)
 		write_to_file(fd, &elf->section_tables[i], elf_section_header_size);
 	}
 
-	print_elf_file(elf, PELF_ALL | PELF_DATA);
+	// print_elf_file(elf, PELF_ALL | PELF_DATA);
 
 	close(fd);
 	return (0);
