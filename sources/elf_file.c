@@ -87,12 +87,15 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
 		}
 	}
-	for (int i = 0; i < elf_file->e_shnum; i++)
+	if (elf_file->e_shstrndx == 0)
 	{
-		reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
-		elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
-		if (elf_file->section_tables[i].sh_name == NULL)
-			return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
+			elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
+			if (elf_file->section_tables[i].sh_name == NULL)
+				return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		}
 	}
 
 	size_t elf_section_data_size;
