@@ -26,10 +26,10 @@ _payload_64:
 	pop rdx
 	pop rax
 	popf
-	jmp 0xFFFFFFFF
+	jmp	0xEFEFEFEF
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-encrypted_data_start:	dq  0xbbbbbbbb
-encrypted_data_len:		dq	0xcccccccc
-start_encode:			dq  0xdddddddd
+encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
+encrypted_data_len:		dq	0xcccccccccccccccc
+start_encode:			dq  0xdddddddddddddddd
