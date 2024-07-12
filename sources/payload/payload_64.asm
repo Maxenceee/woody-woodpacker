@@ -26,8 +26,7 @@ _payload_64:
 	pop rdx
 	pop rax
 	popf
-	jmp	[rel .oui]
-.oui:
+	jmp	0x01020304
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

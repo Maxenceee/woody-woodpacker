@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 18:01:12 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 20:44:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,41 +67,40 @@
 // 	return (0);
 // }
 
-int	packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader)
+int	packer(t_elf_file *elf, t_binary_reader *reader)
 {
+	if (elf_insert_section(elf) == -1)
+	{
+		dprintf(2, "An error occured while inserting the new section\n");
+	}
+
 	int fd = open("woody", O_CREAT | O_WRONLY | O_TRUNC, 0755);
 	if (fd == -1)
 		return (ft_error(WD_PREFIX"Could not open file.\n"), 1);
 
-	uint32_t magic = 0x464C457F;
-	write(fd, new_elf_file->e_ident.raw, 16);
-	write(fd, &new_elf_file->e_type, 2);
-	write(fd, &new_elf_file->e_machine, 2);
-	write(fd, &new_elf_file->e_version, 4);
-	write(fd, "\0\0\0\0\0\0\0\0", new_elf_file->e_ident.ei_class == WD_32BITS ? 4 : 8); // entry
-	write(fd, "\0\0\0\0\0\0\0\0", new_elf_file->e_ident.ei_class == WD_32BITS ? 4 : 8); // phoff
-	write(fd, "\0\0\0\0\0\0\0\0", new_elf_file->e_ident.ei_class == WD_32BITS ? 4 : 8); // shoff
-	write(fd, &new_elf_file->e_flags, 4);
-	write(fd, &new_elf_file->e_ehsize, 2);
-	write(fd, &new_elf_file->e_phentsize, 2);
-	write(fd, &new_elf_file->e_phnum, 2);
-	write(fd, &new_elf_file->e_shentsize, 2);
-	write(fd, "\0\0", 2);
-	write(fd, "\0\0", 2);
+	size_t elf_header_size = sizeof(t_elf_file) - sizeof(char *) - sizeof(t_elf_program_header *) - sizeof(t_elf_section_table *);
+	size_t elf_section_header_size = sizeof(t_elf_section_table) - sizeof(char *) - sizeof(uint8_t *);
 
-	// if (strip_sections(old_elf_file, new_elf_file, reader))
-	// {
-	// 	close(fd);
-	// 	return (1);
-	// }
+	printf("elf_header_size: %zu\n", elf_header_size);
+	printf("elf_section_header_size: %zu\n", elf_section_header_size);
 
-	// if (strip_program_headers(old_elf_file, new_elf_file, reader))
-	// {
-	// 	close(fd);
-	// 	return (1);
-	// }
+	write(fd, elf, elf_header_size);
 
-	print_elf_file(new_elf_file, PELF_HEADER);
+	for (int i = 0; i < elf->e_phnum; i++) {
+		write(fd, &elf->program_headers[i], sizeof(t_elf_program_header));
+	}
+
+	// Write the section headers (excluding pointers)
+	for (int i = 0; i < elf->e_shnum; i++) {
+		write(fd, &elf->section_tables[i], elf_section_header_size);
+	}
+
+	// Write the section data
+	for (int i = 0; i < elf->e_shnum; i++) {
+		write(fd, elf->section_tables[i].data, elf->section_tables[i].sh_size);
+	}
+
+	print_elf_file(elf, PELF_ALL | PELF_DATA);
 
 	close(fd);
 	return (0);

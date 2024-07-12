@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 19:08:59 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 20:22:41 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,9 +138,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		}
 	}
 
-	print_elf_file(elf, PELF_ALL | PELF_DATA);
-
-	free(new_section->data);
 	free(new_section);
 	return (0);
 }
@@ -168,9 +165,13 @@ void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 	elf->e_shoff = elf->section_tables[section_count - 1].sh_offset + elf->section_tables[section_count - 1].sh_size;
 }
 
-void	update_entry_point(t_elf_file *elf, t_packer *packer)
+void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
-	
+	uint64_t last_entry_point = elf->e_entry;
+	elf->e_entry = elf->section_tables[last_loadable].sh_address;
+	int32_t offset = last_entry_point - (elf->e_entry + packer->payload_64_size + WD_PAYLOAD_RETURN_ADDR);
+
+	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - (WD_PAYLOAD_RETURN_ADDR), &offset, 4);
 }
 
 int	elf_insert_section(t_elf_file *elf)
@@ -187,5 +188,7 @@ int	elf_insert_section(t_elf_file *elf)
 	sectioni += 1;
 	update_program_header(elf, &packer, progi);
 	update_section_addr(elf, &packer, sectioni);
+	update_entry_point(elf, &packer, sectioni);
+	print_elf_file(elf, PELF_ALL | PELF_DATA);
 	return (0);
 }

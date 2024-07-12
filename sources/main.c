@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/12 17:04:51 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 20:12:43 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	main(int ac, char **av)
 	char *target;
 	int ch, option = 0;
 	
-	while ((ch = ft_getopt(ac, av, "k:hsd")) != -1) {
+	while ((ch = ft_getopt(ac, av, "k:hsdn")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
@@ -87,6 +87,9 @@ int	main(int ac, char **av)
 			// 	break;
 			case 'd':
 				option |= F_DATA;
+				break;
+			case 'n':
+				option |= F_NOOUTPUT;
 				break;
 			default:
 				usage();
@@ -177,8 +180,6 @@ int	main(int ac, char **av)
 	{
 		print_elf_file(elf_file, PELF_DATA);
 	}
-
-	elf_insert_section(elf_file);
 
 	/**
 	 * INFO:
@@ -284,7 +285,10 @@ int	main(int ac, char **av)
 	// 	return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
 	// ft_memcpy(new_elf_file, elf_file, sizeof(t_elf_file));
 
-	// packer(elf_file, new_elf_file, reader);
+	if (option & F_NOOUTPUT)
+		return (0);
+
+	packer(elf_file, reader);
 
 	// delete_binary_reader(reader);
 	// delete_elf_file(elf_file);

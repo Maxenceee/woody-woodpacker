@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 18:09:32 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 20:32:26 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 #define F_DATA		0x08
 #define F_ENCRYPT	0x10
 #define F_DECRYPT	0x20
+#define F_NOOUTPUT	0x80
 
 
 enum e_class {
@@ -63,21 +64,21 @@ typedef struct s_elf_file {
 	} e_ident;
 
 	uint16_t	e_type;						// object type
-	char		*e_type_name;
 	uint16_t	e_machine;					// machine type
 	uint32_t	e_version;					// object version
 	uint64_t	e_entry;					// address where the execution starts
 	uint64_t	e_phoff;					// program headers' offset
 	uint64_t	e_shoff;					// section headers' offset
 	uint32_t	e_flags;					// architecture-specific flags
-	uint64_t	e_ehsize;					// elf header size
+	uint16_t	e_ehsize;					// elf header size
 	uint16_t	e_phentsize; 				// size of a single program header
 	uint16_t	e_phnum; 					// count of program headers
 	uint16_t	e_shentsize;				// size of single section header
 	uint16_t	e_shnum; 					// count of section headers
 	uint16_t	e_shstrndx;					// index of name's section in the table
-	t_elf_section_table		*section_tables;
+	char		*e_type_name;
 	t_elf_program_header	*program_headers;
+	t_elf_section_table		*section_tables;
 }	t_elf_file;
 
 /**
@@ -113,7 +114,7 @@ void			delete_elf_file(t_elf_file *file_format);
 
 void			print_elf_file(t_elf_file *elf_file, int level);
 
-int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reader *reader);
+int				packer(t_elf_file *elf, t_binary_reader *reader);
 
 /**
  * Insertion
