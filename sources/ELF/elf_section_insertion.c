@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 18:39:08 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 19:08:59 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,11 +131,46 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section_table));
 
+	for (int i = 0; i < elf->e_shnum; i++) {
+		char *section_name = elf->section_tables[i].sh_name;
+		if (strcmp(section_name, ".symtab") == 0) {
+			elf->section_tables[i].sh_link += 1;
+		}
+	}
+
 	print_elf_file(elf, PELF_ALL | PELF_DATA);
 
 	free(new_section->data);
 	free(new_section);
 	return (0);
+}
+
+void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
+{
+	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->payload_64_size;
+	elf->program_headers[last_loadable].p_memsz = new_segment_size;
+	elf->program_headers[last_loadable].p_filesz = new_segment_size;
+
+	for (int i = 0; i < elf->e_phnum; i++) {
+		if (elf->program_headers[i].p_type == PT_LOAD) {
+			elf->program_headers[i].p_flags = PF_X | PF_W | PF_R; // NOLINT(hicpp-signed-bitwise)
+		}
+	}
+}
+
+void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
+{
+	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
+		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size;
+	}
+
+	int section_count = elf->e_shnum;
+	elf->e_shoff = elf->section_tables[section_count - 1].sh_offset + elf->section_tables[section_count - 1].sh_size;
+}
+
+void	update_entry_point(t_elf_file *elf, t_packer *packer)
+{
+	
 }
 
 int	elf_insert_section(t_elf_file *elf)
@@ -146,5 +181,11 @@ int	elf_insert_section(t_elf_file *elf)
 	
 	int progi = efl_find_last_prog_header(elf);
 	int sectioni = efl_find_last_section_header(elf, progi);
-	return (create_new_elf_section(elf, &packer, progi, sectioni));
+	if (create_new_elf_section(elf, &packer, progi, sectioni) == -1)
+		return (-1);
+
+	sectioni += 1;
+	update_program_header(elf, &packer, progi);
+	update_section_addr(elf, &packer, sectioni);
+	return (0);
 }

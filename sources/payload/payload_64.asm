@@ -1,5 +1,4 @@
 global _payload_64
-global _payload_size_64
 extern puts
 
 [BITS 64]
@@ -21,22 +20,16 @@ _payload_64:
 	lea rsi, [rel .displayed_str]
 	mov rdx, 15
 	syscall
-.encrypt:
-	mov rax, [rel encrypted_data_start]
-	mov rdi, [rel encrypted_data_len]
-	mov rsi, [rel start_encode]
-	add rdi, rax
 
 	pop rdi
 	pop rsi
 	pop rdx
 	pop rax
 	popf
-	jmp [rel .encrypt]
+	jmp 0xFFFFFFFF
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
-encrypted_data_len:		dq	0xcccccccccccccccc
-start_encode:			dq  0xdddddddddddddddd
-_payload_size_64:		dq $-_payload_64
+encrypted_data_start:	dq  0xbbbbbbbb
+encrypted_data_len:		dq	0xcccccccc
+start_encode:			dq  0xdddddddd

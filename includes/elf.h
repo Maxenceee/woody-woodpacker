@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 17:32:54 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 18:52:48 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,14 @@ typedef struct s_elf_program_header
 #define SHF_INFO_LINK			(1 << 6)	/* `sh_info' contains SHT index */
 #define SHF_LINK_ORDER			(1 << 7)	/* Preserve order after combining */
 #define SHF_OS_NONCONFORMING	(1 << 8)	/* Non-standard OS specific handling */
+
+/* Legal values for p_flags (segment flags).  */
+
+#define PF_X		(1 << 0)	/* Segment is executable */
+#define PF_W		(1 << 1)	/* Segment is writable */
+#define PF_R		(1 << 2)	/* Segment is readable */
+#define PF_MASKOS	0x0ff00000	/* OS-specific */
+#define PF_MASKPROC	0xf0000000	/* Processor-specific */
 
 static const char *g_elf_section_table_type[] = {
 	"NULL",
