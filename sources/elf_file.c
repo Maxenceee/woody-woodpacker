@@ -87,7 +87,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
 		}
 	}
-	if (elf_file->e_shstrndx == 0)
+	if (elf_file->e_shstrndx > 0)
 	{
 		for (int i = 0; i < elf_file->e_shnum; i++)
 		{
