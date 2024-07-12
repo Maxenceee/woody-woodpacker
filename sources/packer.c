@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 20:44:36 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 21:46:51 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,25 @@
 // 	return (0);
 // }
 
+size_t offset = 0;
+
+int	write_to_file(int fd, void *data, size_t size) {
+	ssize_t written = write(fd, data, size);
+	if (written == -1) {
+		return (-1);
+	}
+	offset += written;
+	return (0);
+}
+
+void add_zero_padding(int fd, size_t end_offset) {
+    char c = 0;
+
+    while(offset < end_offset) {
+        write_to_file(fd, &c, sizeof(c));
+    }
+}
+
 int	packer(t_elf_file *elf, t_binary_reader *reader)
 {
 	if (elf_insert_section(elf) == -1)
@@ -84,20 +103,27 @@ int	packer(t_elf_file *elf, t_binary_reader *reader)
 	printf("elf_header_size: %zu\n", elf_header_size);
 	printf("elf_section_header_size: %zu\n", elf_section_header_size);
 
-	write(fd, elf, elf_header_size);
+	write_to_file(fd, elf, elf_header_size);
+	add_zero_padding(fd, elf->e_phoff);
 
 	for (int i = 0; i < elf->e_phnum; i++) {
-		write(fd, &elf->program_headers[i], sizeof(t_elf_program_header));
+		write_to_file(fd, &elf->program_headers[i], sizeof(t_elf_program_header));
 	}
 
 	// Write the section headers (excluding pointers)
 	for (int i = 0; i < elf->e_shnum; i++) {
-		write(fd, &elf->section_tables[i], elf_section_header_size);
+		if (elf->section_tables[i].sh_type != SHT_NOBITS)
+		{
+			add_zero_padding(fd, elf->section_tables[i].sh_offset);
+			write_to_file(fd, elf->section_tables[i].data, elf->section_tables[i].sh_size);
+		}
 	}
+
+	add_zero_padding(fd, elf->e_shoff);
 
 	// Write the section data
 	for (int i = 0; i < elf->e_shnum; i++) {
-		write(fd, elf->section_tables[i].data, elf->section_tables[i].sh_size);
+		write_to_file(fd, &elf->section_tables[i], elf_section_header_size);
 	}
 
 	print_elf_file(elf, PELF_ALL | PELF_DATA);
