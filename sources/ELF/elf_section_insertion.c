@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 18:15:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 18:25:59 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_s
 	size_t section_name_len = ft_strlen(section_name);
 
 	int section_string_table_index = elf->e_shstrndx;
+	printf("section_string_table_index: %d\n", section_string_table_index);
 	int old_size = elf->section_tables[section_string_table_index].sh_size;
 
 	size_t new_string_table_size = elf->section_tables[section_string_table_index].sh_size + section_name_len + 1;
