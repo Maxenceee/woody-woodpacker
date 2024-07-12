@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/02 22:43:56 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 18:09:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,16 +81,35 @@ typedef struct s_elf_file {
 }	t_elf_file;
 
 /**
+ * key
+ */
+
+#define WD_AES_KEY_SIZE 64
+extern uint8_t	key_aes[WD_AES_KEY_SIZE];
+
+/**
+ * packer
+ */
+
+#define WB_SECTION_NAME ".i'm a teapot"
+
+typedef struct s_packer {
+	uint64_t	loader_offset;
+	uint8_t		*payload_64;
+	uint64_t	payload_64_size;
+}	t_packer;
+
+/**
  * Function definitions
  */
 
 t_elf_file		*new_elf_file(t_binary_reader *reader);
 void			delete_elf_file(t_elf_file *file_format);
 
-#define PELF_ALL		0x00
-#define PELF_HEADER		0x01
-#define PELF_SECTION	0x02
-#define PELF_DATA		0x04
+#define PELF_ALL		0x01
+#define PELF_HEADER		0x02
+#define PELF_SECTION	0x04
+#define PELF_DATA		0x08
 
 void			print_elf_file(t_elf_file *elf_file, int level);
 
@@ -100,7 +119,7 @@ int				packer(t_elf_file *old_elf_file, t_elf_file *new_elf_file, t_binary_reade
  * Insertion
  */
 
-void	elf_insert_section(t_elf_file *elf);
+int	elf_insert_section(t_elf_file *elf);
 
 /* payload */
 
@@ -114,10 +133,10 @@ void	elf_insert_section(t_elf_file *elf);
 #define CDECL_NORM(x) x
 #endif /* __APPLE__ */
 
-extern uint8_t	CDECL_NORM(payload_64);
-extern uint64_t	CDECL_NORM(payload_size_64);
+// extern uint8_t	CDECL_NORM(payload_64);
+// extern uint64_t	CDECL_NORM(payload_size_64);
 
-#define payload_64 CDECL_NORM(payload_64)
-#define payload_size_64 CDECL_NORM(payload_size_64)
+// #define payload_64 CDECL_NORM(payload_64)
+// #define payload_size_64 CDECL_NORM(payload_size_64)
 
 #endif /* WOODY_H */

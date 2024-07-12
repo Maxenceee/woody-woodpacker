@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/04 10:50:15 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 18:15:22 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,39 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	return (index);
 }
 
-int	create_new_elf_section(t_elf_file *elf, int last_load_prog, int last_section_in_prog)
+uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *packer)
+{
+	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
+	if (!payload)
+		return (NULL);
+
+	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+	return (payload);
+}
+
+int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_section)
+{
+	char *section_name = WB_SECTION_NAME;
+	size_t section_name_len = ft_strlen(section_name);
+
+	int section_string_table_index = elf->e_shstrndx;
+	int old_size = elf->section_tables[section_string_table_index].sh_size;
+
+	size_t new_string_table_size = elf->section_tables[section_string_table_index].sh_size + section_name_len + 1;
+	elf->section_tables[section_string_table_index].data = ft_realloc(elf->section_tables[section_string_table_index].data, new_string_table_size);
+	if (elf->section_tables[section_string_table_index].data == NULL) {
+		return (-1);
+	}
+
+	ft_memcpy(elf->section_tables[section_string_table_index].data + old_size, section_name, section_name_len + 1);
+	new_section->sh_name_offset = old_size;
+	new_section->sh_name = WB_SECTION_NAME;
+	elf->section_tables[section_string_table_index].sh_size = new_string_table_size;
+	return (0);
+}
+
+int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog, int last_section_in_prog)
 {
 	t_elf_section_table	*new_section_headers;
 	elf->e_shnum += 1;
@@ -65,17 +97,47 @@ int	create_new_elf_section(t_elf_file *elf, int last_load_prog, int last_section
 	new_section->sh_address = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
 	
 	new_section->sh_size = sizeof(wd_playload_64);
-	/**
-	 * TODO:
-	 * finish implementing the new section
-	 */
+	packer->loader_offset = new_section->sh_address;
+
+	if ((new_section->data = prepare_payload(new_section, packer)) == NULL)
+	{
+		free(new_section);
+		return (-1);
+	}
+
+	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section_table) * (elf->e_shnum - last_section_in_prog - 1 - 1);
+    size_t remaining_after_section_headers_count = sizeof(char *) * (elf->e_shnum - last_section_in_prog - 1 - 1);
+
+	memmove(elf->section_tables + last_section_in_prog + 2, elf->section_tables + last_section_in_prog + 1, remaining_after_section_headers_data_size);
+
+	last_section_in_prog += 1;
+
+	if (elf->e_shstrndx >= last_section_in_prog) {
+		elf->e_shstrndx += 1;
+	}
+
+	if (set_new_elf_section_string_table(elf, new_section) == -1)
+	{
+		free(new_section);
+		return (-1);
+	}
+
+	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section_table));
+
+	print_elf_file(elf, PELF_ALL | PELF_DATA);
+
+	free(new_section->data);
+	free(new_section);
+	return (0);
 }
 
-void	elf_insert_section(t_elf_file *elf)
+int	elf_insert_section(t_elf_file *elf)
 {
+	t_packer	packer;
+	packer.payload_64_size = WB_PAYLOAD_SIZE;
+	packer.payload_64 = (uint8_t *)wd_playload_64;
+	
 	int progi = efl_find_last_prog_header(elf);
 	int sectioni = efl_find_last_section_header(elf, progi);
-	printf("last PT_LOAD header: %d\n", progi);
-	printf("last section in header: %d\n", sectioni);
-	create_new_elf_section(elf, progi, sectioni);
+	return (create_new_elf_section(elf, &packer, progi, sectioni));
 }

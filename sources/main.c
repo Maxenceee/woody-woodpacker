@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/02 22:36:20 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 17:04:51 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 char *optarg = NULL; 
 int optind = 1;
+uint8_t key_aes[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
 static void	usage(void)
 {
@@ -65,13 +66,12 @@ int	main(int ac, char **av)
 {
 	char *target;
 	int ch, option = 0;
-	static char key[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 	
 	while ((ch = ft_getopt(ac, av, "k:hsd")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
-				memmove(key, optarg, 32);
+				memmove(key_aes, optarg, 32);
 				break;
 			case 'h':
 				option |= F_HEADER;

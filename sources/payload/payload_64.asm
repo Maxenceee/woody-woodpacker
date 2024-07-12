@@ -22,9 +22,9 @@ _payload_64:
 	mov rdx, 15
 	syscall
 .encrypt:
-	mov rax, [rel .encrypted_data_start]
-	mov rdi, [rel .encrypted_data_len]
-	mov rsi, [rel .start_encode]
+	mov rax, [rel encrypted_data_start]
+	mov rdi, [rel encrypted_data_len]
+	mov rsi, [rel start_encode]
 	add rdi, rax
 
 	pop rdi
@@ -34,8 +34,9 @@ _payload_64:
 	popf
 	jmp [rel .encrypt]
 
-.key: dq "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-.encrypted_data_start: dq 0
-.encrypted_data_len: dq 0
-.start_encode: dq 0
-_payload_size_64: dq $-_payload_64
+info_start:
+key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
+encrypted_data_len:		dq	0xcccccccccccccccc
+start_encode:			dq  0xdddddddddddddddd
+_payload_size_64:		dq $-_payload_64

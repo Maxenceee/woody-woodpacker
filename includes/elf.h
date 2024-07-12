@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/02 19:53:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 17:32:54 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ typedef struct s_elf_section_table {
 	uint32_t	sh_info;
 	uint64_t	sh_addralign;
 	uint64_t	sh_entsize;
-	char		*sh_name;
 	uint8_t		*data;
+	char		*sh_name;
 }	t_elf_section_table;
 
 typedef struct s_elf_program_header
