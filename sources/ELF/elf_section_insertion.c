@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 22:21:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 22:36:55 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,13 +169,10 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	uint64_t last_entry_point = elf->e_entry;
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
-	printf("last_entry_point: %#lx\n", last_entry_point);
 
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
     uint64_t next_instruction_address = jmp_instruction_address;
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
-	printf("offset: %d\n", offset);
-	printf("jmp src: %#x, dest: %#x\n", (void*)jmp_instruction_address, (void*)(jmp_instruction_address + offset));
 
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
@@ -195,6 +192,5 @@ int	elf_insert_section(t_elf_file *elf)
 	update_program_header(elf, &packer, progi);
 	update_section_addr(elf, &packer, sectioni);
 	update_entry_point(elf, &packer, sectioni);
-	// print_elf_file(elf, PELF_ALL | PELF_DATA);
 	return (0);
 }

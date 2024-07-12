@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/02 19:14:40 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 22:39:02 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void			delete_binary_reader(t_binary_reader *this);
 /* read font file */
 
 unsigned char	*ft_read_file(int fd, unsigned char *file,
-					uint32_t *rsize);
+					uint64_t *rsize);
 
 /* join mem data */
 

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/12 20:12:43 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 22:38:06 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,46 +109,6 @@ int	main(int ac, char **av)
 		return (1);
 	}
 
-
-	// /**
-	//  * test writer
-	//  * 
-	//  */
-
-
-	// uint8_t * tt = malloc(200);
-	// t_binary_writer *writer = new_binary_writer(tt, 200);
-	
-	// writer->set_uint8(writer, 0x01);
-	// writer->set_padding(writer, 15);
-	// writer->set_uint16(writer, 0x0203);
-	// writer->set_padding(writer, 14);
-	// writer->set_uint32(writer, 0x04050607);
-	// writer->set_padding(writer, 12);
-	// writer->set_uint64(writer, 0x08090a0b0c0d0e0f);
-	// writer->set_padding(writer, 8);
-	// writer->set_string(writer, "Hello World");
-	// writer->set_padding(writer, 5);
-	// uint8_t d[8] = {0x10, 0x09, 0x08, 0x07, 0x06, 0x05,0x04, 0x03};
-	// writer->set_bytes(writer, d, 8);
-	// writer->set_padding(writer, 8);
-	// writer->set_endian(writer, WRITER_BIG_ENDIAN);
-	// writer->set_string(writer, "Hello World");
-	// writer->set_padding(writer, 5);
-	// writer->set_bytes(writer, d, 8);
-	// writer->set_padding(writer, 8);
-	// writer->set_uint8(writer, 0x01);
-	// writer->set_padding(writer, 15);
-	// writer->set_uint16(writer, 0x0203);
-	// writer->set_padding(writer, 14);
-	// writer->set_uint32(writer, 0x04050607);
-	// writer->set_padding(writer, 12);
-	// writer->set_uint64(writer, 0x08090a0b0c0d0e0f);
-	// writer->set_padding(writer, 8);
-	// writer->write_file(writer, "test.out");
-
-	// return (0);
-
 	/**
 	 * Create new reader
 	 */
@@ -218,11 +178,11 @@ int	main(int ac, char **av)
 	
 	// AES_CTR_encrypt(cypher, res, IV , nonce, reader2->size, f_key, 64);
 
-	// // i = -1;
-	// // // printf("'");
-	// // // while (++i < csize)
-	// // // 	printf("%02x ", res[i]);
-	// // // printf("'\n");
+	// i = -1;
+	// // printf("'");
+	// // while (++i < csize)
+	// // 	printf("%02x ", res[i]);
+	// // printf("'\n");
 	
 	// iiii = open("res", O_CREAT | O_RDWR | O_TRUNC, 0755);
 	// i = -1;
@@ -235,62 +195,11 @@ int	main(int ac, char **av)
 
 	// return (0);
 
-	/**
-	 * 
-	 * olalaaaaaa ke sai pa bo !!!!!!!!!!
-	 *
-	 */
-	
-	// int ffd = open("woody_encrypted", O_CREAT | O_RDWR | O_TRUNC, 0755);
-
-	// uint8_t input[16];
-	// reader->seek(reader, 0x0);
-	// char key2[33];
-	// memmove(key2, key, 32);
-	// while (reader->get_bytes(reader, input, 16))
-	// {
-	// 	char *res = *AES_encrypt(input, key2);
-	// 	write(ffd, res, 16);
-	// }
-	// printf("key -> %s\n", key);
-	// int ffdd = open("woody_decrypted", O_CREAT | O_WRONLY | O_TRUNC, 0755);
-
-	// reader = new_binary_reader(ffd);
-	// reader->seek(reader, 0x0);
-	// while (reader->get_bytes(reader, input, 16))
-	// {
-	// 	char *res = *AES_decrypt(input, key);
-	// 	write(ffdd, res, 16);
-	// }
-
-	// close(ffd);
-	// close(ffdd);
-	
-	// return (0);
-
-	/**
-	 * 
-	 * oufff c'est enfin fini !!!
-	 * 
-	 */
-
-	// printf("=================+++++=====\n%#x %#lx\n", payload_64, payload_size_64);
-
-	/**
-	 * We copy the content of the original elf file to the new one.
-	 * This is done to keep the original file intact.
-	 */
-	// t_elf_file *new_elf_file = malloc(sizeof(t_elf_file));
-	// if (!new_elf_file)
-	// 	return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
-	// ft_memcpy(new_elf_file, elf_file, sizeof(t_elf_file));
-
 	if (option & F_NOOUTPUT)
 		return (0);
 
 	packer(elf_file, reader);
 
-	// delete_binary_reader(reader);
-	// delete_elf_file(elf_file);
-	// delete_elf_file(new_elf_file);
+	delete_binary_reader(reader);
+	delete_elf_file(elf_file);
 }
