@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/13 02:07:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 02:08:15 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ uint8_t key_aes[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789a
 
 static void	usage(void)
 {
-	(void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-e key] [-d key] file");
+	(void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-h] [-s] [-d] [-k key] file");
 	exit(64);
 }
 
