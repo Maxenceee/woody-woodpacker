@@ -3,7 +3,7 @@ extern puts
 
 [BITS 64]
 
-segment .text
+segment .text align=16
 
 _payload_64:
 	push rax
