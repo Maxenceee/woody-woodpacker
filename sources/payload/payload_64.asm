@@ -6,6 +6,7 @@ extern puts
 segment .text align=16
 
 _payload_64:
+	pushfq
 	push rax
 	push rdx
 	push rsi
@@ -24,6 +25,7 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
+	popfq
 	jmp	0x01020304
 
 info_start:
