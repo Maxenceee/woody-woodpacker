@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 22:13:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 22:20:07 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,27 +192,9 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable, int last_loadable_section)
 {
-	// Taille initiale du segment
-    // uint64_t original_segment_size = elf->program_headers[last_loadable].p_memsz;
-
-	// uint64_t current_offset = elf->program_headers[last_loadable].p_offset + elf->program_headers[last_loadable].p_memsz;
-	// uint64_t offset_padding = calculate_padded_size(current_offset, elf->section_tables[last_loadable_section].sh_addralign) - current_offset;
-
-	// uint64_t new_section_size = offset_padding + elf->section_tables[last_loadable_section].sh_size;
-
-	// printf("current_offset: %#lx, offset_padding: %#lx, size: %#lx\n", current_offset, offset_padding, new_section_size, new_section_size);
-
-    // // Ajout de la taille de la nouvelle section au segment
-    // uint64_t new_segment_size = elf->program_headers[last_loadable].p_memsz + new_section_size;
-
     // // Mettre à jour la taille du segment
     elf->program_headers[last_loadable].p_memsz += packer->new_section_size;
     elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
-
-    // // Afficher les tailles pour vérification
-    // printf("Original segment end: %#lx\n", elf->program_headers[last_loadable].p_offset + elf->program_headers[last_loadable].p_memsz);
-    // printf("New segment size: %#lx\n", new_segment_size);
-	
 
     // Mettre à jour les flags pour inclure les permissions d'exécution et d'écriture
     elf->program_headers[last_loadable].p_flags |= PF_X | PF_W | PF_R;
@@ -248,10 +230,14 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	uint64_t last_entry_point = elf->e_entry;
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
+	printf("last_entry_point: %#lx\n", last_entry_point);
+	printf("new_entry_point: %#lx\n", elf->e_entry);
 
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
     uint64_t next_instruction_address = jmp_instruction_address;
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
+	printf("offset: %d\n", offset);
+	printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
