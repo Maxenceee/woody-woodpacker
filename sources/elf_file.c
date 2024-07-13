@@ -12,6 +12,7 @@
 
 #include "woody.h"
 #include "ctype.h"
+#include "elf.h"
 
 static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 {
