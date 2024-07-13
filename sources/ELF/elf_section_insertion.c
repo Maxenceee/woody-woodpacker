@@ -6,15 +6,20 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 20:18:41 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 21:54:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
 
+size_t calculate_padding(size_t size, size_t alignment) {
+	size_t padding = (alignment - (size % alignment)) % alignment;
+	return (padding);
+}
+
 size_t calculate_padded_size(size_t size, size_t alignment) {
-    size_t padding = (alignment - (size % alignment)) % alignment;
-    return size + padding;
+	size_t padding = (alignment - (size % alignment)) % alignment;
+	return (size + padding);
 }
 
 int		efl_find_last_prog_header(t_elf_file *elf)
@@ -118,28 +123,20 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
     new_section->sh_addralign = 16;
 
-	uint64_t current_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
-    uint64_t current_vaddr = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
+	printf("last_load_prog - 1: %#lx\n", elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size);
 
-	// uint64_t offset_padding = new_section->sh_addralign - (current_offset % new_section->sh_addralign);
-	// uint64_t vaddr_padding = new_section->sh_addralign - (current_vaddr % new_section->sh_addralign);
-
-	uint64_t offset_padding = calculate_padded_size(current_offset, new_section->sh_addralign) - current_offset;
-    uint64_t vaddr_padding = calculate_padded_size(current_vaddr, new_section->sh_addralign) - current_vaddr;
-	// if (current_offset % new_section->sh_addralign != 0) {
-    //     current_offset += offset_padding;
-    // }
-    // if (current_vaddr % new_section->sh_addralign != 0) {
-    //     current_vaddr += vaddr_padding;
-    // }
-
-	printf("offset padding: %#lx\n", offset_padding);
-
-	current_offset += offset_padding;
-    current_vaddr += vaddr_padding;
+	uint64_t current_offset_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
+	uint64_t current_offset = elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size + current_offset_padding;
+    uint64_t current_vaddr_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
+    uint64_t current_vaddr = elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size + current_vaddr_padding;
 	
 	new_section->sh_offset = current_offset;
     new_section->sh_address = current_vaddr;
+	packer->new_section_size = current_offset_padding;
+	printf("new_section->sh_offset: %#lx, new_section->sh_address: %#lx\n", new_section->sh_offset, new_section->sh_address);
+	printf("prog p_memsz addr: %#lx\n", elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz);
+	printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
+
 	packer->loader_offset = new_section->sh_address;
 
 	if ((new_section->data = prepare_payload(new_section, packer)) == NULL)
@@ -148,12 +145,11 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		return (-1);
 	}
 
-	// new_section->sh_size = packer->payload_64_size;
 	new_section->sh_size = calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
 	
-    // if (packer->payload_64_size % new_section->sh_addralign != 0) {
-    //     new_section->sh_size += new_section->sh_addralign - (packer->payload_64_size % new_section->sh_addralign);
-    // }
+	packer->new_section_size += new_section->sh_size;
+	printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
+
 
 	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section_table) * (elf->e_shnum - last_section_in_prog - 1 - 1);
     size_t remaining_after_section_headers_count = sizeof(char *) * (elf->e_shnum - last_section_in_prog - 1 - 1);
