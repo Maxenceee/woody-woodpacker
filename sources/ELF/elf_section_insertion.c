@@ -6,11 +6,16 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 18:56:12 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 19:25:27 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
+
+size_t calculate_padded_size(size_t size, size_t alignment) {
+    size_t padding = (alignment - (size % alignment)) % alignment;
+    return size + padding;
+}
 
 int		efl_find_last_prog_header(t_elf_file *elf)
 {
@@ -113,11 +118,14 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
     new_section->sh_addralign = 16;
 
-	// uint64_t current_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
-    // uint64_t current_vaddr = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
+	uint64_t current_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
+    uint64_t current_vaddr = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
 
 	// uint64_t offset_padding = new_section->sh_addralign - (current_offset % new_section->sh_addralign);
 	// uint64_t vaddr_padding = new_section->sh_addralign - (current_vaddr % new_section->sh_addralign);
+
+	uint64_t offset_padding = calculate_padded_size(current_offset, new_section->sh_addralign) - current_offset;
+    uint64_t vaddr_padding = calculate_padded_size(current_vaddr, new_section->sh_addralign) - current_vaddr;
 
 	// if (current_offset % new_section->sh_addralign != 0) {
     //     current_offset += offset_padding;
@@ -125,15 +133,12 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
     // if (current_vaddr % new_section->sh_addralign != 0) {
     //     current_vaddr += vaddr_padding;
     // }
-	
-	// new_section->sh_offset = current_offset;
-    // new_section->sh_address = current_vaddr;
-	// packer->loader_offset = new_section->sh_address;
 
-	new_section->sh_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
-	new_section->sh_address = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
+	current_offset += offset_padding;
+    current_vaddr += vaddr_padding;
 	
-	new_section->sh_size = WB_PAYLOAD_SIZE;
+	new_section->sh_offset = current_offset;
+    new_section->sh_address = current_vaddr;
 	packer->loader_offset = new_section->sh_address;
 
 	if ((new_section->data = prepare_payload(new_section, packer)) == NULL)
@@ -142,10 +147,12 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		return (-1);
 	}
 
-	new_section->sh_size = packer->payload_64_size;
-    if (packer->payload_64_size % new_section->sh_addralign != 0) {
-        new_section->sh_size += new_section->sh_addralign - (packer->payload_64_size % new_section->sh_addralign);
-    }
+	// new_section->sh_size = packer->payload_64_size;
+	new_section->sh_size = calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
+	
+    // if (packer->payload_64_size % new_section->sh_addralign != 0) {
+    //     new_section->sh_size += new_section->sh_addralign - (packer->payload_64_size % new_section->sh_addralign);
+    // }
 
 	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section_table) * (elf->e_shnum - last_section_in_prog - 1 - 1);
     size_t remaining_after_section_headers_count = sizeof(char *) * (elf->e_shnum - last_section_in_prog - 1 - 1);
@@ -187,42 +194,43 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
-	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->payload_64_size;
+	// size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->payload_64_size;
+	size_t new_segment_size = calculate_padded_size(
+        elf->program_headers[last_loadable].p_filesz + packer->payload_64_size, 
+        elf->program_headers[last_loadable].p_align
+    );
+
 	elf->program_headers[last_loadable].p_memsz = new_segment_size;
 	elf->program_headers[last_loadable].p_filesz = new_segment_size;
 
-	for (int i = 0; i < elf->e_phnum; i++) {
-		if (elf->program_headers[i].p_type == PT_LOAD) {
-			elf->program_headers[i].p_flags = PF_X | PF_W | PF_R; // NOLINT(hicpp-signed-bitwise)
-		}
-	}
+	// for (int i = 0; i < elf->e_phnum; i++) {
+	// 	if (elf->program_headers[i].p_type == PT_LOAD) {
+	// 		elf->program_headers[i].p_flags = PF_X | PF_W | PF_R; // NOLINT(hicpp-signed-bitwise)
+	// 	}
+	// }
+	elf->program_headers[last_loadable].p_flags |= PF_X | PF_W | PF_R;
 }
-
-// void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
-// {
-// 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
-// 		// printf("%s:\n", elf->section_tables[i].sh_name);
-// 		// printf("%s:\n", elf->section_tables[i+1].sh_name);
-// 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
-// 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
-// 			continue;
-// 		}
-// 		// printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
-// 		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign > 1 ?
-// 			elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign
-// 			: 0;
-// 		// printf("offset_padding: %lu\n", offset_padding);
-// 		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
-// 	}
-
-// 	int section_count = elf->e_shnum;
-// 	elf->e_shoff = elf->section_tables[section_count - 1].sh_offset + elf->section_tables[section_count - 1].sh_size;
-// }
 
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
-		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size;
+		// printf("%s:\n", elf->section_tables[i].sh_name);
+		// printf("%s:\n", elf->section_tables[i+1].sh_name);
+		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
+			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
+			continue;
+		}
+		// printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
+		// uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign > 1 ?
+		// 	elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign
+		// 	: 0;
+		// // printf("offset_padding: %lu\n", offset_padding);
+		uint64_t offset_padding = calculate_padded_size(
+            elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, 
+            elf->section_tables[i + 1].sh_addralign
+        ) - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size);
+
+        elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
 	}
 
 	int section_count = elf->e_shnum;
@@ -246,6 +254,7 @@ int	elf_insert_section(t_elf_file *elf)
 	t_packer	packer;
 	packer.payload_64_size = WB_PAYLOAD_SIZE;
 	packer.payload_64 = (uint8_t *)wd_playload_64;
+	// packer.new_section_size = 0;
 	
 	int progi = efl_find_last_prog_header(elf);
 	int sectioni = efl_find_last_section_header(elf, progi);

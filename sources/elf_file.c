@@ -380,7 +380,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			{
 				if (j % 16 == 0)
 				{
-					printf("    %0*lX: ", tab, j);
+					printf("    %0*llX: ", tab, j);
 				}
 				else if (j % 4 == 0)
 				{
