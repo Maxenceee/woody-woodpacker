@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/13 02:11:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 02:13:45 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,72 +22,64 @@ static void	usage(void)
 	exit(64);
 }
 
-/**
- * TODO:
- * 
- * modifier la fonction ft_getopt pour qu'elle prenne en compte les options chainées (ex: -h -s -d => -hsd)
- */
+int ft_getopt(int argc, char * const argv[], const char *optstring)
+{
+	static int optpos = 1;
 
-int ft_getopt(int argc, char * const argv[], const char *optstring) {
-    static int optpos = 1; // Position dans l'argument combiné
+	if (optind >= argc || argv[optind][0] != '-') {
+		return (-1);
+	}
 
-    if (optind >= argc || argv[optind][0] != '-') {
-        return -1; // Pas plus d'options ou ce n'est pas une option
-    }
+	if (argv[optind][0] == '-' && argv[optind][1] == '-') {
+		optind++;
+		return (-1);
+	}
 
-    if (argv[optind][0] == '-' && argv[optind][1] == '-') { // Fin des options
-        optind++;
-        return -1;
-    }
+	if (optpos == 1 && strchr(optstring, argv[optind][1]) && strchr(optstring, argv[optind][1])[1] == ':') {
+		if (argv[optind][2] != '\0') {
+			optarg = &argv[optind][2];
+			optind++;
+			return (argv[optind - 1][1]);
+		} else if (optind + 1 < argc) {
+			optarg = argv[optind + 1];
+			optind += 2;
+			return (argv[optind - 2][1]);
+		} else {
+			optind++;
+			return ('?');
+		}
+	}
 
-    if (optpos == 1 && strchr(optstring, argv[optind][1]) && strchr(optstring, argv[optind][1])[1] == ':') {
-        // Option qui nécessite un argument ne peut pas être chaînée
-        if (argv[optind][2] != '\0') { // Argument collé à l'option
-            optarg = &argv[optind][2];
-            optind++;
-            return argv[optind - 1][1];
-        } else if (optind + 1 < argc) { // Argument séparé
-            optarg = argv[optind + 1];
-            optind += 2;
-            return argv[optind - 2][1];
-        } else { // Pas d'argument disponible
-            fprintf(stderr, "Option -%c requires an argument.\n", argv[optind][1]);
-            optind++;
-            return '?';
-        }
-    }
+	if (argv[optind][optpos] == '\0') {
+		optind++;
+		optpos = 1;
+		return (ft_getopt(argc, argv, optstring));
+	}
 
-    if (argv[optind][optpos] == '\0') { // Fin de l'argument combiné
-        optind++;
-        optpos = 1;
-        return ft_getopt(argc, argv, optstring); // Recurse pour le prochain argument
-    }
+	char optchar = argv[optind][optpos];
+	char *optdecl = strchr(optstring, optchar);
 
-    char optchar = argv[optind][optpos];
-    char *optdecl = strchr(optstring, optchar);
+	if (optdecl == NULL) {
+		optpos++;
+		if (argv[optind][optpos] == '\0') {
+			optind++;
+			optpos = 1;
+		}
+		return ('?');
+	}
 
-    if (optdecl == NULL) { // Option non reconnue
-        optpos++;
-        if (argv[optind][optpos] == '\0') {
-            optind++;
-            optpos = 1;
-        }
-        return '?';
-    }
-
-    if (optdecl[1] == ':') { // Option nécessite un argument, ne devrait pas être chaînée
-        fprintf(stderr, "Option -%c cannot be chained.\n", optchar);
-        optind++;
-        optpos = 1;
-        return '?';
-    } else { // Option sans argument
-        optpos++;
-        if (argv[optind][optpos] == '\0') {
-            optind++;
-            optpos = 1;
-        }
-        return optchar;
-    }
+	if (optdecl[1] == ':') {
+		optind++;
+		optpos = 1;
+		return ('?');
+	} else {
+		optpos++;
+		if (argv[optind][optpos] == '\0') {
+			optind++;
+			optpos = 1;
+		}
+		return (optchar);
+	}
 }
 
 void	printbytes(uint8_t *bytes, size_t size)
