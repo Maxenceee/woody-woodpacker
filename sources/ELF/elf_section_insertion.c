@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 15:52:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 16:43:38 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
     new_section->sh_addralign = 16;
 
-	// new_section->sh_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
-	// new_section->sh_address = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
-
 	uint64_t current_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
     uint64_t current_vaddr = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
 
@@ -188,12 +185,16 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
+		printf("%s:\n", elf->section_tables[i].sh_name);
+		printf("%s:\n", elf->section_tables[i+1].sh_name);
 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
-			printf("%s: SHT_NOBITS\n", elf->section_tables[i].sh_name);
 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
 			continue;
 		}
-		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size;
+		printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
+		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign;
+		printf("offset_padding: %lu\n", offset_padding);
+		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
 	}
 
 	int section_count = elf->e_shnum;
