@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/13 02:08:15 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 02:11:03 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,16 @@ int ft_getopt(int argc, char * const argv[], const char *optstring) {
             optind += 2;
             return argv[optind - 2][1];
         } else { // Pas d'argument disponible
+            fprintf(stderr, "Option -%c requires an argument.\n", argv[optind][1]);
             optind++;
             return '?';
         }
+    }
+
+    if (argv[optind][optpos] == '\0') { // Fin de l'argument combiné
+        optind++;
+        optpos = 1;
+        return ft_getopt(argc, argv, optstring); // Recurse pour le prochain argument
     }
 
     char optchar = argv[optind][optpos];
@@ -69,6 +76,7 @@ int ft_getopt(int argc, char * const argv[], const char *optstring) {
     }
 
     if (optdecl[1] == ':') { // Option nécessite un argument, ne devrait pas être chaînée
+        fprintf(stderr, "Option -%c cannot be chained.\n", optchar);
         optind++;
         optpos = 1;
         return '?';
@@ -232,6 +240,6 @@ int	main(int ac, char **av)
 
 	packer(elf_file, reader);
 
-	delete_binary_reader(reader);
-	delete_elf_file(elf_file);
+	// delete_binary_reader(reader);
+	// delete_elf_file(elf_file);
 }
