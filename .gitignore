@@ -3,7 +3,6 @@
 woody_woodpacker
 woody
 tests*
-test*
 test.*
 test/*
 *.dSYM
@@ -12,3 +11,4 @@ woody_encrypted
 woody_decrypted
 res
 oui
+*.o
