@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 17:08:13 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 17:13:46 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,17 +186,17 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
-		printf("%s:\n", elf->section_tables[i].sh_name);
-		printf("%s:\n", elf->section_tables[i+1].sh_name);
+		// printf("%s:\n", elf->section_tables[i].sh_name);
+		// printf("%s:\n", elf->section_tables[i+1].sh_name);
 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
 			continue;
 		}
-		printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
+		// printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
 		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign > 1 ?
 			elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign
 			: 0;
-		printf("offset_padding: %lu\n", offset_padding);
+		// printf("offset_padding: %lu\n", offset_padding);
 		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
 	}
 
@@ -206,14 +206,23 @@ void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 
 void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
-	uint64_t last_entry_point = elf->e_entry;
-	elf->e_entry = elf->section_tables[last_loadable].sh_address;
+	 uint64_t last_entry_point = elf->e_entry;
+    elf->e_entry = elf->section_tables[last_loadable].sh_address;
 
-	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
-    uint64_t next_instruction_address = jmp_instruction_address;
-	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
+    uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
+    int32_t offset = (int32_t)(last_entry_point - jmp_instruction_address);
 
-	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
+    // Vérifier que jmp_instruction_address est valide
+    if (jmp_instruction_address >= elf->section_tables[last_loadable].sh_address &&
+        jmp_instruction_address < elf->section_tables[last_loadable].sh_address + elf->section_tables[last_loadable].sh_size)
+    {
+        ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
+    }
+    else
+    {
+        printf("Error: jmp_instruction_address out of bounds.\n");
+        // Gérer l'erreur appropriée ici
+    }
 }
 
 int	elf_insert_section(t_elf_file *elf)
