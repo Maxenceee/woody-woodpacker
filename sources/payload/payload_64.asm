@@ -24,8 +24,7 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	; jmp	0x01020304
-	ret
+	jmp	0x01020304
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
