@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 17:13:46 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 17:21:47 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
     
     ft_bzero(payload, offset_padding); // Nettoyer le padding
     ft_memcpy(payload + offset_padding, packer->payload_64, packer->payload_64_size); // Copier le payload
+	ft_memcpy(payload + offset_padding + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE); // Copier le payload
+
     ft_bzero(payload + offset_padding + packer->payload_64_size, end_padding); // Nettoyer le padding à la fin
+	
     
     return (payload);
 }
@@ -206,23 +209,14 @@ void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 
 void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
-	 uint64_t last_entry_point = elf->e_entry;
-    elf->e_entry = elf->section_tables[last_loadable].sh_address;
+	uint64_t last_entry_point = elf->e_entry;
+	elf->e_entry = elf->section_tables[last_loadable].sh_address;
 
-    uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
-    int32_t offset = (int32_t)(last_entry_point - jmp_instruction_address);
+	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
+    uint64_t next_instruction_address = jmp_instruction_address;
+	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
 
-    // Vérifier que jmp_instruction_address est valide
-    if (jmp_instruction_address >= elf->section_tables[last_loadable].sh_address &&
-        jmp_instruction_address < elf->section_tables[last_loadable].sh_address + elf->section_tables[last_loadable].sh_size)
-    {
-        ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
-    }
-    else
-    {
-        printf("Error: jmp_instruction_address out of bounds.\n");
-        // Gérer l'erreur appropriée ici
-    }
+	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
 
 int	elf_insert_section(t_elf_file *elf)
