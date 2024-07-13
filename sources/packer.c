@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 22:37:09 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 23:13:12 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ int	packer(t_elf_file *elf, t_binary_reader *reader)
 {
 	if (elf_insert_section(elf) == -1)
 	{
-		dprintf(2, "An error occured while inserting the new section\n");
+		return (ft_error("An error occured while inserting the new section"));
 	}
 
 	int fd = open("woody", O_CREAT | O_WRONLY | O_TRUNC, 0755);
 	if (fd == -1)
-		return (ft_error(WD_PREFIX"Could not open file.\n"), 1);
+		return (ft_error("Could not open file."), 1);
 
 	size_t elf_header_size = sizeof(t_elf_file) - sizeof(char *) - sizeof(t_elf_program_header *) - sizeof(t_elf_section_table *);
 	size_t elf_section_header_size = sizeof(t_elf_section_table) - sizeof(char *) - sizeof(uint8_t *);

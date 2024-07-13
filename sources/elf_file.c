@@ -55,7 +55,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 	reader->seek(reader, elf_file->e_shoff);
 	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section_table));
 	if (elf_file->section_tables == NULL)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		return (ft_error("Could not allocate memory."), 1);
 	for (int i = 0; i < elf_file->e_shnum; i++)
 	{
 		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
@@ -94,7 +94,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
 			elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
 			if (elf_file->section_tables[i].sh_name == NULL)
-				return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+				return (ft_error("Could not allocate memory."), 1);
 		}
 	}
 
@@ -107,7 +107,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			elf_file->section_tables[i].data = malloc(elf_section_data_size);
 			if (elf_file->section_tables[i].data == NULL) {
 				free(elf_file->section_tables[i].data);
-				return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+				return (ft_error("Could not allocate memory."), 1);
 			}
 
 			ft_memset(elf_file->section_tables[i].data, 0, elf_section_data_size);
@@ -124,7 +124,7 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 	reader->seek(reader, elf_file->e_phoff);
 	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
 	if (elf_file->program_headers == NULL)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		return (ft_error("Could not allocate memory."), 1);
 	for (int i = 0; i < elf_file->e_phnum; i++)
 	{
 		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
@@ -156,7 +156,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 {
 	t_elf_file *elf_file = ft_calloc(1, sizeof(t_elf_file));
 	if (elf_file == NULL)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
+		return (ft_error("Could not allocate memory."), NULL);
 
 	/**
 	 * By default we set en endianness to little endian because it's the endianness of the header
@@ -167,7 +167,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Invalid file format.\n"), NULL);
+		return (ft_error("Invalid file format."), NULL);
 	}
 
 	if (elf_file->e_ident.ei_data == 2)
@@ -181,7 +181,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_version != 1)
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Wrong version.\n"), NULL);
+		return (ft_error("Wrong version."), NULL);
 	}
 
 	/**
@@ -190,7 +190,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_osabi != 0x00 && elf_file->e_ident.ei_osabi != 0x03)
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Incompatible ABI.\n"), NULL);
+		return (ft_error("Incompatible ABI."), NULL);
 	}
 
 	get_type_name(reader, elf_file);
@@ -388,7 +388,6 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				}
 				printf("%02x", elf_file->section_tables[i].data[j]);
 
-				// Stocker le caractère ASCII correspondant
 				if (isprint(elf_file->section_tables[i].data[j]))
 				{
 					ascii_line[j % 16] = elf_file->section_tables[i].data[j];
