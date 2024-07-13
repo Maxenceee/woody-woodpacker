@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 17:21:47 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 18:56:12 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,27 +45,33 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 
 uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *packer)
 {
-	// Calculer l'alignement de l'offset et la taille de fin
-    uint64_t offset_padding = new_section_headers->sh_offset % 16;
-    uint64_t end_padding = (offset_padding + packer->payload_64_size) % 16;
+	// // Calculer l'alignement de l'offset et la taille de fin
+    // uint64_t offset_padding = new_section_headers->sh_offset % 16;
+    // uint64_t end_padding = (offset_padding + packer->payload_64_size) % 16;
     
-    printf("payload offset_padding: %lu\n", offset_padding);
-    printf("payload size: %lu\n", packer->payload_64_size);
-    printf("payload align: %lu\n", end_padding);
+    // printf("payload offset_padding: %lu\n", offset_padding);
+    // printf("payload size: %lu\n", packer->payload_64_size);
+    // printf("payload align: %lu\n", end_padding);
     
-    // Allouer et initialiser le payload avec le padding nécessaire
-    uint8_t *payload = (uint8_t *)malloc(packer->payload_64_size + offset_padding + end_padding);
-    if (!payload)
-        return NULL;
+    // // Allouer et initialiser le payload avec le padding nécessaire
+    // uint8_t *payload = (uint8_t *)malloc(packer->payload_64_size + offset_padding + end_padding);
+    // if (!payload)
+    //     return NULL;
     
-    ft_bzero(payload, offset_padding); // Nettoyer le padding
-    ft_memcpy(payload + offset_padding, packer->payload_64, packer->payload_64_size); // Copier le payload
-	ft_memcpy(payload + offset_padding + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE); // Copier le payload
+    // ft_bzero(payload, offset_padding); // Nettoyer le padding
+    // ft_memcpy(payload + offset_padding, packer->payload_64, packer->payload_64_size); // Copier le payload
+	// ft_memcpy(payload + offset_padding + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE); // Copier le payload
 
-    ft_bzero(payload + offset_padding + packer->payload_64_size, end_padding); // Nettoyer le padding à la fin
-	
+    // ft_bzero(payload + offset_padding + packer->payload_64_size, end_padding); // Nettoyer le padding à la fin
     
-    return (payload);
+    // return (payload);
+	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
+	if (!payload)
+		return (NULL);
+
+	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+	return (payload);
 }
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_section)
@@ -107,21 +113,27 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
     new_section->sh_addralign = 16;
 
-	uint64_t current_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
-    uint64_t current_vaddr = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
+	// uint64_t current_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
+    // uint64_t current_vaddr = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
 
-	uint64_t offset_padding = new_section->sh_addralign - (current_offset % new_section->sh_addralign);
-	uint64_t vaddr_padding = new_section->sh_addralign - (current_vaddr % new_section->sh_addralign);
+	// uint64_t offset_padding = new_section->sh_addralign - (current_offset % new_section->sh_addralign);
+	// uint64_t vaddr_padding = new_section->sh_addralign - (current_vaddr % new_section->sh_addralign);
 
-	if (current_offset % new_section->sh_addralign != 0) {
-        current_offset += offset_padding;
-    }
-    if (current_vaddr % new_section->sh_addralign != 0) {
-        current_vaddr += vaddr_padding;
-    }
+	// if (current_offset % new_section->sh_addralign != 0) {
+    //     current_offset += offset_padding;
+    // }
+    // if (current_vaddr % new_section->sh_addralign != 0) {
+    //     current_vaddr += vaddr_padding;
+    // }
 	
-	new_section->sh_offset = current_offset;
-    new_section->sh_address = current_vaddr;
+	// new_section->sh_offset = current_offset;
+    // new_section->sh_address = current_vaddr;
+	// packer->loader_offset = new_section->sh_address;
+
+	new_section->sh_offset = elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz;
+	new_section->sh_address = elf->program_headers[last_load_prog].p_vaddr + elf->program_headers[last_load_prog].p_memsz;
+	
+	new_section->sh_size = WB_PAYLOAD_SIZE;
 	packer->loader_offset = new_section->sh_address;
 
 	if ((new_section->data = prepare_payload(new_section, packer)) == NULL)
@@ -186,21 +198,31 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	}
 }
 
+// void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
+// {
+// 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
+// 		// printf("%s:\n", elf->section_tables[i].sh_name);
+// 		// printf("%s:\n", elf->section_tables[i+1].sh_name);
+// 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
+// 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
+// 			continue;
+// 		}
+// 		// printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
+// 		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign > 1 ?
+// 			elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign
+// 			: 0;
+// 		// printf("offset_padding: %lu\n", offset_padding);
+// 		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
+// 	}
+
+// 	int section_count = elf->e_shnum;
+// 	elf->e_shoff = elf->section_tables[section_count - 1].sh_offset + elf->section_tables[section_count - 1].sh_size;
+// }
+
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
-		// printf("%s:\n", elf->section_tables[i].sh_name);
-		// printf("%s:\n", elf->section_tables[i+1].sh_name);
-		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
-			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
-			continue;
-		}
-		// printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
-		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign > 1 ?
-			elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign
-			: 0;
-		// printf("offset_padding: %lu\n", offset_padding);
-		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
+		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size;
 	}
 
 	int section_count = elf->e_shnum;
