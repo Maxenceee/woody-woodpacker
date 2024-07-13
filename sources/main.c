@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/13 02:11:03 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 02:11:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,12 +118,6 @@ int	main(int ac, char **av)
 			case 's':
 				option |= F_SECTION;
 				break;
-			// case 'e':
-			// 	option |= F_ENCRYPT;
-			// 	break;
-			// case 'd':
-			// 	option |= F_DECRYPT;
-			// 	break;
 			case 'd':
 				option |= F_DATA;
 				break;
