@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 22:20:07 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 22:26:54 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,6 +220,7 @@ void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
         ) - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size);
 
         elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
+        elf->section_tables[i + 1].sh_address = elf->section_tables[i].sh_address + elf->section_tables[i].sh_size + offset_padding;
 	}
 
 	int section_count = elf->e_shnum;
