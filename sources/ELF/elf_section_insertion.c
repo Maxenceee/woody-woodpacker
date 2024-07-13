@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 16:43:38 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 17:08:13 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		char *section_name = elf->section_tables[i].sh_name;
 		if (strcmp(section_name, ".symtab") == 0) {
 			elf->section_tables[i].sh_link += 1;
+			elf->section_tables[i].sh_size += ft_strlen(elf->section_tables[i].sh_name) + 1;
 		}
 	}
 
@@ -192,7 +193,9 @@ void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 			continue;
 		}
 		printf("%#lx, %lx, t %#lx | align %d\n", elf->section_tables[i].sh_offset, elf->section_tables[i].sh_size, elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, elf->section_tables[i + 1].sh_addralign);
-		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign;
+		uint64_t offset_padding = elf->section_tables[i + 1].sh_addralign > 1 ?
+			elf->section_tables[i + 1].sh_addralign - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size) % elf->section_tables[i + 1].sh_addralign
+			: 0;
 		printf("offset_padding: %lu\n", offset_padding);
 		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
 	}
