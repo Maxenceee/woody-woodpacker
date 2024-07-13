@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/29 15:30:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 15:34:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 15:46:47 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,9 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
+		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
+			continue;
+		}
 		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size;
 	}
 
