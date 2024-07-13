@@ -1,5 +1,4 @@
 global _payload_64
-extern puts
 
 [BITS 64]
 
