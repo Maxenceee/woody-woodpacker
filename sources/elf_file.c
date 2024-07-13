@@ -374,7 +374,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				continue;
 			}
 
-			int j = 0;
+			uint64_t j = 0;
 			for (; j < elf_file->section_tables[i].sh_size; j++)
 			{
 				if (j % 16 == 0)

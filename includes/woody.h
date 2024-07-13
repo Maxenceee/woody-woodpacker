@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/12 22:38:18 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 14:13:26 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct s_elf_file {
 			char		ei_pad[7];				// Reserved padding bytes
 		};
 
-		char		raw[16];
+		uint8_t		raw[16];
 	} e_ident;
 
 	uint16_t	e_type;						// object type
