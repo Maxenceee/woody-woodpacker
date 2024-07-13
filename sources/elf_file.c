@@ -293,11 +293,11 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 	if (level & PELF_ALL || level & PELF_SECTION)
 	{
 		printf("\nSection Headers:\n");
-		printf("  [Nr] Name               Type               Address            Offset             Size               \n");
+		printf("  [Nr] Name               Type               Address            Offset             Size               Align\n");
 		for (int i = 0; i < elf_file->e_shnum; i++)
 		{
 			printf("  [%2d] ", i);
-			printf("%-18s", elf_file->section_tables[i].sh_name);
+			printf("%-18s ", elf_file->section_tables[i].sh_name);
 			if (elf_file->section_tables[i].sh_type < 0x13)
 				printf("%-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
 			else
