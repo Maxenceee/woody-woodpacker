@@ -335,7 +335,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			{
 				if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
 					elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
-					elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_filesz)
+					elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_memsz)
 				{
 					printf("%s ", elf_file->section_tables[j].sh_name);
 				}
