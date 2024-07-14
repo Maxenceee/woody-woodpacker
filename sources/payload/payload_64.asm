@@ -6,41 +6,24 @@ segment .text align=16
 
 _payload_64:
 	push rax
-	push rdi
-	push rsi
-	push rsp
 	push rdx
-	push rcx
-	push rbx
-	call get_my_loc
-	sub edx, next_i - msg
-	mov ecx, edx
-	mov edx, msg_len
-	mov ebx, 1
-	mov eax, 4
+	push rsi
+	push rdi
+	jmp .print_start_msg
+.displayed_str:
+	db "....WOODY....", 0x0a, 0
+.print_start_msg:
+	mov rax, 0x1
+	mov rdi, 1
+	lea rsi, [rel .displayed_str]
+	mov rdx, 15
 	syscall
 
-get_my_loc:
-	call next_i
-
-next_i:
-	pop rdx
-	ret
-
-msg	db "....WOODY....", 0x0a, 0
-msg_len	equ	$ - msg
-
-clean:
-	; Reset the stack
-	add rsp, 160
-	pop rbx
-	pop rcx
-	pop rdx
-	pop rsp
-	pop rsi
 	pop rdi
+	pop rsi
+	pop rdx
 	pop rax
-	jmp	0xFFFFFFFF
+	jmp	0x01020304
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
