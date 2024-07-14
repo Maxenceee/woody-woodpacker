@@ -23,7 +23,6 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	leave
 	; jmp	0x01020304
 	call 0x01020304
 
