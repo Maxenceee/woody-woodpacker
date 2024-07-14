@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 22:36:41 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 17:50:43 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 17:52:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 // #define WD_PAYLOAD_OFF_KEY (24 + 64)
 // #define WD_PAYLOAD_RETURN_ADDR (24 + 64 + 4)
 #define WD_PAYLOAD_OFF_KEY (0)
-#define WD_PAYLOAD_RETURN_ADDR (0)
+#define WD_PAYLOAD_RETURN_ADDR (4)
 
 static const unsigned char wd_playload_64[] = {
 	// 0x50, 0x52, 0x56, 0x57, 0xeb, 0x0f, 0x2e, 0x2e, 0x2e, 0x2e, 0x57, 0x4f, 0x4f, 0x44, 0x59, 0x2e,
