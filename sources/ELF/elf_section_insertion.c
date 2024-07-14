@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 18:01:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 19:10:27 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,14 +204,14 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	uint64_t last_entry_point = elf->e_entry;
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
-	// printf("last_entry_point: %#lx\n", last_entry_point);
-	// printf("new_entry_point: %#lx\n", elf->e_entry);
+	printf("last_entry_point: %#lx\n", last_entry_point);
+	printf("new_entry_point: %#lx\n", elf->e_entry);
 
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address;
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
-	// printf("offset: %d\n", offset);
-	// printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
+	printf("offset: %d => %#lx\n", offset, offset);
+	printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
@@ -220,7 +220,7 @@ int	elf_insert_section(t_elf_file *elf)
 {
 	t_packer	packer;
 	packer.payload_64_size = WB_PAYLOAD_SIZE;
-	packer.payload_64 = (uint8_t *)wd_playload_64;
+	packer.payload_64 = &wd_playload_64;
 	packer.new_section_size = 0;
 	
 	int progi = efl_find_last_prog_header(elf);

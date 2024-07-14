@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 20:35:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 18:59:34 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,23 +121,5 @@ int				packer(t_elf_file *elf, t_binary_reader *reader);
  */
 
 int	elf_insert_section(t_elf_file *elf);
-
-/* payload */
-
-/**
- * On MacOS the symbol name must not be prefixed with an underscore when 
- * using extern symbole.
- */
-#ifndef __APPLE__
-#define CDECL_NORM(x) _ ## x
-#else
-#define CDECL_NORM(x) x
-#endif /* __APPLE__ */
-
-// extern uint8_t	CDECL_NORM(payload_64);
-// extern uint64_t	CDECL_NORM(payload_size_64);
-
-// #define payload_64 CDECL_NORM(payload_64)
-// #define payload_size_64 CDECL_NORM(payload_size_64)
 
 #endif /* WOODY_H */

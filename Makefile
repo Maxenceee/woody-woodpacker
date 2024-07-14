@@ -3,10 +3,10 @@ HEADERS_DIR		=	includes
 OBJ_DIR			=	.objs
 
 SRCS			=	$(shell find $(MANDATORY_DIR) -name "*.c")
-# SRCS_ASM		=	$(shell find $(MANDATORY_DIR) -name "*.asm")
+SRCS_ASM		=	$(shell find $(MANDATORY_DIR) -name "*.asm")
 
 OBJS			=	$(patsubst $(MANDATORY_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
-# OBJS_ASM		=	$(patsubst $(MANDATORY_DIR)%.asm, $(OBJ_DIR)%.o, $(SRCS_ASM))
+OBJS_ASM		=	$(patsubst $(MANDATORY_DIR)%.asm, $(OBJ_DIR)%.o, $(SRCS_ASM))
 
 HEADERS			=	$(shell find $(HEADERS_DIR) -name "*.h") $(shell find $(MANDATORY_DIR) -name "*.h")
 
@@ -37,15 +37,15 @@ $(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.c $(HEADERS)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf ${UP}${CUT}
 
-# $(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.asm $(HEADERS)
-# 	@mkdir -p $(@D)
-# 	@echo "$(YELLOW)Compiling [$<]$(DEFAULT)"
-# 	@$(ASM) $(ASMFLAGS) $< -o $@
-# 	@printf ${UP}${CUT}
+$(OBJ_DIR)/%.o: $(MANDATORY_DIR)/%.asm $(HEADERS)
+	@mkdir -p $(@D)
+	@echo "$(YELLOW)Compiling [$<]$(DEFAULT)"
+	@$(ASM) $(ASMFLAGS) $< -o $@
+	@printf ${UP}${CUT}
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(OBJS_ASM)
 	@$(CC) $(CFLAGS) $^ -o $(NAME)
 	@echo "$(GREEN)$(NAME) compiled!$(DEFAULT)"
 
