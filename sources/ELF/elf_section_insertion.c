@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 17:47:20 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 17:48:17 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,6 +230,6 @@ int	elf_insert_section(t_elf_file *elf)
 	sectioni += 1;
 	update_program_header(elf, &packer, progi, sectioni);
 	update_section_addr(elf, &packer, sectioni);
-	update_entry_point(elf, &packer, sectioni);
+	// update_entry_point(elf, &packer, sectioni);
 	return (0);
 }
