@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 17:46:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 17:47:20 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,8 +208,7 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address;
-	// int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
-	uint32_t offset = last_entry_point;
+	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
 	// printf("offset: %d\n", offset);
 	// printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
