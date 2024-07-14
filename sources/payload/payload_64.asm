@@ -5,8 +5,6 @@ global _payload_64
 segment .text align=16
 
 _payload_64:
-	push rbp
-	mov rbp, rsp
 	push rax
 	push rdx
 	push rsi
@@ -25,8 +23,6 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	mov rsp, rbp
-	pop rbp
 	jmp	0x01020304
 
 info_start:
