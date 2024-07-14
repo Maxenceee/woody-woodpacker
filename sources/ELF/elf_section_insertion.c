@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 23:07:38 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 14:41:53 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	for (int j = 1; j < elf->e_shnum; j++)
 	{
 		if (elf->section_tables[j].sh_offset >= prog->p_offset &&
-			elf->section_tables[j].sh_offset + elf->section_tables[j].sh_size <=
-			prog->p_offset + prog->p_filesz)
+			elf->section_tables[j].sh_offset + elf->section_tables[j].sh_size <= prog->p_offset + prog->p_filesz)
 		{
 			index = j;
 		}

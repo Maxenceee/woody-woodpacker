@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 23:13:12 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 14:47:40 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ int	packer(t_elf_file *elf, t_binary_reader *reader)
 		write_to_file(fd, &elf->program_headers[i], sizeof(t_elf_program_header));
 	}
 
-	// Write the section headers (excluding pointers)
 	for (int i = 0; i < elf->e_shnum; i++) {
 		if (elf->section_tables[i].sh_type != SHT_NOBITS)
 		{
@@ -63,7 +62,6 @@ int	packer(t_elf_file *elf, t_binary_reader *reader)
 
 	add_zero_padding(fd, elf->e_shoff);
 
-	// Write the section data
 	for (int i = 0; i < elf->e_shnum; i++) {
 		write_to_file(fd, &elf->section_tables[i], elf_section_header_size);
 	}
