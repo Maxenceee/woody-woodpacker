@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 17:56:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 18:01:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ int	elf_insert_section(t_elf_file *elf)
 	t_packer	packer;
 	packer.payload_64_size = WB_PAYLOAD_SIZE;
 	packer.payload_64 = (uint8_t *)wd_playload_64;
-	// packer.new_section_size = 0;
+	packer.new_section_size = 0;
 	
 	int progi = efl_find_last_prog_header(elf);
 	int sectioni = efl_find_last_section_header(elf, progi);

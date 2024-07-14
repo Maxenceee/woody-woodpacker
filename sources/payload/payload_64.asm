@@ -1,6 +1,6 @@
 global _payload_64
 
-[BITS 64]
+[BITS 32]
 
 segment .text align=16
 
