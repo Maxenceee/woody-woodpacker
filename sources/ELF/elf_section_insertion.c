@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 17:48:17 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/14 17:49:35 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
 		return (NULL);
 
 	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+	// Copy key inside payload
+	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 	return (payload);
 }
 
