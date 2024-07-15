@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 22:36:41 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 19:08:24 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/15 15:44:17 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ extern uint64_t	CDECL_NORM(payload_64_size);
 
 #define WB_PAYLOAD_SIZE CDECL_NORM(payload_64_size)
 
-#define WD_PAYLOAD_OFF_KEY (24 + 64 + 1)
-#define WD_PAYLOAD_RETURN_ADDR (24 + 64 + 4 + 1)
+#define WD_PAYLOAD_OFF_KEY (24 + 64 + 1) // 3 * sizeof(uint64_t) + sizeof(aes_key) + sizeof(payload_64_size)
+#define WD_PAYLOAD_RETURN_ADDR (24 + 64 + 4 + 1) // 3 * sizeof(uint64_t) + sizeof(aes_key) + sizeof(uint32_t) + sizeof(payload_64_size)
 
 // static const unsigned char wd_playload_64[] = {
 // 	0x50, 0x52, 0x56, 0x57, 0xeb, 0x0f, 0x2e, 0x2e, 0x2e, 0x2e, 0x57, 0x4f, 0x4f, 0x44, 0x59, 0x2e,
