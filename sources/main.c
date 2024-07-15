@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/13 02:13:45 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/15 19:08:17 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,6 @@ int	main(int ac, char **av)
 		usage();
 	target = av[optind];
 
-	printf("Target: %s\n", target);
-	printf("Key: %s\n", key_aes);
-
 	int fd = open(target, O_RDONLY);
 	if (fd == -1)
 	{
@@ -166,6 +163,11 @@ int	main(int ac, char **av)
 	{
 		print_elf_file(elf_file, PELF_DATA);
 	}
+\
+	printf("================================================\n", target);
+	printf("Target: %s\n", target);
+	printf("Key: %s\n", key_aes);
+	printf("================================================\n", target);
 
 	/**
 	 * INFO:
