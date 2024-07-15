@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/15 19:05:42 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 01:34:45 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		char *section_name = elf->section_tables[i].sh_name;
 		if (strcmp(section_name, ".symtab") == 0) {
 			elf->section_tables[i].sh_link += 1;
-			elf->section_tables[i].sh_size += ft_strlen(elf->section_tables[i].sh_name) + 1;
 		}
 	}
 
