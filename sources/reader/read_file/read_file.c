@@ -6,17 +6,17 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 21:46:34 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/15 17:49:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/12 22:38:54 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "reader/binary_reader.h"
 
-unsigned char	*ft_read_file(int fd, unsigned char *file, uint32_t *rsize)
+unsigned char	*ft_read_file(int fd, unsigned char *file, uint64_t *rsize)
 {
 	unsigned char	*buff;
 	int				read_bytes;
-	uint32_t		size;
+	uint64_t		size;
 
 	size = 0;
 	buff = ft_calloc((BUFFER_SIZE + 1), sizeof(unsigned char));

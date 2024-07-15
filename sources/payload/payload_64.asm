@@ -1,12 +1,11 @@
 global _payload_64
-global _payload_size_64
-extern puts
+global _payload_64_size
 
 [BITS 64]
 
-segment .text
+segment .text align=16
+
 _payload_64:
-	pushf
 	push rax
 	push rdx
 	push rsi
@@ -20,20 +19,16 @@ _payload_64:
 	lea rsi, [rel .displayed_str]
 	mov rdx, 15
 	syscall
-.encrypt:
-	mov rax, [rel .encrypted_data_start]
-	mov rdi, [rel .encrypted_data_len]
-	mov rsi, [rel .start_encode]
-	add rdi, rax
 
 	pop rdi
 	pop rsi
 	pop rdx
 	pop rax
-	popf
-	jmp [rel .encrypt]
+	jmp	[rel 0x00] ; tkt le compilo veut une vraie adresse
 
-.encrypted_data_start: dq 0
-.encrypted_data_len: dq 0
-.start_encode: dq 0
-_payload_size_64: dq $-_payload_64
+info_start:
+key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
+encrypted_data_len:		dq	0xcccccccccccccccc
+start_encode:			dq  0xdddddddddddddddd
+_payload_64_size:		dq $-_payload_64

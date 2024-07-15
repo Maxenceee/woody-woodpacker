@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "woody.h"
+#include "ctype.h"
 
 static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 {
@@ -45,7 +46,7 @@ static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
 			elf_file->e_type_name = "HIPROC";
             break;
         default:
-			elf_file->e_type_name = "Error";
+			elf_file->e_type_name = "Error"; 
     }
 }
 
@@ -54,7 +55,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 	reader->seek(reader, elf_file->e_shoff);
 	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section_table));
 	if (elf_file->section_tables == NULL)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		return (ft_error("Could not allocate memory."), 1);
 	for (int i = 0; i < elf_file->e_shnum; i++)
 	{
 		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
@@ -73,26 +74,48 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			elf_file->section_tables[i].sh_offset = reader->get_uint64(reader);
 			elf_file->section_tables[i].sh_size = reader->get_uint64(reader);
 		}
-		(void)reader->get_uint32(reader); // sh_link
-		(void)reader->get_uint32(reader); // sh_info
+		elf_file->section_tables[i].sh_link = reader->get_uint32(reader);
+		elf_file->section_tables[i].sh_info = reader->get_uint32(reader);
 		if (elf_file->e_ident.ei_class == WD_32BITS)
 		{
-			(void)reader->get_uint32(reader); // sh_addralign
-			(void)reader->get_uint32(reader); // sh_entize
+			elf_file->section_tables[i].sh_addralign = reader->get_uint32(reader);
+			elf_file->section_tables[i].sh_entsize = reader->get_uint32(reader);
 		}
 		else
 		{
-			(void)reader->get_uint64(reader); // sh_addralign
-			(void)reader->get_uint64(reader); // sh_entize
+			elf_file->section_tables[i].sh_addralign = reader->get_uint64(reader);
+			elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
 		}
 	}
+	if (elf_file->e_shstrndx > 0)
+	{
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
+			elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
+			if (elf_file->section_tables[i].sh_name == NULL)
+				return (ft_error("Could not allocate memory."), 1);
+		}
+	}
+
+	size_t elf_section_data_size;
 	for (int i = 0; i < elf_file->e_shnum; i++)
 	{
-		reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
-		elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
-		if (elf_file->section_tables[i].sh_name == NULL)
-			return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		if (elf_file->section_tables[i].sh_type != SHT_NOBITS) {
+			elf_section_data_size = elf_file->section_tables[i].sh_size;
+
+			elf_file->section_tables[i].data = malloc(elf_section_data_size);
+			if (elf_file->section_tables[i].data == NULL) {
+				free(elf_file->section_tables[i].data);
+				return (ft_error("Could not allocate memory."), 1);
+			}
+
+			ft_memset(elf_file->section_tables[i].data, 0, elf_section_data_size);
+			reader->seek(reader, elf_file->section_tables[i].sh_offset);
+			reader->get_bytes(reader, elf_file->section_tables[i].data, elf_section_data_size);
+		}
 	}
+
 	return (0);
 }
 
@@ -101,7 +124,7 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 	reader->seek(reader, elf_file->e_phoff);
 	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
 	if (elf_file->program_headers == NULL)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), 1);
+		return (ft_error("Could not allocate memory."), 1);
 	for (int i = 0; i < elf_file->e_phnum; i++)
 	{
 		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
@@ -133,7 +156,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 {
 	t_elf_file *elf_file = ft_calloc(1, sizeof(t_elf_file));
 	if (elf_file == NULL)
-		return (ft_error(WD_PREFIX"Could not allocate memory.\n"), NULL);
+		return (ft_error("Could not allocate memory."), NULL);
 
 	/**
 	 * By default we set en endianness to little endian because it's the endianness of the header
@@ -144,7 +167,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Invalid file format.\n"), NULL);
+		return (ft_error("Invalid file format."), NULL);
 	}
 
 	if (elf_file->e_ident.ei_data == 2)
@@ -158,7 +181,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_version != 1)
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Wrong version.\n"), NULL);
+		return (ft_error("Wrong version."), NULL);
 	}
 
 	/**
@@ -167,7 +190,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_osabi != 0x00 && elf_file->e_ident.ei_osabi != 0x03)
 	{
 		delete_elf_file(elf_file);
-		return (ft_error(WD_PREFIX"Incompatible ABI.\n"), NULL);
+		return (ft_error("Incompatible ABI."), NULL);
 	}
 
 	get_type_name(reader, elf_file);
@@ -242,7 +265,7 @@ static void	print_elf_program_flag(uint32_t flag)
 
 void	print_elf_file(t_elf_file *elf_file, int level)
 {
-	if (level == PELF_ALL || level == PELF_HEADER)
+	if (level & PELF_ALL || level & PELF_HEADER)
 	{
 		printf("ELF Header:\n");
 		printf("  Magic:   ");
@@ -259,7 +282,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		printf("  Entry point:                       %#lx\n", elf_file->e_entry);
 		printf("  Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
 		printf("  Start of section headers:          %ld (bytes into file)\n", elf_file->e_shoff);
-		printf("  Size of this header:               %ld (bytes)\n", elf_file->e_ehsize);
+		printf("  Size of this header:               %d (bytes)\n", elf_file->e_ehsize);
 		printf("  Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
 		printf("  Number of program headers:         %d\n", elf_file->e_phnum);
 		printf("  Size of section headers:           %d (bytes)\n", elf_file->e_shentsize);
@@ -267,10 +290,10 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		printf("  Section header string table index: %d\n", elf_file->e_shstrndx);
 	}
 
-	if (level == PELF_ALL || level == PELF_SECTION)
+	if (level & PELF_ALL || level & PELF_SECTION)
 	{
 		printf("\nSection Headers:\n");
-		printf("  [Nr] Name               Type               Address            Offset             Size\n");
+		printf("  [Nr] Name               Type               Address            Offset             Size               Align\n");
 		for (int i = 0; i < elf_file->e_shnum; i++)
 		{
 			printf("  [%2d] ", i);
@@ -281,7 +304,8 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				printf("%#-18x ", elf_file->section_tables[i].sh_type);
 			printf("%#018lx ", elf_file->section_tables[i].sh_address);
 			printf("%#018lx ", elf_file->section_tables[i].sh_offset);
-			printf("%#018lx\n", elf_file->section_tables[i].sh_size);
+			printf("%#018lx ", elf_file->section_tables[i].sh_size);
+			printf("%#018lx\n", elf_file->section_tables[i].sh_addralign);
 		}
 
 		printf("\nProgram Headers:\n");
@@ -311,10 +335,82 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			{
 				if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
 					elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
-					elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_filesz)
+					elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_memsz)
 				{
 					printf("%s ", elf_file->section_tables[j].sh_name);
 				}
+			}
+			printf("\n");
+		}
+	}
+
+	if (level & PELF_DATA)
+	{
+		int tab = 6;
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			int j = 1, l = elf_file->section_tables[i].sh_size;
+			while (l > 10)
+			{
+				j++;
+				l /= 10;
+			}
+			if (j > tab)
+				tab = j;
+		}
+
+		char ascii_line[17];
+		ascii_line[16] = '\0';
+		printf("\nSection data mapping:\n");
+		for (int i = 0; i < elf_file->e_shnum; i++)
+		{
+			if (elf_file->section_tables[i].sh_type != PT_NULL)
+				printf("  Section %s:\n", elf_file->section_tables[i].sh_name);
+			else
+				printf("  Section %s:\n", "(null)");
+
+			if (elf_file->section_tables[i].sh_size == 0 || elf_file->section_tables[i].sh_type == SHT_NOBITS)
+			{
+				printf("    (null)\n\n");
+				continue;
+			}
+
+			uint64_t j = 0;
+			for (; j < elf_file->section_tables[i].sh_size; j++)
+			{
+				if (j % 16 == 0)
+				{
+					printf("    %0*lX: ", tab, j);
+				}
+				else if (j % 4 == 0)
+				{
+					printf(" ");
+				}
+				printf("%02x", elf_file->section_tables[i].data[j]);
+
+				if (isprint(elf_file->section_tables[i].data[j]))
+				{
+					ascii_line[j % 16] = elf_file->section_tables[i].data[j];
+				}
+				else
+				{
+					ascii_line[j % 16] = '.';
+				}
+
+				if ((j + 1) % 16 == 0)
+				{
+					printf("  %s\n", ascii_line);
+				}
+			}
+			if (j % 16 != 0)
+			{
+				int remaining = 16 - (j % 16);
+				printf("%*s", remaining * 2 + remaining / 4, "");
+				for (int k = j % 16; k < 16; k++)
+				{
+					ascii_line[k] = ' ';
+				}
+				printf("  %s\n", ascii_line);
 			}
 			printf("\n");
 		}

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/11 14:05:14 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/13 14:11:34 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 typedef struct s_binary_reader	t_binary_reader;
 
-enum e_endian
+enum e_endian_reader
 {
 	READER_BIG_ENDIAN		= 0X00,
 	READER_LITTLE_ENDIAN	= 0X01
@@ -34,13 +34,13 @@ enum e_endian
 
 struct s_binary_reader
 {
-	uint32_t			_pos;
+	uint64_t			_pos;
 	unsigned char		*data;
-	uint32_t			size;
+	uint64_t			size;
 	int					endian;
 
-	uint32_t			((*seek)(t_binary_reader *, uint32_t));
-	uint32_t			(*tell)(t_binary_reader *);
+	uint64_t			((*seek)(t_binary_reader *, uint64_t));
+	uint64_t			(*tell)(t_binary_reader *);
 
 	uint8_t				(*get_uint8)(t_binary_reader *);
 	uint16_t			(*get_uint16)(t_binary_reader *);
@@ -59,7 +59,7 @@ struct s_binary_reader
 	char				*(*get_rstring)(t_binary_reader *);
 	char				*(*get_unicode_string)(t_binary_reader *, uint16_t);
 
-	size_t				(*get_bytes)(t_binary_reader *, char *, size_t );
+	size_t				(*get_bytes)(t_binary_reader *, uint8_t *, size_t );
 
 	uint64_t			(*get_date)(t_binary_reader *);
 
@@ -83,7 +83,7 @@ void			delete_binary_reader(t_binary_reader *this);
 /* read font file */
 
 unsigned char	*ft_read_file(int fd, unsigned char *file,
-					uint32_t *rsize);
+					uint64_t *rsize);
 
 /* join mem data */
 
@@ -92,8 +92,8 @@ unsigned char	*ft_memjoin(unsigned char *s1, unsigned char *s2,
 
 /* binary reader methods */
 
-uint32_t		br_seek(t_binary_reader *this, uint32_t pos);
-uint32_t		br_tell(t_binary_reader *this);
+uint64_t		br_seek(t_binary_reader *this, uint64_t pos);
+uint64_t		br_tell(t_binary_reader *this);
 
 uint8_t			br_get_uint8(t_binary_reader *this);
 uint16_t		br_get_uint16(t_binary_reader *this);
@@ -111,7 +111,7 @@ char			*br_get_string(t_binary_reader *this, uint16_t length);
 char			*br_get_rstring(t_binary_reader *this);
 char			*br_get_unicode_string(t_binary_reader *this, uint16_t length);
 
-size_t			br_get_bytes(t_binary_reader *this, char *target, size_t length);
+size_t			br_get_bytes(t_binary_reader *this, uint8_t *target, size_t length);
 
 uint64_t		br_get_date(t_binary_reader *this);
 
