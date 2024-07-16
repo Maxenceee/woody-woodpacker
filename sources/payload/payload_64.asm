@@ -31,7 +31,7 @@ _payload_64:
 	pop rdx
 	pop rax
 	mov rax, 0x0
-	jmp rax; tkt le compilo veut une vraie adresse
+	jmp [rax]; tkt le compilo veut une vraie adresse
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
