@@ -30,7 +30,8 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	jmp	JUMP_ADDR; tkt le compilo veut une vraie adresse
+	mov rax, 0x0
+	jmp rax; tkt le compilo veut une vraie adresse
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
