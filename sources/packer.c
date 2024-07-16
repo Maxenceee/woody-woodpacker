@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/14 14:47:40 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 01:39:22 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ int	write_to_file(int fd, void *data, size_t size) {
 }
 
 void add_zero_padding(int fd, size_t end_offset) {
-    char c = 0;
+	char c = 0;
 
-    while(offset < end_offset) {
-        write_to_file(fd, &c, sizeof(c));
-    }
+	while(offset < end_offset) {
+		write_to_file(fd, &c, sizeof(c));
+	}
 }
 
 int	packer(t_elf_file *elf, t_binary_reader *reader)
