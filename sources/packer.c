@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 19:14:31 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 20:08:46 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ void add_zero_padding(int fd, size_t end_offset) {
 t_elf_section_table	*get_text_section(t_elf_file *elf)
 {
 	for (int i = 0; i < elf->e_shnum; i++) {
-		char *section_name = elf->section_tables[i].sh_name;
-		if (strcmp(section_name, ".text") == 0) {
+		if (strcmp(elf->section_tables[i].sh_name, ".text") == 0) {
 			return (&elf->section_tables[i]);
 		}
 	}

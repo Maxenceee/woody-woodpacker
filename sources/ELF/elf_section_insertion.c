@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 19:14:31 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 20:15:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,16 @@ size_t calculate_padding(size_t size, size_t alignment) {
 size_t calculate_padded_size(size_t size, size_t alignment) {
 	size_t padding = (alignment - (size % alignment)) % alignment;
 	return (size + padding);
+}
+
+int	has_section(t_elf_file *elf, const char *name)
+{
+	for (int i = 0; i < elf->e_shnum; i++) {
+		if (strcmp(elf->section_tables[i].sh_name, name) == 0) {
+			return (1);
+		}
+	}
+	return (0);
 }
 
 int		efl_find_last_prog_header(t_elf_file *elf)
@@ -68,15 +78,30 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_section)
 {
-	char *section_name = WB_SECTION_NAME;
-	size_t section_name_len = ft_strlen(section_name);
+	char *section_name = malloc(sizeof(WB_SECTION_NAME));
+	if (section_name == NULL) {
+		return (-1);
+	}
+	ft_memcpy(section_name, WB_SECTION_NAME, sizeof(WB_SECTION_NAME));
+	size_t section_name_len = sizeof(WB_SECTION_NAME);
+
+	while (has_section(elf, section_name))
+	{
+		section_name = ft_strjoin(section_name, "-2");
+		if (section_name == NULL) {
+			return (-1);
+		}
+		section_name_len += 2;
+	}
 
 	int section_string_table_index = elf->e_shstrndx;
 	int old_size = elf->section_tables[section_string_table_index].sh_size;
 
-	size_t new_string_table_size = elf->section_tables[section_string_table_index].sh_size + section_name_len + 1;
+	size_t new_string_table_size = elf->section_tables[section_string_table_index].sh_size + section_name_len;
 	elf->section_tables[section_string_table_index].data = ft_realloc(elf->section_tables[section_string_table_index].data, new_string_table_size);
-	if (elf->section_tables[section_string_table_index].data == NULL) {
+	if (elf->section_tables[section_string_table_index].data == NULL)
+	{
+		free(section_name);
 		return (-1);
 	}
 
@@ -84,6 +109,7 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_s
 	new_section->sh_name_offset = old_size;
 	new_section->sh_name = WB_SECTION_NAME;
 	elf->section_tables[section_string_table_index].sh_size = new_string_table_size;
+	free(section_name);
 	return (0);
 }
 
@@ -160,8 +186,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section_table));
 
 	for (int i = 0; i < elf->e_shnum; i++) {
-		char *section_name = elf->section_tables[i].sh_name;
-		if (strcmp(section_name, ".symtab") == 0) {
+		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0) {
 			elf->section_tables[i].sh_link += 1;
 		}
 	}

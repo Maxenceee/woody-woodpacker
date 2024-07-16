@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/16 19:14:31 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 20:13:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,6 @@ int	main(int ac, char **av)
 
 	packer(elf_file, reader);
 
-	// delete_binary_reader(reader);
+	delete_binary_reader(reader);
 	// delete_elf_file(elf_file);
 }
