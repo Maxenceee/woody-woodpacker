@@ -93,9 +93,9 @@ Relocation is the process of adjusting the addresses in an executable file so th
 +------------------------------------+
 |          Données de section        |
 +------------------------------------+
-|          Segments                  |
+|                 ...                |
 +------------------------------------+
-|          Données de segment        |
+|          Table de secions          |
 +------------------------------------+
 
 

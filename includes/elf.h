@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/13 14:15:59 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 14:59:21 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,68 +119,8 @@ typedef struct s_elf_program_header
 #define PF_MASKOS	0x0ff00000	/* OS-specific */
 #define PF_MASKPROC	0xf0000000	/* Processor-specific */
 
-static const char *g_elf_section_table_type[] = {
-	"NULL",
-	"PROGBITS",
-	"SYMTAB",
-	"STRTAB",
-	"RELA",
-	"HASH",
-	"DYNAMIC",
-	"NOTE",
-	"NOBITS",
-	"REL",
-	"SHLIB",
-	"DYNSYM",
-	"INIT_ARRAY",
-	"FINI_ARRAY",
-	"PREINIT_ARRAY",
-	"GROUP",
-	"SYMTAB_SHNDX",
-	"NUM"
-};
-
-static const char *g_elf_osabi_name[] = {
-	"UNIX - System V",
-	"HP-UX",
-	"NetBSD",
-	"Linux",
-	"GNU Hurd",
-	"Solaris",
-	"AIX (Monterey)",
-	"IRIX",
-	"FreeBSD",
-	"Tru64",
-	"Novell Modesto",
-	"OpenBSD",
-	"OpenVMS",
-	"NonStop Kernel",
-	"AROS",
-	"FenixOS",
-	"Nuxi CloudABI",
-	"Stratus Technologies OpenVOS"
-};
-
-static const char *g_elf_program_header_type[] = {
-	"NULL",
-	"LOAD",
-	"DYNAMIC",
-	"INTERP",
-	"NOTE",
-	"SHLIB",
-	"PHDR",
-	"TLS",
-	"NUM",
-	"LOOS",
-	"GNU_EH_FRAME",
-	"GNU_STACK",
-	"GNU_RELRO",
-	"LOSUNW",
-	"SUNWBSS",
-	"SUNWSTACK",
-	"HIOS",
-	"LOPROC",
-	"HIPROC"
-};
+extern const char *g_elf_section_table_type[];
+extern const char *g_elf_osabi_name[];
+extern const char *g_elf_program_header_type[];
 
 #endif /* ELF_H */

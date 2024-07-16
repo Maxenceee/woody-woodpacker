@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 13:40:55 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 14:53:34 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,15 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 
 uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *packer)
 {
+	(void)new_section_headers;
+
 	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
 	if (!payload)
 		return (NULL);
 
 	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
 	// Copy key inside payload
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 	return (payload);
 }
 
@@ -87,7 +89,7 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_s
 
 int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog, int last_section_in_prog)
 {
-	t_elf_section_table	*new_section_headers;
+	(void)last_load_prog;
 	elf->e_shnum += 1;
 
 	size_t new_section_headers_size = sizeof(t_elf_section_table) * elf->e_shnum;
@@ -133,7 +135,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	// printf("new elf->program_headers[last_load_prog].p_memsz: %#lx\n\n", elf->program_headers[last_load_prog].p_memsz + packer->new_section_size);
 
 	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section_table) * (elf->e_shnum - last_section_in_prog - 1 - 1);
-	size_t remaining_after_section_headers_count = sizeof(char *) * (elf->e_shnum - last_section_in_prog - 1 - 1);
 
 	memmove(elf->section_tables + last_section_in_prog + 2, elf->section_tables + last_section_in_prog + 1, remaining_after_section_headers_data_size);
 
@@ -153,7 +154,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	}
 	else
 	{
-		dprintf(2, "No section string table found\n");
+		ft_error("No section string table found");
 	}
 
 	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section_table));
@@ -171,6 +172,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable, int last_loadable_section)
 {
+	(void)last_loadable_section;
 	// // Mettre à jour la taille du segment
 	elf->program_headers[last_loadable].p_memsz += packer->new_section_size;
 	elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
@@ -181,6 +183,7 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable,
 
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
+	(void)packer;
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;

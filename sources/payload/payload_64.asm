@@ -24,11 +24,11 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	jmp	[rel 0x00] ; tkt le compilo veut une vraie adresse
+	jmp	0x00 ; tkt le compilo veut une vraie adresse
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
-encrypted_data_len:		dq	0xcccccccccccccccc
+encrypted_data_size:	dq	0xcccccccccccccccc
 start_encode:			dq  0xdddddddddddddddd
 _payload_64_size:		dq $-_payload_64

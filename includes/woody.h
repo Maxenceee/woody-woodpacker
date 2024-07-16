@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 02:12:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 14:11:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "elf.h"
 #include "payload/payload.h"
 
-#define WD_PREFIX "woody: "
+#define WD_PREFIX "woody"
 
 #define WD_MAGIC 0x7F454C46
 

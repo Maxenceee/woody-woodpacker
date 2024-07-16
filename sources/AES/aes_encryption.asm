@@ -1,6 +1,5 @@
 section .text
 
-
 align 256
 ONE:	; basic label
 ;  .quad 0x00000000,0x00000001
@@ -28,7 +27,6 @@ dq  0x0b0a090807060504, 0x0f0e0d0c0b0a0908
 align 256	
 BSWAP_EPI_64:	; basic label
 db  7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8
-
 
 
 section .text

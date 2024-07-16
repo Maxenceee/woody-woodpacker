@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/16 01:33:40 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 14:24:15 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ int	main(int ac, char **av)
 	{
 		print_elf_file(elf_file, PELF_DATA);
 	}
-\
+
 	printf("================================================\n");
 	printf("Target: %s\n", target);
 	printf("Key: %s\n", key_aes);
