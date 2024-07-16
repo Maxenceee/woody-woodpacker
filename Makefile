@@ -12,8 +12,8 @@ HEADERS			=	$(shell find $(HEADERS_DIR) -name "*.h") $(shell find $(MANDATORY_DI
 
 CC				=	gcc
 ASM				=	nasm
-RM				=	rm -f
-CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 -Wall -Wextra -Werror
+RM				=	rm
+CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 #-Wall -Wextra -Werror
 
 ifeq ($(shell uname), Darwin)
 	ASMFLAGS	=	-f macho64

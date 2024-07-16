@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 15:06:30 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/16 19:14:31 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	encrypt_text_section(t_elf_file *elf)
 	
 	AES_CTR_encrypt((uint8_t *)text_section->data, cypher, IV , nonce, text_section->sh_size, f_key, 64);
 
-	memmove(text_section->data, cypher, text_section->sh_size); // copy the encrypted data in the section data buffer
+	ft_memmove(text_section->data, cypher, text_section->sh_size); // copy the encrypted data in the section data buffer
 	free(cypher);
 	free(f_key);
 	return (0);
