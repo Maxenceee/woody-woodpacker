@@ -296,7 +296,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		printf("  [Nr] Name               Type               Address            Offset             Size               Align\n");
 		for (int i = 0; i < elf_file->e_shnum; i++)
 		{
-			printf("  [%2d] ", i);
+			printf("  [%*d] ", elf_file->e_shnum / 10 >= 10 ? 3 : 2, i);
 			printf("%-18s ", elf_file->section_tables[i].sh_name);
 			if (elf_file->section_tables[i].sh_type < 0x13)
 				printf("%-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
