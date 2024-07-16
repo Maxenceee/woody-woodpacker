@@ -1,6 +1,12 @@
 global _payload_64
 global _payload_64_size
 
+%ifdef __APPLE__
+%define JUMP_ADDR [rel 0x0]
+%else
+%define JUMP_ADDR 0x0
+%endif
+
 [BITS 64]
 
 segment .text align=16
@@ -24,7 +30,7 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	jmp	0x0 ; tkt le compilo veut une vraie adresse
+	jmp	JUMP_ADDR; tkt le compilo veut une vraie adresse
 
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

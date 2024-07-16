@@ -16,9 +16,9 @@ RM				=	rm
 CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 #-Wall -Wextra -Werror
 
 ifeq ($(shell uname), Darwin)
-	ASMFLAGS	=	-f macho64
+	ASMFLAGS	=	-f macho64 -D __APPLE__
 else
-	ASMFLAGS	=	-f elf64
+	ASMFLAGS	=	-f elf64 -D __LINUX__
 endif
 
 NAME			=	woody_woodpacker
