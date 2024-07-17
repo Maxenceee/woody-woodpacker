@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:54:07 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/25 16:54:17 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 22:40:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	*ft_realloc(void *ptr, size_t size)
 	void	*new_ptr;
 
 	new_ptr = malloc(size);
-	if (!new_ptr)
+	if (new_ptr == NULL)
 		return (NULL);
 	if (ptr)
 	{

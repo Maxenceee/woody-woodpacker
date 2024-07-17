@@ -6,99 +6,27 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/17 19:34:17 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 22:31:22 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
 
-char *optarg = NULL; 
-int optind = 1;
 uint8_t key_aes[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
 static void	usage(void)
 {
-	// (void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-h] [-s] [-d] [-m] [-u] [-k key] file");
+	// (void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-h] [-l] [-S] [-s] [-d] [-g] [-k key] file");
 	(void)fprintf(stderr, "%s\n", "usage: woody_woodpacker <option(s)> file");
 	(void)fprintf(stderr, "  %s\n", "Options are:");
-	(void)fprintf(stderr, "  %-10s %s\n", "-h", "Display the ELF file header");
-	(void)fprintf(stderr, "  %-10s %s\n", "-l", "Display the program headers");
-	(void)fprintf(stderr, "  %-10s %s\n", "-S", "Display the sections' header");
-	(void)fprintf(stderr, "  %-10s %s\n", "-s", "Display the symbol table");
-	(void)fprintf(stderr, "  %-10s %s\n", "-d", "Display the section data");
-	(void)fprintf(stderr, "  %-10s %s\n", "-k <key>", "Use custom encrypt key");
+	(void)fprintf(stderr, "  %-8s %s\n", "-h", "Display the ELF file header");
+	(void)fprintf(stderr, "  %-8s %s\n", "-l", "Display the program headers");
+	(void)fprintf(stderr, "  %-8s %s\n", "-S", "Display the sections' header");
+	(void)fprintf(stderr, "  %-8s %s\n", "-s", "Display the symbol table");
+	(void)fprintf(stderr, "  %-8s %s\n", "-d", "Display the section data");
+	(void)fprintf(stderr, "  %-8s %s\n", "-g", "Update debug symbols");
+	(void)fprintf(stderr, "  %-8s %s\n", "-k <key>", "Use custom encrypt key");
 	exit(64);
-}
-
-int ft_getopt(int argc, char * const argv[], const char *optstring)
-{
-	static int optpos = 1;
-
-	if (optind >= argc || argv[optind][0] != '-') {
-		return (-1);
-	}
-
-	if (argv[optind][0] == '-' && argv[optind][1] == '-') {
-		optind++;
-		return (-1);
-	}
-
-	if (optpos == 1 && strchr(optstring, argv[optind][1]) && strchr(optstring, argv[optind][1])[1] == ':') {
-		if (argv[optind][2] != '\0') {
-			optarg = &argv[optind][2];
-			optind++;
-			return (argv[optind - 1][1]);
-		} else if (optind + 1 < argc) {
-			optarg = argv[optind + 1];
-			optind += 2;
-			return (argv[optind - 2][1]);
-		} else {
-			optind++;
-			return ('?');
-		}
-	}
-
-	if (argv[optind][optpos] == '\0') {
-		optind++;
-		optpos = 1;
-		return (ft_getopt(argc, argv, optstring));
-	}
-
-	char optchar = argv[optind][optpos];
-	char *optdecl = strchr(optstring, optchar);
-
-	if (optdecl == NULL) {
-		optpos++;
-		if (argv[optind][optpos] == '\0') {
-			optind++;
-			optpos = 1;
-		}
-		return ('?');
-	}
-
-	if (optdecl[1] == ':') {
-		optind++;
-		optpos = 1;
-		return ('?');
-	} else {
-		optpos++;
-		if (argv[optind][optpos] == '\0') {
-			optind++;
-			optpos = 1;
-		}
-		return (optchar);
-	}
-}
-
-void	printbytes(uint8_t *bytes, size_t size)
-{
-	size_t i = 0;
-	while (i < size)
-	{
-		printf("%02x ", bytes[i]);
-		i++;
-	}
-	printf("\n");
 }
 
 int	main(int ac, char **av)
@@ -126,6 +54,9 @@ int	main(int ac, char **av)
 				break;
 			case 's':
 				option |= F_SYM;
+				break;
+			case 'g':
+				option |= F_UDSYM;
 				break;
 			case 'n':
 				option |= F_NOOUTPUT;
@@ -159,7 +90,7 @@ int	main(int ac, char **av)
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)
 	{
-		printf("Error: Cannot get format for file %s\n", target);
+		delete_binary_reader(reader);
 		return (1);
 	}
 
@@ -247,11 +178,18 @@ int	main(int ac, char **av)
 
 	// return (0);
 
+	delete_binary_reader(reader);
+
 	if (option & F_NOOUTPUT)
 		return (0);
 
-	packer(elf_file, reader);
+	if (elf_insert_section(elf_file, option) == -1)
+	{
+		delete_elf_file(elf_file);
+		ft_error("An error occured while inserting the new section");
+		return (1);
+	}
 
-	delete_binary_reader(reader);
-	// delete_elf_file(elf_file);
+	packer(elf_file);
+	delete_elf_file(elf_file);
 }

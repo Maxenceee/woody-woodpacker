@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 19:11:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 22:57:18 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ size_t calculate_padded_size(size_t size, size_t alignment) {
 int	has_section(t_elf_file *elf, const char *name)
 {
 	for (int i = 0; i < elf->e_shnum; i++) {
-		if (strcmp(elf->section_tables[i].sh_name, name) == 0) {
+		if (elf->section_tables[i].sh_name && strcmp(elf->section_tables[i].sh_name, name) == 0) {
 			return (1);
 		}
 	}
@@ -99,18 +99,19 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_s
 	int old_size = elf->section_tables[section_string_table_index].sh_size;
 
 	size_t new_string_table_size = elf->section_tables[section_string_table_index].sh_size + section_name_len;
-	elf->section_tables[section_string_table_index].data = ft_realloc(elf->section_tables[section_string_table_index].data, new_string_table_size);
-	if (elf->section_tables[section_string_table_index].data == NULL)
+	void *tmp = ft_realloc(elf->section_tables[section_string_table_index].data, new_string_table_size);
+	if (tmp == NULL)
 	{
+		printf("Bad readlloc in set_new_elf_section_string_table\n");
 		free(section_name);
 		return (-1);
 	}
+	elf->section_tables[section_string_table_index].data = tmp;
 
 	ft_memcpy(elf->section_tables[section_string_table_index].data + old_size, section_name, section_name_len + 1);
 	new_section->sh_name_offset = old_size;
-	new_section->sh_name = WB_SECTION_NAME;
+	new_section->sh_name = section_name;
 	elf->section_tables[section_string_table_index].sh_size = new_string_table_size;
-	free(section_name);
 	return (0);
 }
 
@@ -120,12 +121,16 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	elf->e_shnum += 1;
 
 	size_t new_section_headers_size = sizeof(t_elf_section_table) * elf->e_shnum;
-	elf->section_tables = ft_realloc(elf->section_tables, new_section_headers_size);
-	if (!elf->section_tables)
+	void *tmp = ft_realloc(elf->section_tables, new_section_headers_size);
+	if (tmp == NULL)
+	{
+		printf("Bad readlloc in create_new_elf_section\n");
 		return (-1);
+	}
+	elf->section_tables = tmp;
 
 	t_elf_section_table *new_section = ft_calloc(1, sizeof(t_elf_section_table));
-	if (!new_section)
+	if (new_section == NULL)
 		return (-1);
 
 	new_section->sh_type = SHT_PROGBITS;
@@ -137,6 +142,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 	uint64_t current_offset_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
 	uint64_t current_offset = elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size + current_offset_padding;
+
 	uint64_t current_vaddr_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
 	uint64_t current_vaddr = elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size + current_vaddr_padding;
 	
@@ -156,7 +162,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	}
 
 	new_section->sh_size = calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
-	
 	packer->new_section_size += new_section->sh_size;
 	// printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
 	// printf("new elf->program_headers[last_load_prog].p_memsz: %#lx\n\n", elf->program_headers[last_load_prog].p_memsz + packer->new_section_size);
@@ -166,6 +171,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	ft_memmove(elf->section_tables + last_section_in_prog + 2, elf->section_tables + last_section_in_prog + 1, remaining_after_section_headers_data_size);
 
 	last_section_in_prog += 1;
+	ft_memset(&elf->section_tables[last_section_in_prog], 0, sizeof(t_elf_section_table));
 
 	if (elf->e_shstrndx != 0)
 	{
@@ -175,6 +181,8 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 		if (set_new_elf_section_string_table(elf, new_section) == -1)
 		{
+			if (new_section->data)
+				free(new_section->data);
 			free(new_section);
 			return (-1);
 		}
@@ -282,7 +290,7 @@ void	update_symbols(t_elf_file *elf, t_packer *packer)
 	}
 }
 
-int	elf_insert_section(t_elf_file *elf)
+int	elf_insert_section(t_elf_file *elf, int opt)
 {
 	t_packer	packer;
 	packer.payload_64_size = WB_PAYLOAD_SIZE;
@@ -298,6 +306,8 @@ int	elf_insert_section(t_elf_file *elf)
 	update_program_header(elf, &packer, progi, sectioni);
 	update_section_addr(elf, &packer, sectioni);
 	update_entry_point(elf, &packer, sectioni);
-	update_symbols(elf, &packer);
+
+	if (opt & F_UDSYM)
+		update_symbols(elf, &packer);
 	return (0);
 }

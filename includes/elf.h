@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 20:08:00 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 21:41:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 #define ELF_H
 
 #include <stdint.h>
+
+#define ET_NONE		0		/* No file type */
+#define ET_REL		1		/* Relocatable file */
+#define ET_EXEC		2		/* Executable file */
+#define ET_DYN		3		/* Shared object file */
+#define ET_CORE		4		/* Core file */
+#define	ET_NUM		5		/* Number of defined types */
+#define ET_LOOS		0xfe00	/* OS-specific range start */
+#define ET_HIOS		0xfeff	/* OS-specific range end */
+#define ET_LOPROC	0xff00	/* Processor-specific range start */
+#define ET_HIPROC	0xffff	/* Processor-specific range end */
 
 #define	PT_NULL		0		/* Program header table entry unused */
 #define PT_LOAD		1		/* Loadable program segment */

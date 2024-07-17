@@ -1,255 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   elf_file.c                                      :+:      :+:    :+:   */
+/*   print_elf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/23 16:11:26 by mbrement          #+#    #+#             */
-/*   Updated: 2024/04/24 17:09:42 by mbrement         ###   ########lyon.fr   */
+/*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
+/*   Updated: 2024/07/17 21:56:42 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
-#include "ctype.h"
-
-static void	get_type_name(t_binary_reader *reader, t_elf_file *elf_file)
-{
-	reader->seek(reader, 0x10);
-	elf_file->e_type = reader->get_uint16(reader);
-	 switch(elf_file->e_type) {
-		case 0x00 :
-			elf_file->e_type_name = "NONE";
-			break;
-		case 0x01 :
-			elf_file->e_type_name = "REL";
-			break;
-		case 0x02 :
-			elf_file->e_type_name = "EXEC";
-			break;
-		case 0x03 :
-			elf_file->e_type_name = "DYN";
-			break;
-		case 0x04 :
-			elf_file->e_type_name = "CORE";
-			break;
-		case 0xFE00 :
-			elf_file->e_type_name = "LOOS";
-			break;
-		case 0xFEFF :
-			elf_file->e_type_name = "HIOS";
-			break;
-		case 0xFF00 :
-			elf_file->e_type_name = "LOPROC";
-			break;
-		case 0xFFFF :
-			elf_file->e_type_name = "HIPROC";
-            break;
-        default:
-			elf_file->e_type_name = "Error"; 
-    }
-}
-
-static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
-{
-	reader->seek(reader, elf_file->e_shoff);
-	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section_table));
-	if (elf_file->section_tables == NULL)
-		return (ft_error("Could not allocate memory."), 1);
-	for (int i = 0; i < elf_file->e_shnum; i++)
-	{
-		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
-		elf_file->section_tables[i].sh_type = reader->get_uint32(reader);
-		if (elf_file->e_ident.ei_class == WD_32BITS)
-		{
-			elf_file->section_tables[i].sh_flags = reader->get_uint32(reader);
-			elf_file->section_tables[i].sh_address = reader->get_uint32(reader);
-			elf_file->section_tables[i].sh_offset = reader->get_uint32(reader);
-			elf_file->section_tables[i].sh_size = reader->get_uint32(reader);
-		}
-		else
-		{
-			elf_file->section_tables[i].sh_flags = reader->get_uint64(reader);
-			elf_file->section_tables[i].sh_address = reader->get_uint64(reader);
-			elf_file->section_tables[i].sh_offset = reader->get_uint64(reader);
-			elf_file->section_tables[i].sh_size = reader->get_uint64(reader);
-		}
-		elf_file->section_tables[i].sh_link = reader->get_uint32(reader);
-		elf_file->section_tables[i].sh_info = reader->get_uint32(reader);
-		if (elf_file->e_ident.ei_class == WD_32BITS)
-		{
-			elf_file->section_tables[i].sh_addralign = reader->get_uint32(reader);
-			elf_file->section_tables[i].sh_entsize = reader->get_uint32(reader);
-		}
-		else
-		{
-			elf_file->section_tables[i].sh_addralign = reader->get_uint64(reader);
-			elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
-		}
-	}
-	if (elf_file->e_shstrndx > 0)
-	{
-		for (int i = 0; i < elf_file->e_shnum; i++)
-		{
-			reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
-			elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
-			if (elf_file->section_tables[i].sh_name == NULL)
-				return (ft_error("Could not allocate memory."), 1);
-		}
-	}
-
-	size_t elf_section_data_size;
-	for (int i = 0; i < elf_file->e_shnum; i++)
-	{
-		if (elf_file->section_tables[i].sh_type != SHT_NOBITS) {
-			elf_section_data_size = elf_file->section_tables[i].sh_size;
-
-			elf_file->section_tables[i].data = malloc(elf_section_data_size);
-			if (elf_file->section_tables[i].data == NULL) {
-				free(elf_file->section_tables[i].data);
-				return (ft_error("Could not allocate memory."), 1);
-			}
-
-			ft_memset(elf_file->section_tables[i].data, 0, elf_section_data_size);
-			reader->seek(reader, elf_file->section_tables[i].sh_offset);
-			reader->get_bytes(reader, elf_file->section_tables[i].data, elf_section_data_size);
-		}
-	}
-
-	return (0);
-}
-
-static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader)
-{
-	reader->seek(reader, elf_file->e_phoff);
-	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
-	if (elf_file->program_headers == NULL)
-		return (ft_error("Could not allocate memory."), 1);
-	for (int i = 0; i < elf_file->e_phnum; i++)
-	{
-		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
-		if (elf_file->e_ident.ei_class == WD_32BITS)
-		{
-			elf_file->program_headers[i].p_offset = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_vaddr = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_paddr = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_filesz = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_memsz = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_align = reader->get_uint32(reader);
-		}
-		else
-		{
-			elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
-			elf_file->program_headers[i].p_offset = reader->get_uint64(reader);
-			elf_file->program_headers[i].p_vaddr = reader->get_uint64(reader);
-			elf_file->program_headers[i].p_paddr = reader->get_uint64(reader);
-			elf_file->program_headers[i].p_filesz = reader->get_uint64(reader);
-			elf_file->program_headers[i].p_memsz = reader->get_uint64(reader);
-			elf_file->program_headers[i].p_align = reader->get_uint64(reader);
-		}
-	}
-	return (0);
-}
-
-t_elf_file	*new_elf_file(t_binary_reader *reader)
-{
-	t_elf_file *elf_file = ft_calloc(1, sizeof(t_elf_file));
-	if (elf_file == NULL)
-		return (ft_error("Could not allocate memory."), NULL);
-
-	/**
-	 * By default we set en endianness to little endian because it's the endianness of the header
-	 */
-	reader->set_endian(reader, READER_LITTLE_ENDIAN);
-	reader->get_bytes(reader, elf_file->e_ident.raw, 16);
-
-	if (elf_file->e_ident.ei_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
-	{
-		delete_elf_file(elf_file);
-		return (ft_error("Invalid file format."), NULL);
-	}
-
-	if (elf_file->e_ident.ei_data == 2)
-	{
-		reader->set_endian(reader, READER_BIG_ENDIAN);
-	}
-
-	/**
-	 * We check that the e_ident version is 1, if not the file is not valid
-	 */
-	if (elf_file->e_ident.ei_version != 1)
-	{
-		delete_elf_file(elf_file);
-		return (ft_error("Wrong version."), NULL);
-	}
-
-	/**
-	 * We ensure that the format of the binary matches the current system
-	 */
-	if (elf_file->e_ident.ei_osabi != 0x00 && elf_file->e_ident.ei_osabi != 0x03)
-	{
-		delete_elf_file(elf_file);
-		return (ft_error("Incompatible ABI."), NULL);
-	}
-
-	get_type_name(reader, elf_file);
-	elf_file->e_machine = reader->get_uint16(reader);
-	elf_file->e_version = reader->get_uint32(reader);
-
-	if (elf_file->e_ident.ei_class == WD_32BITS)
-	{
-		elf_file->e_entry += reader->get_uint32(reader);
-		elf_file->e_phoff = reader->get_uint32(reader);
-		elf_file->e_shoff = reader->get_uint32(reader);
-	}
-	else
-	{
-		elf_file->e_entry += reader->get_uint64(reader);
-		elf_file->e_phoff = reader->get_uint64(reader);
-		elf_file->e_shoff = reader->get_uint64(reader);
-	}
-	elf_file->e_flags = reader->get_uint32(reader);
-	elf_file->e_ehsize = reader->get_uint16(reader);
-	elf_file->e_phentsize = reader->get_uint16(reader);
-	elf_file->e_phnum = reader->get_uint16(reader);
-	elf_file->e_shentsize = reader->get_uint16(reader);
-	elf_file->e_shnum = reader->get_uint16(reader);
-	elf_file->e_shstrndx = reader->get_uint16(reader);
-
-	if (get_elf_tables_offset(elf_file, reader))
-	{
-		delete_elf_file(elf_file);
-		return (NULL);
-	}
-
-	if (get_elf_program_headers(elf_file, reader))
-	{
-		delete_elf_file(elf_file);
-		return (NULL);
-	}
-
-	return (elf_file);
-}
-
-void	delete_elf_file(t_elf_file *elf_file)
-{
-	if (elf_file == NULL)
-		return ;
-
-	if (elf_file->program_headers)
-		free(elf_file->program_headers);
-
-	if (elf_file->section_tables)
-	{
-		for (int i = 0; i < elf_file->e_shnum; i++)
-		{
-			free(elf_file->section_tables[i].sh_name);
-		}
-		free(elf_file->section_tables);
-	}
-	free(elf_file);
-}
+#include <ctype.h>
 
 static void	print_elf_program_flag(uint32_t flag)
 {
@@ -337,7 +99,43 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			break;
 		}
 		printf("  ABI Version:                       %u\n", elf_file->e_ident.ei_abi_version);
-		printf("  Type:                              %s\n", elf_file->e_type_name);
+		printf("  Type:                              ");
+		switch (elf_file->e_type)
+		{
+		case ET_NONE:
+			printf("NONE\n");
+			break;
+		case ET_REL:
+			printf("REL\n");
+			break;
+		case ET_EXEC:
+			printf("EXEC\n");
+			break;
+		case ET_DYN:
+			printf("DYN\n");
+			break;
+		case ET_CORE:
+			printf("CORE\n");
+			break;
+		case ET_NUM:
+			printf("NUM\n");
+			break;
+		case ET_LOOS:
+			printf("LOOS\n");
+			break;
+		case ET_HIOS:
+			printf("HIOS\n");
+			break;
+		case ET_LOPROC:
+			printf("LOPROC\n");
+			break;
+		case ET_HIPROC:
+			printf("HIPROC\n");
+			break;
+		default:
+			printf("Unknown\n");
+			break;
+		}
 		printf("  Version:                           %#x\n", elf_file->e_version);
 		printf("  Entry point:                       %#lx\n", elf_file->e_entry);
 		printf("  Start of program headers:          %ld (bytes into file)\n", elf_file->e_phoff);
@@ -480,64 +278,64 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			switch (elf_file->program_headers[i].p_type)
 			{
 			case PT_NULL:
-				printf("%-18s ", "NULL");
+				printf("%-14s ", "NULL");
 				break;
 			case PT_LOAD:
-				printf("%-18s ", "LOAD");
+				printf("%-14s ", "LOAD");
 				break;
 			case PT_DYNAMIC:
-				printf("%-18s ", "DYNAMIC");
+				printf("%-14s ", "DYNAMIC");
 				break;
 			case PT_INTERP:
-				printf("%-18s ", "INTERP");
+				printf("%-14s ", "INTERP");
 				break;
 			case PT_NOTE:
-				printf("%-18s ", "NOTE");
+				printf("%-14s ", "NOTE");
 				break;
 			case PT_SHLIB:
-				printf("%-18s ", "SHLIB");
+				printf("%-14s ", "SHLIB");
 				break;
 			case PT_PHDR:
-				printf("%-18s ", "PHDR");
+				printf("%-14s ", "PHDR");
 				break;
 			case PT_TLS:
-				printf("%-18s ", "TLS");
+				printf("%-14s ", "TLS");
 				break;
 			case PT_NUM:
-				printf("%-18s ", "NUM");
+				printf("%-14s ", "NUM");
 				break;
 			case PT_LOOS:
-				printf("%-18s ", "LOOS");
+				printf("%-14s ", "LOOS");
 				break;
 			case PT_GNU_EH_FRAME:
-				printf("%-18s ", "GNU_EH_FRAME");
+				printf("%-14s ", "GNU_EH_FRAME");
 				break;
 			case PT_GNU_STACK:
-				printf("%-18s ", "GNU_STACK");
+				printf("%-14s ", "GNU_STACK");
 				break;
 			case PT_GNU_RELRO:
-				printf("%-18s ", "GNU_RELRO");
+				printf("%-14s ", "GNU_RELRO");
 				break;
 			case PT_GNU_PROPERTY:
-				printf("%-18s ", "GNU_PROPERTY");
+				printf("%-14s ", "GNU_PROPERTY");
 				break;
 			case PT_SUNWBSS:
-				printf("%-18s ", "SUNWBSS");
+				printf("%-14s ", "SUNWBSS");
 				break;
 			case PT_SUNWSTACK:
-				printf("%-18s ", "SUNWSTACK");
+				printf("%-14s ", "SUNWSTACK");
 				break;
 			case PT_HIOS:
-				printf("%-18s ", "HIOS");
+				printf("%-14s ", "HIOS");
 				break;
 			case PT_LOPROC:
-				printf("%-18s ", "LOPROC");
+				printf("%-14s ", "LOPROC");
 				break;
 			case PT_HIPROC:
-				printf("%-18s ", "HIPROC");
+				printf("%-14s ", "HIPROC");
 				break;
 			default:
-				printf("%#-18x ", elf_file->program_headers[i].p_type);
+				printf("%#-14x ", elf_file->program_headers[i].p_type);
 				break;
 			}
 			printf("%#018lx ", elf_file->program_headers[i].p_offset);
