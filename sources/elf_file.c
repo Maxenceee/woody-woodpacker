@@ -354,7 +354,51 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			case SHT_NUM:
 				printf("%-18s ", "NUM");
 				break;
-
+			case SHT_LOOS:
+				printf("%-18s ", "LOOS");
+				break;
+			case SHT_GNU_ATTRIBUTES:
+				printf("%-18s ", "GNU_ATTRIBUTES");
+				break;
+			case SHT_GNU_HASH:
+				printf("%-18s ", "GNU_HASH");
+				break;
+			case SHT_GNU_LIBLIST:
+				printf("%-18s ", "GNU_LIBLIST");
+				break;
+			case SHT_CHECKSUM:
+				printf("%-18s ", "CHECKSUM");
+				break;
+			case SHT_LOSUNW:
+				printf("%-18s ", "LOSUNW");
+				break;
+			case SHT_SUNW_COMDAT:
+				printf("%-18s ", "SUNW_COMDAT");
+				break;
+			case SHT_SUNW_syminfo:
+				printf("%-18s ", "SUNW_syminfo");
+				break;
+			case SHT_GNU_verdef:
+				printf("%-18s ", "GNU_verdef");
+				break;
+			case SHT_GNU_verneed:
+				printf("%-18s ", "VERNEED");
+				break;
+			case SHT_GNU_versym:
+				printf("%-18s ", "VERSYM");
+				break;
+			case SHT_LOPROC:
+				printf("%-18s ", "LOPROC");
+				break;
+			case SHT_HIPROC:
+				printf("%-18s ", "HIPROC");
+				break;
+			case SHT_LOUSER:
+				printf("%-18s ", "LOUSER");
+				break;
+			case SHT_HIUSER:
+				printf("%-18s ", "HIUSER");
+				break;
 			default:
 				printf("%#-18x ", elf_file->section_tables[i].sh_type);
 				break;
