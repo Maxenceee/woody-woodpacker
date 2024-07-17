@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/16 20:13:49 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 18:54:55 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ uint8_t key_aes[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789a
 
 static void	usage(void)
 {
-	(void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-h] [-s] [-d] [-k key] file");
+	(void)fprintf(stderr, "%s\n", "usage: woody_woodpacker [-h] [-s] [-d] [-m] [-k key] file");
 	exit(64);
 }
 
@@ -98,7 +98,7 @@ int	main(int ac, char **av)
 	char *target;
 	int ch, option = 0;
 	
-	while ((ch = ft_getopt(ac, av, "k:hsdn")) != -1) {
+	while ((ch = ft_getopt(ac, av, "k:hsdmn")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
@@ -112,6 +112,9 @@ int	main(int ac, char **av)
 				break;
 			case 'd':
 				option |= F_DATA;
+				break;
+			case 'm':
+				option |= F_SYM;
 				break;
 			case 'n':
 				option |= F_NOOUTPUT;
@@ -159,6 +162,11 @@ int	main(int ac, char **av)
 		print_elf_file(elf_file, PELF_SECTION);
 	}
 
+	if (option & F_SYM)
+	{
+		print_elf_file(elf_file, PELF_SYM);
+	}
+	
 	if (option & F_DATA)
 	{
 		print_elf_file(elf_file, PELF_DATA);

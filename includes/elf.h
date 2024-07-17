@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 14:59:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 18:45:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@
 #define PT_LOPROC	0x70000000	/* Start of processor-specific */
 #define PT_HIPROC	0x7fffffff	/* End of processor-specific */
 
-typedef struct s_elf_section_table {
+typedef struct
+{
 	uint32_t	sh_name_offset;
 	uint32_t	sh_type;
 	uint64_t	sh_flags;
@@ -51,7 +52,7 @@ typedef struct s_elf_section_table {
 	char		*sh_name;
 }	t_elf_section_table;
 
-typedef struct s_elf_program_header
+typedef struct
 {
 	uint32_t	p_type;
 	uint32_t	p_flags;
@@ -122,5 +123,54 @@ typedef struct s_elf_program_header
 extern const char *g_elf_section_table_type[];
 extern const char *g_elf_osabi_name[];
 extern const char *g_elf_program_header_type[];
+
+
+typedef struct
+{
+	uint32_t	st_name;
+	uint8_t		st_info;
+	uint8_t		st_other;
+	uint16_t	st_shndx;
+	uint64_t	st_value;
+	uint64_t	st_size;
+}	t_elf_sym;
+
+enum
+{
+	STB_LOCAL	= 0,
+	STB_GLOBAL	= 1,
+	STB_WEAK	= 2,
+	STB_LOOS	= 10,
+	STB_HIOS	= 12,
+	STB_LOPROC	= 13,
+	STB_HIPROC	= 15,
+};
+ 
+enum
+{
+	STT_NOTYPE	= 0,
+	STT_OBJECT	= 1,
+	STT_FUNC	= 2,
+	STT_SECTION	= 3,
+	STT_FILE	= 4,
+	STT_LOOS	= 10,
+	STT_HIOS	= 12,
+	STT_LOPROC	= 13,
+	STT_HIPROC	= 15,
+};
+
+#define ELF64_ST_BIND(i)    ((i)>>4)
+ 
+#define ELF64_ST_TYPE(i)    ((i)&0xf)
+ 
+#define ELF64_ST_INFO(b,t)  (((b)<<4)+((t)&0xf))
+
+enum
+{
+	STV_DEFAULT		= 0,
+	STV_INTERNAL	= 1,
+	STV_HIDDEN		= 2,
+	STV_PROTECTED	= 3,
+};
 
 #endif /* ELF_H */

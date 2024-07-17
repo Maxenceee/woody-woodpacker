@@ -31,13 +31,13 @@
 #define F_KEY		0x01
 #define F_HEADER	0x02
 #define F_SECTION	0x04
-#define F_DATA		0x08
-#define F_ENCRYPT	0x10
-#define F_DECRYPT	0x20
+#define F_SYM		0x08
+#define F_DATA		0x10
 #define F_NOOUTPUT	0x80
 
 
-enum e_class {
+enum
+{
 	WD_32BITS = 1,
 	WD_64BITS = 2
 };
@@ -46,10 +46,12 @@ enum e_class {
  * Structures
  */
 
-typedef struct s_elf_file {
-	union u_elf_e_ident
+typedef struct
+{
+	union
 	{
-		struct {
+		struct
+		{
 			uint32_t	ei_magic;				// magic number
 			uint8_t		ei_class;				// 32 bits or 64 bits
 			uint8_t		ei_data;				// little of big endian
@@ -93,7 +95,8 @@ extern uint8_t	key_aes[WD_AES_KEY_SIZE];
 
 #define WB_SECTION_NAME ".i'm a teapot"
 
-typedef struct s_packer {
+typedef struct
+{
 	uint64_t	loader_offset;
 	uint8_t		*payload_64;
 	uint64_t	payload_64_size;
@@ -110,7 +113,8 @@ void			delete_elf_file(t_elf_file *file_format);
 #define PELF_ALL		0x01
 #define PELF_HEADER		0x02
 #define PELF_SECTION	0x04
-#define PELF_DATA		0x08
+#define PELF_SYM		0x08
+#define PELF_DATA		0x10
 
 void			print_elf_file(t_elf_file *elf_file, int level);
 

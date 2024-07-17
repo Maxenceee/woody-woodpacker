@@ -253,6 +253,40 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
 
+void	update_symbols(t_elf_file *elf, t_packer *packer)
+{
+	int symstr_idx = 0;
+	int symtab_idx = 0;
+
+	for (uint16_t i = 0; i < elf->e_shnum; i++) {
+		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0 && elf->section_tables[i].sh_type == SHT_SYMTAB)
+			symtab_idx = i;
+		else if (strcmp(elf->section_tables[i].sh_name, ".strtab") == 0 && elf->section_tables[i].sh_type == SHT_STRTAB)
+			symstr_idx = i;
+	}
+	if (symtab_idx == 0 || symstr_idx == 0)
+	{
+		ft_warning("Could not update symbol table");
+		return ;
+	}
+
+	t_elf_sym sym;
+	for (size_t j = 0; j * sizeof(t_elf_sym) < elf->section_tables[symtab_idx].sh_size; j++) {
+		void *absoffset = elf->section_tables[symtab_idx].data + j * sizeof(t_elf_sym);
+		memmove(&sym, absoffset, sizeof(sym));
+
+		if (sym.st_name == 0)
+			continue;
+
+		if (strcmp(elf->section_tables[symstr_idx].data + sym.st_name, "_start") == 0)
+		{
+			sym.st_value = elf->e_entry;
+			memmove(absoffset, &sym, sizeof(sym));
+			break;
+		}
+	}
+}
+
 int	elf_insert_section(t_elf_file *elf)
 {
 	t_packer	packer;
@@ -269,5 +303,6 @@ int	elf_insert_section(t_elf_file *elf)
 	update_program_header(elf, &packer, progi, sectioni);
 	update_section_addr(elf, &packer, sectioni);
 	update_entry_point(elf, &packer, sectioni);
+	update_symbols(elf, &packer);
 	return (0);
 }
