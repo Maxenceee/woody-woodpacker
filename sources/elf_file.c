@@ -275,7 +275,67 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		printf("  Class:                             ELF%d\n", elf_file->e_ident.ei_class * 32);
 		printf("  Data:                              2's complement, %s\n", elf_file->e_ident.ei_data - 1 ? "big endian" : "little endian");
 		printf("  Version:                           %u (current)\n", elf_file->e_ident.ei_version);
-		printf("  OS/ABI:                            %s\n", g_elf_osabi_name[elf_file->e_ident.ei_osabi]);
+		printf("  OS/ABI:                            ");
+		switch (elf_file->e_ident.ei_osabi)
+		{
+		case 0:
+			printf("UNIX - System V\n");
+			break;
+		case 1:
+			printf("HP-UX\n");
+			break;
+		case 2:
+			printf("NetBSD\n");
+			break;
+		case 3:
+			printf("Linux\n");
+			break;
+		case 4:
+			printf("GNU Hurd\n");
+			break;
+		case 5:
+			printf("Solaris\n");
+			break;
+		case 6:
+			printf("AIX (Monterey)\n");
+			break;
+		case 7:
+			printf("IRIX\n");
+			break;
+		case 8:
+			printf("FreeBSD\n");
+			break;
+		case 9:
+			printf("Tru64\n");
+			break;
+		case 10:
+			printf("Novell Modesto\n");
+			break;
+		case 11:
+			printf("OpenBSD\n");
+			break;
+		case 12:
+			printf("OpenVMS\n");
+			break;
+		case 13:
+			printf("NonStop Kernel\n");
+			break;
+		case 14:
+			printf("AROS\n");
+			break;
+		case 15:
+			printf("FenixOS\n");
+			break;
+		case 16:
+			printf("Nuxi CloudABI\n");
+			break;
+		case 17:
+			printf("Stratus Technologies OpenVOS\n");
+			break;
+		default:
+			printf("Unknown\n");
+			break;
+		}
 		printf("  ABI Version:                       %u\n", elf_file->e_ident.ei_abi_version);
 		printf("  Type:                              %s\n", elf_file->e_type_name);
 		printf("  Version:                           %#x\n", elf_file->e_version);
@@ -417,10 +477,69 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		for (int i = 0; i < elf_file->e_phnum; i++)
 		{
 			printf("  ");
-			if (elf_file->program_headers[i].p_type < 0x08)
-				printf("%-14s ", g_elf_program_header_type[elf_file->program_headers[i].p_type]);
-			else
-				printf("%#-14x ", elf_file->program_headers[i].p_type);
+			switch (elf_file->program_headers[i].p_type)
+			{
+			case PT_NULL:
+				printf("%-18s ", "NULL");
+				break;
+			case PT_LOAD:
+				printf("%-18s ", "LOAD");
+				break;
+			case PT_DYNAMIC:
+				printf("%-18s ", "DYNAMIC");
+				break;
+			case PT_INTERP:
+				printf("%-18s ", "INTERP");
+				break;
+			case PT_NOTE:
+				printf("%-18s ", "NOTE");
+				break;
+			case PT_SHLIB:
+				printf("%-18s ", "SHLIB");
+				break;
+			case PT_PHDR:
+				printf("%-18s ", "PHDR");
+				break;
+			case PT_TLS:
+				printf("%-18s ", "TLS");
+				break;
+			case PT_NUM:
+				printf("%-18s ", "NUM");
+				break;
+			case PT_LOOS:
+				printf("%-18s ", "LOOS");
+				break;
+			case PT_GNU_EH_FRAME:
+				printf("%-18s ", "GNU_EH_FRAME");
+				break;
+			case PT_GNU_STACK:
+				printf("%-18s ", "GNU_STACK");
+				break;
+			case PT_GNU_RELRO:
+				printf("%-18s ", "GNU_RELRO");
+				break;
+			case PT_GNU_PROPERTY:
+				printf("%-18s ", "GNU_PROPERTY");
+				break;
+			case PT_SUNWBSS:
+				printf("%-18s ", "SUNWBSS");
+				break;
+			case PT_SUNWSTACK:
+				printf("%-18s ", "SUNWSTACK");
+				break;
+			case PT_HIOS:
+				printf("%-18s ", "HIOS");
+				break;
+			case PT_LOPROC:
+				printf("%-18s ", "LOPROC");
+				break;
+			case PT_HIPROC:
+				printf("%-18s ", "HIPROC");
+				break;
+			default:
+				printf("%#-18x ", elf_file->program_headers[i].p_type);
+				break;
+			}
 			printf("%#018lx ", elf_file->program_headers[i].p_offset);
 			printf("%#018lx ", elf_file->program_headers[i].p_vaddr);
 			printf("%#018lx ", elf_file->program_headers[i].p_paddr);
