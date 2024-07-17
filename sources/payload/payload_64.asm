@@ -23,7 +23,7 @@ _payload_64:
 	push rdi
 
 
-	mov	rsi, 256 
+	mov	rsi, 256
 	mov rdx, 0x3
 	mov r10, 0x22
 	mov r8, -1
@@ -31,12 +31,11 @@ _payload_64:
 	xor rdi, rdi
 	mov rax, 9
 	syscall
-	mov rsi, rax
-	mov	rdi, key
+	mov rdi, rax
+	mov	rsi, key
 	; mov	rsi, f_key
 	mov rsi, rax
 	call _AES_256_Key_Expansion2
-; after_key_expansion:
 	jmp .print_start_msg
 .displayed_str:
 	db "....WOODY....", 0x0a, 0
@@ -50,7 +49,7 @@ _payload_64:
 	pop rsi
 	pop rdx
 	pop rax
-	; ret
+	ret
 	; jmp JUMP_ADDR; tkt le compilo veut une vraie adresse
 
 align 256
@@ -266,6 +265,25 @@ END_4:	; basic label
 ret 
 
 
+_PRINT:	; basic label
+	  push rbx
+    push rbp
+    push r12
+    push r13
+    push r14
+    push r15
+	mov rax, 1
+	mov rdi, 1
+	mov rdx, 6
+	lea rsi, [rel hello_message]
+	syscall
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
+    pop rbx
+	ret
 
 _AES_256_Key_Expansion2:	; basic label
 ; # 	[parameter 1: %rdi]
@@ -343,5 +361,6 @@ key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
 start_encode:			dq  0xdddddddddddddddd
+hello_message: db 'hello', 0xA  ; "hello\n"
 f_key:					dq	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 _payload_64_size:		dq $-_payload_64
