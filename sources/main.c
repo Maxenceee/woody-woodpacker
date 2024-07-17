@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/17 22:31:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 23:04:21 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	main(int ac, char **av)
 	char *target;
 	int ch, option = 0;
 
-	while ((ch = ft_getopt(ac, av, "k:hSdsln")) != -1) {
+	while ((ch = ft_getopt(ac, av, "k:hlSsdgn")) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;

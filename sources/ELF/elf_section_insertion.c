@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 22:57:18 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 23:04:59 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ void	update_symbols(t_elf_file *elf, t_packer *packer)
 		if (sym.st_name == 0)
 			continue;
 
-		if (strcmp(elf->section_tables[symstr_idx].data + sym.st_name, "_start") == 0)
+		if (strcmp((char *)(elf->section_tables[symstr_idx].data + sym.st_name), "_start") == 0)
 		{
 			sym.st_value = elf->e_entry;
 			memmove(absoffset, &sym, sizeof(sym));
