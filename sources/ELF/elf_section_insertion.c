@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   elf_section_insertion.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 19:05:16 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 17:23:58 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
+#include <stdio.h>
 
 size_t calculate_padding(size_t size, size_t alignment) {
 	size_t padding = (alignment - (size % alignment)) % alignment;
@@ -69,6 +70,11 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
 	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
 	if (!payload)
 		return (NULL);
+
+	// for (int i = 0; i < packer->payload_64_size; i++) {
+	// 	printf("%#x ", packer->payload_64[i]);
+	// }
+	printf("%d\n", packer->payload_64_size);
 
 	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
 	// Copy key inside payload
@@ -231,15 +237,19 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	uint64_t last_entry_point = elf->e_entry;
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
-	// printf("last_entry_point: %#lx\n", last_entry_point);
-	// printf("new_entry_point: %#lx\n", elf->e_entry);
+	printf("last_entry_point: %#lx\n", last_entry_point);
+	printf("new_entry_point: %#lx\n", elf->e_entry);
 
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address + 4; // + 4 bytes to go to the address of the instruction after jump
-	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
-	// printf("offset: %d => %#x\n", offset, offset);
-	// printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
+	int64_t offset = (int64_t)(last_entry_point - next_instruction_address);
+	printf("offset: %d => %#lx\n", offset, offset);
+	printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
+	/**
+	 * TODO:
+	 * mettre a jour les offset pour pas tout casser
+	 */
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
 
