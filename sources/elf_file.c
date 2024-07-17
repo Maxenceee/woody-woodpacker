@@ -298,16 +298,76 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		{
 			printf("  [%*d] ", elf_file->e_shnum / 10 >= 10 ? 3 : 2, i);
 			printf("%-18s ", elf_file->section_tables[i].sh_name);
-			if (elf_file->section_tables[i].sh_type < 0x13)
-				printf("%-18s ", g_elf_section_table_type[elf_file->section_tables[i].sh_type]);
-			else
+			switch (elf_file->section_tables[i].sh_type)
+			{
+			case SHT_NULL:
+				printf("%-18s ", "NULL");
+				break;
+			case SHT_PROGBITS:
+				printf("%-18s ", "PROGBITS");
+				break;
+			case SHT_SYMTAB:
+				printf("%-18s ", "SYMTAB");
+				break;
+			case SHT_STRTAB:
+				printf("%-18s ", "STRTAB");
+				break;
+			case SHT_RELA:
+				printf("%-18s ", "RELA");
+				break;
+			case SHT_HASH:
+				printf("%-18s ", "HASH");
+				break;
+			case SHT_DYNAMIC:
+				printf("%-18s ", "DYNAMIC");
+				break;
+			case SHT_NOTE:
+				printf("%-18s ", "NOTE");
+				break;
+			case SHT_NOBITS:
+				printf("%-18s ", "NOBITS");
+				break;
+			case SHT_REL:
+				printf("%-18s ", "REL");
+				break;
+			case SHT_SHLIB:
+				printf("%-18s ", "SHLIB");
+				break;
+			case SHT_DYNSYM:
+				printf("%-18s ", "DYNSYM");
+				break;
+			case SHT_INIT_ARRAY:
+				printf("%-18s ", "INIT_ARRAY");
+				break;
+			case SHT_FINI_ARRAY:
+				printf("%-18s ", "FINI_ARRAY");
+				break;
+			case SHT_PREINIT_ARRAY:
+				printf("%-18s ", "PREINIT_ARRAY");
+				break;
+			case SHT_GROUP:
+				printf("%-18s ", "GROUP");
+				break;
+			case SHT_SYMTAB_SHNDX:
+				printf("%-18s ", "SYMTAB_SHNDX");
+				break;
+			case SHT_NUM:
+				printf("%-18s ", "NUM");
+				break;
+
+			default:
 				printf("%#-18x ", elf_file->section_tables[i].sh_type);
+				break;
+			}
 			printf("%#018lx ", elf_file->section_tables[i].sh_address);
 			printf("%#018lx ", elf_file->section_tables[i].sh_offset);
 			printf("%#018lx ", elf_file->section_tables[i].sh_size);
 			printf("%#018lx\n", elf_file->section_tables[i].sh_addralign);
 		}
+	}
 
+	if (level & PELF_ALL || level & PELF_PROG)
+	{
 		printf("\nProgram Headers:\n");
 		printf("  Type           Offset             VirtAddr           PhysAddr           FileSiz            MemSiz             Flags  Align\n");
 		for (int i = 0; i < elf_file->e_phnum; i++)

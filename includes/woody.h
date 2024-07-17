@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   woody.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 18:10:21 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/17 19:41:45 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@
 
 #define F_KEY		0x01
 #define F_HEADER	0x02
-#define F_SECTION	0x04
-#define F_SYM		0x08
-#define F_DATA		0x10
+#define F_PROG		0x04
+#define F_SECTION	0x08
+#define F_SYM		0x10
+#define F_DATA		0x20
 #define F_NOOUTPUT	0x80
 
 
@@ -112,9 +113,10 @@ void			delete_elf_file(t_elf_file *file_format);
 
 #define PELF_ALL		0x01
 #define PELF_HEADER		0x02
-#define PELF_SECTION	0x04
-#define PELF_SYM		0x08
-#define PELF_DATA		0x10
+#define PELF_PROG		0x04
+#define PELF_SECTION	0x08
+#define PELF_SYM		0x10
+#define PELF_DATA		0x20
 
 void			print_elf_file(t_elf_file *elf_file, int level);
 
