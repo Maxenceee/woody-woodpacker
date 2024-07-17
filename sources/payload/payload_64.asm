@@ -2,6 +2,8 @@ global _payload_64
 global _payload_64_size
 global _AES_CTR_encrypt2
 global _AES_256_Key_Expansion2
+extern malloc
+
 
 %ifdef __APPLE__
 %define JUMP_ADDR [rel 0x0]
@@ -12,7 +14,44 @@ global _AES_256_Key_Expansion2
 [BITS 64]
 
 segment .text align=16
+malloc_ptr dq malloc
 
+_payload_64:
+	push rax
+	push rdx
+	push rsi
+	push rdi
+
+
+	mov	rsi, 256 
+	mov rdx, 0x3
+	mov r10, 0x22
+	mov r8, -1
+	mov r9, 0
+	xor rdi, rdi
+	mov rax, 9
+	syscall
+	mov rsi, rax
+	mov	rdi, key
+	; mov	rsi, f_key
+	mov rsi, rax
+	call _AES_256_Key_Expansion2
+; after_key_expansion:
+	jmp .print_start_msg
+.displayed_str:
+	db "....WOODY....", 0x0a, 0
+.print_start_msg:
+	mov rax, 0x1
+	mov rdi, 1
+	lea rsi, [rel .displayed_str]
+	mov rdx, 15
+	syscall
+	pop rdi
+	pop rsi
+	pop rdx
+	pop rax
+	; ret
+	; jmp JUMP_ADDR; tkt le compilo veut une vraie adresse
 
 align 256
 ONE:	; basic label
@@ -299,41 +338,10 @@ pxor 	xmm3,	xmm2
 ret
 
 
-
-
-
-
-
-
-_payload_64:
-	push rax
-	push rdx
-	push rsi
-	push rdi
-	jmp .print_start_msg
-.displayed_str:
-	db "....WOODY....", 0x0a, 0
-.print_start_msg:
-	mov rax, 0x1
-	mov rdi, 1
-	lea rsi, [rel .displayed_str]
-	mov rdx, 15
-	syscall
-
-	mov rsi, [rel f_key]
-	mov rdi, [rel key]
-	call _AES_256_Key_Expansion2
-
-	pop rdi
-	pop rsi
-	pop rdx
-	pop rax
-	jmp JUMP_ADDR; tkt le compilo veut une vraie adresse
-
 info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-f_key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
 start_encode:			dq  0xdddddddddddddddd
+f_key:					dq	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 _payload_64_size:		dq $-_payload_64
