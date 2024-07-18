@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 21:56:42 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 13:46:07 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,114 @@ static void	print_elf_program_flag(uint32_t flag)
 	if (flag & 0x04)
 		res += printf("R");
 	printf("%*s%s", 3 - res, "", "    ");
+}
+
+static void	print_elf_sym(t_elf_section_table *sym_section, t_elf_section_table *symstr_section)
+{
+	printf("\nSymbol table '.symtab' contains %ld entries:\n", sym_section->sh_size / sizeof(t_elf_sym));
+	printf("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n");
+	t_elf_sym sym;
+	for (size_t j = 0; j * sizeof(t_elf_sym) < sym_section->sh_size; j++) {
+		void *absoffset = sym_section->data + j * sizeof(t_elf_sym);
+		memmove(&sym, absoffset, sizeof(sym));
+		printf("    %2ld: ", j);
+		printf("%016lx ", sym.st_value);
+		printf("%5ld ", sym.st_size);
+		switch (ELF64_ST_TYPE(sym.st_info))
+		{
+		case STT_NOTYPE:
+			printf("%-7s ", "NOTYPE");
+			break;
+		case STT_OBJECT:
+			printf("%-7s ", "OBJECT");
+			break;
+		case STT_FUNC:
+			printf("%-7s ", "FUNC");
+			break;
+		case STT_SECTION:
+			printf("%-7s ", "SECTION");
+			break;
+		case STT_FILE:
+			printf("%-7s ", "FILE");
+			break;
+		case STT_LOOS:
+			printf("%-7s ", "LOOS");
+			break;
+		case STT_HIOS:
+			printf("%-7s ", "HIOS");
+			break;
+		case STT_LOPROC:
+			printf("%-7s ", "LOPROC");
+			break;
+		case STT_HIPROC:
+			printf("%7s ", "HIPROC");
+			break;
+		default:
+			printf("%-7d ", ELF64_ST_TYPE(sym.st_info));
+			break;
+		}
+		switch (ELF64_ST_BIND(sym.st_info))
+		{
+		case STB_LOCAL:
+			printf("%-6s ", "LOCAL");
+			break;
+		case STB_GLOBAL:
+			printf("%-6s ", "GLOBAL");
+			break;
+		case STB_WEAK:
+			printf("%-6s ", "WEAK");
+			break;
+		case STT_LOOS:
+			printf("%-6s ", "LOOS");
+			break;
+		case STT_HIOS:
+			printf("%-6s ", "HIOS");
+			break;
+		case STT_LOPROC:
+			printf("%-6s ", "LOPROC");
+			break;
+		case STT_HIPROC:
+			printf("%-6s ", "HIPROC");
+			break;
+		default:
+			printf("%-6d ", ELF64_ST_BIND(sym.st_info));
+			break;
+		}
+		switch (sym.st_other)
+		{
+		case STV_DEFAULT:
+			printf("%-7s ", "DEFAULT");
+			break;
+		case STV_INTERNAL:
+			printf("%-7s ", "INTERNAL");
+			break;
+		case STV_HIDDEN:
+			printf("%-7s ", "HIDDEN");
+			break;
+		case STV_PROTECTED:
+			printf("%-7s ", "PROTECTED");
+			break;
+		default:
+			printf("%-7d ", sym.st_other);
+			break;
+		}
+		switch (sym.st_shndx)
+		{
+		case 0:
+			printf("%4s ", "UND");
+			break;
+		case 65521:
+			printf("%4s ", "ABS");
+			break;
+		default:
+			printf("%4d ", sym.st_shndx);
+			break;
+		}
+		if (sym.st_name != 0) {
+			printf("%s", symstr_section->data + sym.st_name);
+		}
+		printf("\n");
+	}
 }
 
 void	print_elf_file(t_elf_file *elf_file, int level)
@@ -367,8 +475,17 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 
 	if (level & PELF_ALL || level & PELF_SYM)
 	{
-		int symstr_idx = 0;
 		int symtab_idx = 0;
+		int symstr_idx = 0;
+
+		for (uint16_t i = 0; i < elf_file->e_shnum; i++) {
+			if (strcmp(elf_file->section_tables[i].sh_name, ".dynsym") == 0 && elf_file->section_tables[i].sh_type == SHT_DYNSYM)
+				symtab_idx = i;
+			else if (strcmp(elf_file->section_tables[i].sh_name, ".dynstr") == 0 && elf_file->section_tables[i].sh_type == SHT_STRTAB)
+				symstr_idx = i;
+		}
+		
+		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx]);
 
 		for (uint16_t i = 0; i < elf_file->e_shnum; i++) {
 			if (strcmp(elf_file->section_tables[i].sh_name, ".symtab") == 0 && elf_file->section_tables[i].sh_type == SHT_SYMTAB)
@@ -377,110 +494,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				symstr_idx = i;
 		}
 
-		printf("\nSymbol table '.symtab' contains %ld entries:\n", elf_file->section_tables[symtab_idx].sh_size / sizeof(t_elf_sym));
-		printf("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n");
-		t_elf_sym sym;
-		for (size_t j = 0; j * sizeof(t_elf_sym) < elf_file->section_tables[symtab_idx].sh_size; j++) {
-			void *absoffset = elf_file->section_tables[symtab_idx].data + j * sizeof(t_elf_sym);
-			memmove(&sym, absoffset, sizeof(sym));
-			printf("    %2ld: ", j);
-			printf("%016lx ", sym.st_value);
-			printf("%5ld ", sym.st_size);
-			switch (ELF64_ST_TYPE(sym.st_info))
-			{
-			case STT_NOTYPE:
-				printf("%-7s ", "NOTYPE");
-				break;
-			case STT_OBJECT:
-				printf("%-7s ", "OBJECT");
-				break;
-			case STT_FUNC:
-				printf("%-7s ", "FUNC");
-				break;
-			case STT_SECTION:
-				printf("%-7s ", "SECTION");
-				break;
-			case STT_FILE:
-				printf("%-7s ", "FILE");
-				break;
-			case STT_LOOS:
-				printf("%-7s ", "LOOS");
-				break;
-			case STT_HIOS:
-				printf("%-7s ", "HIOS");
-				break;
-			case STT_LOPROC:
-				printf("%-7s ", "LOPROC");
-				break;
-			case STT_HIPROC:
-				printf("%7s ", "HIPROC");
-				break;
-			default:
-				printf("%-7d ", ELF64_ST_TYPE(sym.st_info));
-				break;
-			}
-			switch (ELF64_ST_BIND(sym.st_info))
-			{
-			case STB_LOCAL:
-				printf("%-6s ", "LOCAL");
-				break;
-			case STB_GLOBAL:
-				printf("%-6s ", "GLOBAL");
-				break;
-			case STB_WEAK:
-				printf("%-6s ", "WEAK");
-				break;
-			case STT_LOOS:
-				printf("%-6s ", "LOOS");
-				break;
-			case STT_HIOS:
-				printf("%-6s ", "HIOS");
-				break;
-			case STT_LOPROC:
-				printf("%-6s ", "LOPROC");
-				break;
-			case STT_HIPROC:
-				printf("%-6s ", "HIPROC");
-				break;
-			default:
-				printf("%-6d ", ELF64_ST_BIND(sym.st_info));
-				break;
-			}
-			switch (sym.st_other)
-			{
-			case STV_DEFAULT:
-				printf("%-7s ", "DEFAULT");
-				break;
-			case STV_INTERNAL:
-				printf("%-7s ", "INTERNAL");
-				break;
-			case STV_HIDDEN:
-				printf("%-7s ", "HIDDEN");
-				break;
-			case STV_PROTECTED:
-				printf("%-7s ", "PROTECTED");
-				break;
-			default:
-				printf("%-7d ", sym.st_other);
-				break;
-			}
-			switch (sym.st_shndx)
-			{
-			case 0:
-				printf("%4s ", "UND");
-				break;
-			case 65521:
-				printf("%4s ", "ABS");
-				break;
-			default:
-				printf("%4d ", sym.st_shndx);
-				break;
-			}
-			if (sym.st_name != 0) {
-				printf("%s", elf_file->section_tables[symstr_idx].data + sym.st_name);
-			}
-			printf("\n");
-		}
+		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx]);
 	}
 
 	if (level & PELF_DATA)

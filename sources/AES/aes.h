@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   aes.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 14:17:15 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 18:11:20 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/18 14:25:00 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,7 @@
 
 void	AES_256_Key_Expansion(const unsigned char *userkey, unsigned char *key);
 void	AES_CTR_encrypt(const unsigned char *in, unsigned char *out, const unsigned char ivec[8], const unsigned char nonce[4], unsigned long length, const unsigned char *key, int nr);
+
+void	gen_aes_key(uint8_t *dest, size_t size);
 
 #endif /* AES_H */

@@ -6,13 +6,13 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/17 23:04:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 14:29:04 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
 
-uint8_t key_aes[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+uint8_t key_aes[WD_AES_KEY_SIZE];
 
 static void	usage(void)
 {
@@ -70,6 +70,11 @@ int	main(int ac, char **av)
 		usage();
 	target = av[optind];
 
+	if (0 == (option & F_KEY))
+	{
+		gen_aes_key(key_aes, WD_AES_KEY_SIZE);
+	}
+
 	int fd = open(target, O_RDONLY);
 	if (fd == -1)
 	{
@@ -121,7 +126,7 @@ int	main(int ac, char **av)
 
 	printf("================================================\n");
 	printf("Target: %s\n", target);
-	printf("Key: %s\n", key_aes);
+	printf("Key: %.64s\n", key_aes);
 	printf("================================================\n");
 
 	/**
