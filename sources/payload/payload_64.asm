@@ -52,14 +52,17 @@ _payload_64:
 ; # 	[parameter 5: %r8]
 ; # 	[parameter 6: %r9]
 ; # 	[parameter 7: 8 + %rsp]
-	mov rsi, rax
 	mov rdi, [rel encrypted_data_start]
-	mov rdx, [rel IV]
+	mov rsi, rax
+	mov rdx, IV
 	mov rcx, [rel nonce]
-	mov r8, [rel encrypted_data_size]
+	mov r8, encrypted_data_size
 	pop r9
 	mov rax, 64
+	push rax
 	call _AES_CTR_encrypt2
+	call _PRINT
+
 
 
 
@@ -128,8 +131,8 @@ NO_PARTS_4:	; basic label
 mov 	r10,	r8
 shl 	r10,	62
 shr 	r10,	62
-pinsrq 	xmm0,	[rdx],	1
-pinsrd 	xmm0,	[rcx],	1
+pinsrq 	xmm0,	[rdx],	1			;crash here right now
+pinsrd 	xmm0,	[rcx],	1			;crash here right now
 psrldq 	xmm0,	4
 movdqa 	xmm2,	xmm0
 pshufb 	xmm2,	[rel LOAD_HIGH_BROADCAST_AND_BSWAP]
@@ -296,7 +299,7 @@ ret
 
 
 _PRINT:	; basic label
-	  push rbx
+	push rbx
     push rbp
     push r12
     push r13
@@ -390,9 +393,8 @@ info_start:
 key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
-start_encode:			dq  0xdddddddddddddddd
 hello_message: 			db 'hello', 0xA  ; "hello\n"
-IV:						db 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-nonce 					db 0x00, 0xFA, 0xAC, 0x24
+IV:						dq 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+nonce:					dq 0x00, 0xFA, 0xAC, 0x24
 f_key:					dq	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 _payload_64_size:		dq $-_payload_64

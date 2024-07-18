@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 18:10:21 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/18 13:53:13 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,5 +125,7 @@ int				packer(t_elf_file *elf, t_binary_reader *reader);
  */
 
 int	elf_insert_section(t_elf_file *elf);
+t_elf_section_table	*get_text_section(t_elf_file *elf);
+
 
 #endif /* WOODY_H */
