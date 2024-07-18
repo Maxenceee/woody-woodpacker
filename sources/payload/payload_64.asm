@@ -2,7 +2,6 @@ global _payload_64
 global _payload_64_size
 global _AES_CTR_encrypt2
 global _AES_256_Key_Expansion2
-extern malloc
 
 
 %ifdef __APPLE__
@@ -14,7 +13,6 @@ extern malloc
 [BITS 64]
 
 segment .text align=16
-malloc_ptr dq malloc
 
 _payload_64:
 	push rax
@@ -35,7 +33,7 @@ _payload_64:
 	mov	rsi, key
 	; mov	rsi, f_key
 	mov rsi, rax
-	call _AES_256_Key_Expansion2
+	; call _AES_256_Key_Expansion2
 	push rsi
 	mov	rsi, [rel encrypted_data_size]
 	mov rdx, 0x3
@@ -52,10 +50,10 @@ _payload_64:
 ; # 	[parameter 5: %r8]
 ; # 	[parameter 6: %r9]
 ; # 	[parameter 7: 8 + %rsp]
-	mov rdi, [rel encrypted_data_start]
+	lea rdi, [rel encrypted_data_start]
 	mov rsi, rax
-	mov rdx, IV
-	mov rcx, [rel nonce]
+	lea rdx, [rel IV]
+	lea rcx, [rel nonce]
 	mov r8, encrypted_data_size
 	pop r9
 	mov rax, 64
@@ -318,7 +316,7 @@ _PRINT:	; basic label
     pop rbx
 	ret
 
-_AES_256_Key_Expansion2:	; basic label
+_AES_256_Key_Expansion2:	; basic label  UwU pwease down't kill me (j'ai pris des degat mental )
 ; # 	[parameter 1: %rdi]
 ; # 	[parameter 2: %rsi]
 movdqu 	xmm1,	[rdi]
@@ -390,11 +388,11 @@ ret
 
 
 info_start:
-key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
+key:					db	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+encrypted_data_start:	dq	0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
-hello_message: 			db 'hello', 0xA  ; "hello\n"
-IV:						dq 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-nonce:					dq 0x00, 0xFA, 0xAC, 0x24
-f_key:					dq	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-_payload_64_size:		dq $-_payload_64
+hello_message: 			db	'hello', 0xA  ; "hello\n"
+IV:						db	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+nonce:					db  0x00, 0xFA, 0xAC, 0x24
+f_key:					db	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+_payload_64_size:		dq	$-_payload_64
