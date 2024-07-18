@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 13:32:31 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 22:21:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 22:30:54 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 int	ft_error(const char *str)
 {
-	return (dprintf(STDOUT_FILENO, "%s%s: %s%s\n", RED, WD_PREFIX, str, RESET));
+	return (dprintf(STDOUT_FILENO, "%s%s: error: %s%s\n", RED, WD_PREFIX, str, RESET));
 }
 
 int	ft_error_msg(const char *str, const char *msg)
@@ -26,7 +26,7 @@ int	ft_error_msg(const char *str, const char *msg)
 
 int	ft_warning(const char *str)
 {
-	return (dprintf(STDOUT_FILENO, "%s%s: %s%s\n", B_YELLOW, WD_PREFIX, str, RESET));
+	return (dprintf(STDOUT_FILENO, "%s%s: warning: %s%s\n", B_YELLOW, WD_PREFIX, str, RESET));
 }
 
 int	ft_info(const char *str)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binary_reader.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 18:11:25 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/18 22:43:37 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,8 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <fcntl.h>
+# include <sys/mman.h>
 # include "utils/utils.h"
-
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
-# endif
 
 typedef struct s_binary_reader	t_binary_reader;
 
@@ -79,16 +76,6 @@ void			init_binary_reader(t_binary_reader *reader);
 /* delete binary reader */
 
 void			delete_binary_reader(t_binary_reader *this);
-
-/* read font file */
-
-unsigned char	*ft_read_file(int fd, unsigned char *file,
-					uint64_t *rsize);
-
-/* join mem data */
-
-unsigned char	*ft_memjoin(unsigned char *s1, unsigned char *s2,
-					uint32_t size, uint32_t length);
 
 /* binary reader methods */
 

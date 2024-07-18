@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 19:02:43 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 22:13:31 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 22:45:17 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdint.h>
 # include <fcntl.h>
 # include <string.h>
+#include "ft_getopt.h"
 
 int		ft_error(const char *str);
 int		ft_error_msg(const char *str, const char *msg);
@@ -33,6 +34,8 @@ void	ft_bzero(void *s, size_t n);
 void	*ft_memset(void *b, int c, size_t len);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 void	*ft_memmove(void *dst, const void *src, size_t n);
+uint8_t	*ft_memjoin(unsigned char *s1, unsigned char *s2,
+			uint32_t size, uint32_t length);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_realloc(void *ptr, size_t size);
 
@@ -67,8 +70,8 @@ void	ft_replace(char *src, char to_rep, char set);
 int		ft_extension(char *str, char *end);
 int		ft_strmultichr(char *str, char *chrlst);
 
-extern char *optarg; 
-extern int optind;
-int ft_getopt(int argc, char * const argv[], const char *optstring);
+// extern char *optarg; 
+// extern int optind;
+// int ft_getopt(int argc, char * const argv[], const char *optstring);
 
 #endif /* UTILS_H */

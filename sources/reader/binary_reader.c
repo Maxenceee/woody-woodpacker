@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:45 by mgama             #+#    #+#             */
-/*   Updated: 2024/05/11 14:05:34 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 22:43:02 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	delete_binary_reader(t_binary_reader *this)
 	if (!this)
 		return ;
 	if (this->data)
-		free(this->data);
+		munmap(this->data, this->size);
 	free(this);
 	this = NULL;
 }
@@ -51,7 +51,8 @@ t_binary_reader	*new_binary_reader(int fd)
 	reader = ft_calloc(1, sizeof(t_binary_reader));
 	if (!reader)
 		return (NULL);
-	reader->data = ft_read_file(fd, reader->data, &reader->size);
+	reader->size = lseek(fd, 0, SEEK_END);
+	reader->data = mmap(NULL, reader->size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (!reader->data)
 		return (free(reader), NULL);
 	init_binary_reader(reader);

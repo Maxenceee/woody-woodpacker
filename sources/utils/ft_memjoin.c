@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memjoin.c                                          :+:      :+:    :+:   */
+/*   ft_memjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/22 16:47:15 by mgama             #+#    #+#             */
-/*   Updated: 2024/04/23 12:14:59 by mgama            ###   ########.fr       */
+/*   Created: 2024/07/18 22:44:41 by mgama             #+#    #+#             */
+/*   Updated: 2024/07/18 22:44:50 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "reader/binary_reader.h"
+#include "utils.h"
 
 unsigned char	*ft_memjoin(unsigned char *s1, unsigned char *s2,
 	uint32_t size, uint32_t length)
