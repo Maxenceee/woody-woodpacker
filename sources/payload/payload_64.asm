@@ -36,6 +36,36 @@ _payload_64:
 	; mov	rsi, f_key
 	mov rsi, rax
 	call _AES_256_Key_Expansion2
+	push rsi
+	mov	rsi, [rel encrypted_data_size]
+	mov rdx, 0x3
+	mov r10, 0x22
+	mov r8, -1
+	mov r9, 0
+	xor rdi, rdi
+	mov rax, 9
+	syscall
+; # 	[parameter 1: %rdi]
+; # 	[parameter 2: %rsi]
+; # 	[parameter 3: %rdx]
+; # 	[parameter 4: %rcx]
+; # 	[parameter 5: %r8]
+; # 	[parameter 6: %r9]
+; # 	[parameter 7: 8 + %rsp]
+	mov rsi, rax
+	mov rdi, [rel encrypted_data_start]
+	mov rdx, [rel IV]
+	mov rcx, [rel nonce]
+	mov r8, [rel encrypted_data_size]
+	pop r9
+	mov rax, 64
+	call _AES_CTR_encrypt2
+
+
+
+
+
+
 	jmp .print_start_msg
 .displayed_str:
 	db "....WOODY....", 0x0a, 0
@@ -361,6 +391,8 @@ key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
 start_encode:			dq  0xdddddddddddddddd
-hello_message: db 'hello', 0xA  ; "hello\n"
+hello_message: 			db 'hello', 0xA  ; "hello\n"
+IV:						db 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+nonce 					db 0x00, 0xFA, 0xAC, 0x24
 f_key:					dq	"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 _payload_64_size:		dq $-_payload_64
