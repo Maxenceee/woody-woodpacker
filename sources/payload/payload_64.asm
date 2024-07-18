@@ -33,8 +33,8 @@ _payload_64:
 	jmp JUMP_ADDR; tkt le compilo veut une vraie adresse
 
 info_start:
-key:					dq	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-encrypted_data_start:	dq  0xbbbbbbbbbbbbbbbb
+key:					db	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+encrypted_data_start:	dq	0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
 start_encode:			dq  0xdddddddddddddddd
 _payload_64_size:		dq $-_payload_64

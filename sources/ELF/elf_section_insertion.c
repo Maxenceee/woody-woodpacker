@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 23:04:59 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 14:11:58 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	return (index);
 }
 
-uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *packer)
+uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_elf_section_table *text_section, t_packer *packer)
 {
 	(void)new_section_headers;
 
@@ -74,6 +74,10 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_packer *pac
 	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
 	// Copy key inside payload
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+	// printf("WD_PAYLOAD_OFF_DATA_START: %#016x\n", text_section->sh_offset);
+	// printf("WD_PAYLOAD_OFF_DATA_SIZE: %#016x\n", text_section->sh_size);
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
 	return (payload);
 }
 
@@ -155,7 +159,9 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 
 	packer->loader_offset = new_section->sh_address;
 
-	if ((new_section->data = prepare_payload(new_section, packer)) == NULL)
+	/* TODO: check if text_section is NULL*/
+	t_elf_section_table *text_section = get_text_section(elf);
+	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
 	{
 		free(new_section);
 		return (-1);

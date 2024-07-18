@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 22:13:24 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 13:53:13 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,5 +126,6 @@ int				packer(t_elf_file *elf);
  */
 
 int	elf_insert_section(t_elf_file *elf, int opt);
+t_elf_section_table	*get_text_section(t_elf_file *elf);
 
 #endif /* WOODY_H */
