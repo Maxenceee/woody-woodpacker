@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   woody.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
 /*   Updated: 2024/07/18 13:53:13 by mbrement         ###   ########lyon.fr   */
@@ -14,7 +14,6 @@
 # define WOODY_H
 
 #include <fcntl.h>
-#include <string.h>
 #include "reader/binary_reader.h"
 #include "AES/aes.h"
 #include "elf.h"
@@ -30,9 +29,11 @@
 
 #define F_KEY		0x01
 #define F_HEADER	0x02
-#define F_SECTION	0x04
-#define F_SYM		0x08
-#define F_DATA		0x10
+#define F_PROG		0x04
+#define F_SECTION	0x08
+#define F_SYM		0x10
+#define F_DATA		0x20
+#define F_UDSYM		0x40
 #define F_NOOUTPUT	0x80
 
 
@@ -77,7 +78,6 @@ typedef struct
 	uint16_t	e_shentsize;				// size of single section header
 	uint16_t	e_shnum; 					// count of section headers
 	uint16_t	e_shstrndx;					// index of name's section in the table
-	char		*e_type_name;
 	t_elf_program_header	*program_headers;
 	t_elf_section_table		*section_tables;
 }	t_elf_file;
@@ -112,20 +112,20 @@ void			delete_elf_file(t_elf_file *file_format);
 
 #define PELF_ALL		0x01
 #define PELF_HEADER		0x02
-#define PELF_SECTION	0x04
-#define PELF_SYM		0x08
-#define PELF_DATA		0x10
+#define PELF_PROG		0x04
+#define PELF_SECTION	0x08
+#define PELF_SYM		0x10
+#define PELF_DATA		0x20
 
 void			print_elf_file(t_elf_file *elf_file, int level);
 
-int				packer(t_elf_file *elf, t_binary_reader *reader);
+int				packer(t_elf_file *elf);
 
 /**
  * Insertion
  */
 
-int	elf_insert_section(t_elf_file *elf);
+int	elf_insert_section(t_elf_file *elf, int opt);
 t_elf_section_table	*get_text_section(t_elf_file *elf);
-
 
 #endif /* WOODY_H */

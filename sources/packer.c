@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   packer.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
 /*   Updated: 2024/07/18 13:25:33 by mbrement         ###   ########lyon.fr   */
@@ -73,15 +73,8 @@ int	encrypt_text_section(t_elf_file *elf)
 	return (0);
 }
 
-int	packer(t_elf_file *elf, t_binary_reader *reader)
+int	packer(t_elf_file *elf)
 {
-	(void)reader;
-
-	if (elf_insert_section(elf) == -1)
-	{
-		return (ft_error("An error occured while inserting the new section"), -1);
-	}
-
 	// if (encrypt_text_section(elf) == -1)
 	// 	return (-1);
 
@@ -89,7 +82,7 @@ int	packer(t_elf_file *elf, t_binary_reader *reader)
 	if (fd == -1)
 		return (ft_error("Could not open file."), -1);
 
-	size_t elf_header_size = sizeof(t_elf_file) - sizeof(char *) - sizeof(t_elf_program_header *) - sizeof(t_elf_section_table *);
+	size_t elf_header_size = sizeof(t_elf_file) - sizeof(t_elf_program_header *) - sizeof(t_elf_section_table *);
 	size_t elf_section_header_size = sizeof(t_elf_section_table) - sizeof(char *) - sizeof(uint8_t *);
 
 	write_to_file(fd, elf, elf_header_size);

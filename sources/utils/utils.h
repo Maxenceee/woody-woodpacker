@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 19:02:43 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/16 19:14:50 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/17 22:13:31 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <fcntl.h>
-
-/* ft_bzero */
+# include <string.h>
 
 int		ft_error(const char *str);
 int		ft_error_msg(const char *str, const char *msg);
@@ -67,5 +66,9 @@ int		ft_strlcpy(char *dest, char *src, uint32_t size);
 void	ft_replace(char *src, char to_rep, char set);
 int		ft_extension(char *str, char *end);
 int		ft_strmultichr(char *str, char *chrlst);
+
+extern char *optarg; 
+extern int optind;
+int ft_getopt(int argc, char * const argv[], const char *optstring);
 
 #endif /* UTILS_H */

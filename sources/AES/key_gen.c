@@ -1,28 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   br_get_unicode_string.c                            :+:      :+:    :+:   */
+/*   key_gen.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/22 15:19:52 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/17 22:24:05 by mgama            ###   ########.fr       */
+/*   Created: 2024/07/18 14:18:17 by mgama             #+#    #+#             */
+/*   Updated: 2024/07/18 14:28:39 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "reader/binary_reader.h"
+#include "woody.h"
+#include <time.h>
 
-char	*br_get_unicode_string(t_binary_reader *this, uint16_t length)
+void	gen_aes_key(uint8_t *dest, size_t size)
 {
-	int		i;
-	char	*res;
+	srand(time(0));
 
-	res = malloc((length + 1) * sizeof(char));
-	if (!res)
-		return (NULL);
-	i = -1;
-	while (++i < length / 2)
-		res[i] = this->get_uint16(this);
-	res[i] = 0;
-	return (res);
+	if (size)
+	{
+		for (size_t n = 0; n < size; n++) {
+			dest[n] = rand() % 256;
+		}
+	}
 }
