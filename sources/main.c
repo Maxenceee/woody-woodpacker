@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/18 22:38:41 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/18 22:48:42 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,16 +102,16 @@ int	main(int ac, char **av)
 		usage();
 	target = av[options.optind];
 
-	if (0 == (option & F_KEY))
-	{
-		gen_aes_key(key_aes, WD_AES_KEY_SIZE);
-	}
-
 	int fd = open(target, O_RDONLY);
 	if (fd == -1)
 	{
 		printf("Error: Cannot open file %s\n", target);
 		return (1);
+	}
+
+	if (0 == (option & F_KEY))
+	{
+		gen_aes_key(key_aes, WD_AES_KEY_SIZE);
 	}
 
 	/**
@@ -120,9 +120,12 @@ int	main(int ac, char **av)
 	t_binary_reader *reader = new_binary_reader(fd);
 	if (!reader)
 	{
+		close(fd);
 		printf("Error: Cannot read file %s\n", target);
 		return (1);
 	}
+	close(fd);
+
 	// Get the file e_type reading 3 bytes as a string
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)
