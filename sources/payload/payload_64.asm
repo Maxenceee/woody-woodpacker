@@ -36,5 +36,4 @@ info_start:
 key:					db	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 encrypted_data_start:	dq	0xbbbbbbbbbbbbbbbb
 encrypted_data_size:	dq	0xcccccccccccccccc
-start_encode:			dq  0xdddddddddddddddd
 _payload_64_size:		dq $-_payload_64

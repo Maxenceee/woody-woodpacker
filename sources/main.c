@@ -6,10 +6,11 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/18 17:14:33 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/18 19:03:39 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "utils/utils.h"
 #include "woody.h"
 
 uint8_t key_aes[WD_AES_KEY_SIZE];
@@ -25,7 +26,7 @@ static void	usage(void)
 	(void)fprintf(stderr, "  %-8s %s\n", "-s", "Display the symbol table");
 	(void)fprintf(stderr, "  %-8s %s\n", "-d", "Display the section data");
 	(void)fprintf(stderr, "  %-8s %s\n", "-g", "Update debug symbols");
-	(void)fprintf(stderr, "  %-8s %s\n", "-k <key>", "Use custom encrypt key");
+	(void)fprintf(stderr, "  %-8s %s\n", "-k <key>", "Use custom encrypt key (64 bytes)");
 	exit(64);
 }
 

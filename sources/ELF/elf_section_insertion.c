@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   elf_section_insertion.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 14:11:58 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/18 18:59:36 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_elf_section
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 	// printf("WD_PAYLOAD_OFF_DATA_START: %#016x\n", text_section->sh_offset);
 	// printf("WD_PAYLOAD_OFF_DATA_SIZE: %#016x\n", text_section->sh_size);
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
+	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
+	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
 	return (payload);
 }
 
