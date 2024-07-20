@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   elf_section_insertion.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 18:59:36 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/20 14:41:08 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	return (index);
 }
 
-uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_elf_section_table *text_section, t_packer *packer)
+uint8_t	*prepare_payload(t_elf_section *new_section_headers, t_elf_section *text_section, t_packer *packer)
 {
 	(void)new_section_headers;
 
@@ -81,7 +81,7 @@ uint8_t	*prepare_payload(t_elf_section_table *new_section_headers, t_elf_section
 	return (payload);
 }
 
-int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section_table *new_section)
+int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section)
 {
 	char *section_name = malloc(sizeof(WB_SECTION_NAME));
 	if (section_name == NULL) {
@@ -124,8 +124,9 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	(void)last_load_prog;
 	elf->e_shnum += 1;
 
-	size_t new_section_headers_size = sizeof(t_elf_section_table) * elf->e_shnum;
+	size_t new_section_headers_size = sizeof(t_elf_section) * elf->e_shnum;
 	void *tmp = ft_realloc(elf->section_tables, new_section_headers_size);
+	printf("%zu %p\n", sizeof(t_elf_section), tmp);
 	if (tmp == NULL)
 	{
 		printf("Bad readlloc in create_new_elf_section\n");
@@ -133,7 +134,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	}
 	elf->section_tables = tmp;
 
-	t_elf_section_table *new_section = ft_calloc(1, sizeof(t_elf_section_table));
+	t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
 	if (new_section == NULL)
 		return (-1);
 
@@ -160,7 +161,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	packer->loader_offset = new_section->sh_address;
 
 	/* TODO: check if text_section is NULL*/
-	t_elf_section_table *text_section = get_text_section(elf);
+	t_elf_section *text_section = get_text_section(elf);
 	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
 	{
 		free(new_section);
@@ -172,12 +173,12 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	// printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
 	// printf("new elf->program_headers[last_load_prog].p_memsz: %#lx\n\n", elf->program_headers[last_load_prog].p_memsz + packer->new_section_size);
 
-	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section_table) * (elf->e_shnum - last_section_in_prog - 1 - 1);
+	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section) * (elf->e_shnum - last_section_in_prog - 1 - 1);
 
 	ft_memmove(elf->section_tables + last_section_in_prog + 2, elf->section_tables + last_section_in_prog + 1, remaining_after_section_headers_data_size);
 
 	last_section_in_prog += 1;
-	ft_memset(&elf->section_tables[last_section_in_prog], 0, sizeof(t_elf_section_table));
+	ft_memset(&elf->section_tables[last_section_in_prog], 0, sizeof(t_elf_section));
 
 	if (elf->e_shstrndx != 0)
 	{
@@ -198,7 +199,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		ft_error("No section string table found");
 	}
 
-	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section_table));
+	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section));
 
 	for (int i = 0; i < elf->e_shnum; i++) {
 		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0) {

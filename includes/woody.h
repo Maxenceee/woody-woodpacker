@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/19 17:54:17 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 14:22:57 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,15 @@ typedef struct
 	uint16_t	e_type;						// object type
 	uint16_t	e_machine;					// machine type
 	uint32_t	e_version;					// object version
+#ifdef WD_32BITS_EXEC
+	uint32_t	e_entry;					// address where the execution starts
+	uint32_t	e_phoff;					// program headers' offset
+	uint32_t	e_shoff;					// section headers' offset
+#else
 	uint64_t	e_entry;					// address where the execution starts
 	uint64_t	e_phoff;					// program headers' offset
 	uint64_t	e_shoff;					// section headers' offset
+#endif /* WD_32BITS_EXEC */
 	uint32_t	e_flags;					// architecture-specific flags
 	uint16_t	e_ehsize;					// elf header size
 	uint16_t	e_phentsize; 				// size of a single program header
@@ -83,7 +89,7 @@ typedef struct
 	uint16_t	e_shnum; 					// count of section headers
 	uint16_t	e_shstrndx;					// index of name's section in the table
 	t_elf_program_header	*program_headers;
-	t_elf_section_table		*section_tables;
+	t_elf_section			*section_tables;
 }	t_elf_file;
 
 /**
@@ -130,6 +136,6 @@ int				packer(t_elf_file *elf);
  */
 
 int	elf_insert_section(t_elf_file *elf, int opt);
-t_elf_section_table	*get_text_section(t_elf_file *elf);
+t_elf_section	*get_text_section(t_elf_file *elf);
 
 #endif /* WOODY_H */

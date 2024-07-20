@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 13:25:33 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/20 14:14:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void add_zero_padding(int fd, size_t end_offset) {
 	}
 }
 
-t_elf_section_table	*get_text_section(t_elf_file *elf)
+t_elf_section	*get_text_section(t_elf_file *elf)
 {
 	for (int i = 0; i < elf->e_shnum; i++) {
 		if (strcmp(elf->section_tables[i].sh_name, ".text") == 0) {
@@ -43,7 +43,7 @@ t_elf_section_table	*get_text_section(t_elf_file *elf)
 
 int	encrypt_text_section(t_elf_file *elf)
 {
-	t_elf_section_table	*text_section = get_text_section(elf);
+	t_elf_section	*text_section = get_text_section(elf);
 	if (text_section == NULL)
 		return (ft_error("The text section could not be found in the file"), -1);
 
@@ -82,8 +82,8 @@ int	packer(t_elf_file *elf)
 	if (fd == -1)
 		return (ft_error("Could not open file."), -1);
 
-	size_t elf_header_size = sizeof(t_elf_file) - sizeof(t_elf_program_header *) - sizeof(t_elf_section_table *);
-	size_t elf_section_header_size = sizeof(t_elf_section_table) - sizeof(char *) - sizeof(uint8_t *);
+	size_t elf_header_size = sizeof(t_elf_file) - sizeof(t_elf_program_header *) - sizeof(t_elf_section *);
+	size_t elf_section_header_size = sizeof(t_elf_section) - sizeof(char *) - sizeof(uint8_t *);
 
 	write_to_file(fd, elf, elf_header_size);
 	add_zero_padding(fd, elf->e_phoff);

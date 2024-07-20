@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 13:46:07 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 14:14:32 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	print_elf_program_flag(uint32_t flag)
 	printf("%*s%s", 3 - res, "", "    ");
 }
 
-static void	print_elf_sym(t_elf_section_table *sym_section, t_elf_section_table *symstr_section)
+static void	print_elf_sym(t_elf_section *sym_section, t_elf_section *symstr_section)
 {
 	printf("\nSymbol table '.symtab' contains %ld entries:\n", sym_section->sh_size / sizeof(t_elf_sym));
 	printf("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n");
