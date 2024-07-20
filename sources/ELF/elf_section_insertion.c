@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 15:39:49 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 16:16:44 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	if (section_name == NULL) {
 		return (-1);
 	}
-	ft_memcpy(section_name, WB_SECTION_NAME, sizeof(WB_SECTION_NAME));
 	size_t section_name_len = sizeof(WB_SECTION_NAME) + 1;
+	ft_memcpy(section_name, WB_SECTION_NAME, section_name_len);
 
 	while (has_section(elf, section_name))
 	{
@@ -135,10 +135,8 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		return (-1);
 	}
 	ft_memcpy(tmp, elf->section_tables, sizeof(t_elf_section) * (elf->e_shnum - 1));
-	printf("%p\n", elf->section_tables);
 	free(elf->section_tables);
 	elf->section_tables = tmp;
-	printf("%p\n", elf->section_tables);
 
 	t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
 	if (new_section == NULL)
@@ -174,8 +172,8 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 		return (-1);
 	}
 
-	new_section->sh_size = calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
-	packer->new_section_size += new_section->sh_size;
+	new_section->sh_size = packer->payload_64_size;
+	packer->new_section_size += calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
 	// printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
 	// printf("new elf->program_headers[last_load_prog].p_memsz: %#lx\n\n", elf->program_headers[last_load_prog].p_memsz + packer->new_section_size);
 
@@ -253,14 +251,14 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	uint64_t last_entry_point = elf->e_entry;
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
-	printf("last_entry_point: %#lx\n", last_entry_point);
-	printf("new_entry_point: %#lx\n", elf->e_entry);
+	// printf("last_entry_point: %#lx\n", last_entry_point);
+	// printf("new_entry_point: %#lx\n", elf->e_entry);
 
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address + 4; // + 4 bytes to go to the address of the instruction after jump
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
-	printf("offset: %d => %#x\n", offset, offset);
-	printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
+	// printf("offset: %d => %#x\n", offset, offset);
+	// printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
 	/**
 	 * TODO:
