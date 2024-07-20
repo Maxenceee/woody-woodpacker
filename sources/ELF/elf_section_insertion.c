@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 14:41:08 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 15:39:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ uint8_t	*prepare_payload(t_elf_section *new_section_headers, t_elf_section *text
 	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
 	// Copy key inside payload
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+
 	// printf("WD_PAYLOAD_OFF_DATA_START: %#016x\n", text_section->sh_offset);
 	// printf("WD_PAYLOAD_OFF_DATA_SIZE: %#016x\n", text_section->sh_size);
 	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
@@ -83,12 +84,12 @@ uint8_t	*prepare_payload(t_elf_section *new_section_headers, t_elf_section *text
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section)
 {
-	char *section_name = malloc(sizeof(WB_SECTION_NAME));
+	char *section_name = malloc(sizeof(WB_SECTION_NAME) + 1);
 	if (section_name == NULL) {
 		return (-1);
 	}
 	ft_memcpy(section_name, WB_SECTION_NAME, sizeof(WB_SECTION_NAME));
-	size_t section_name_len = sizeof(WB_SECTION_NAME);
+	size_t section_name_len = sizeof(WB_SECTION_NAME) + 1;
 
 	while (has_section(elf, section_name))
 	{
@@ -102,17 +103,19 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	int section_string_table_index = elf->e_shstrndx;
 	int old_size = elf->section_tables[section_string_table_index].sh_size;
 
-	size_t new_string_table_size = elf->section_tables[section_string_table_index].sh_size + section_name_len;
-	void *tmp = ft_realloc(elf->section_tables[section_string_table_index].data, new_string_table_size);
+	size_t new_string_table_size = old_size + section_name_len;
+	void *tmp = malloc(new_string_table_size);
 	if (tmp == NULL)
 	{
 		printf("Bad readlloc in set_new_elf_section_string_table\n");
 		free(section_name);
 		return (-1);
 	}
+	ft_memcpy(tmp, elf->section_tables[section_string_table_index].data, old_size);
+	free(elf->section_tables[section_string_table_index].data);
 	elf->section_tables[section_string_table_index].data = tmp;
 
-	ft_memcpy(elf->section_tables[section_string_table_index].data + old_size, section_name, section_name_len + 1);
+	ft_memmove(elf->section_tables[section_string_table_index].data + old_size, section_name, section_name_len);
 	new_section->sh_name_offset = old_size;
 	new_section->sh_name = section_name;
 	elf->section_tables[section_string_table_index].sh_size = new_string_table_size;
@@ -125,14 +128,17 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	elf->e_shnum += 1;
 
 	size_t new_section_headers_size = sizeof(t_elf_section) * elf->e_shnum;
-	void *tmp = ft_realloc(elf->section_tables, new_section_headers_size);
-	printf("%zu %p\n", sizeof(t_elf_section), tmp);
+	void *tmp = malloc(new_section_headers_size);
 	if (tmp == NULL)
 	{
 		printf("Bad readlloc in create_new_elf_section\n");
 		return (-1);
 	}
+	ft_memcpy(tmp, elf->section_tables, sizeof(t_elf_section) * (elf->e_shnum - 1));
+	printf("%p\n", elf->section_tables);
+	free(elf->section_tables);
 	elf->section_tables = tmp;
+	printf("%p\n", elf->section_tables);
 
 	t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
 	if (new_section == NULL)

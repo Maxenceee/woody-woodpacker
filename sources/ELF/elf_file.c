@@ -16,7 +16,6 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 {
 	reader->seek(reader, elf_file->e_shoff);
 	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section));
-	printf("%zu %p\n", sizeof(t_elf_section), elf_file->section_tables);
 	if (elf_file->section_tables == NULL)
 		return (ft_error("Could not allocate memory"), 1);
 	for (int i = 0; i < elf_file->e_shnum; i++)
@@ -214,7 +213,6 @@ void	delete_elf_file(t_elf_file *elf_file)
 			if (elf_file->section_tables[i].data)
 				free(elf_file->section_tables[i].data);
 		}
-		printf("%zu %p\n", sizeof(t_elf_section), elf_file->section_tables);
 		free(elf_file->section_tables);
 	}
 	free(elf_file);
