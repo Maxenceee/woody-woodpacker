@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 19:02:43 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 22:45:17 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 22:14:35 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <fcntl.h>
 # include <string.h>
 #include "ft_getopt.h"
+#include "pcolors.h"
 
 int		ft_error(const char *str);
 int		ft_error_msg(const char *str, const char *msg);
@@ -70,8 +71,18 @@ void	ft_replace(char *src, char to_rep, char set);
 int		ft_extension(char *str, char *end);
 int		ft_strmultichr(char *str, char *chrlst);
 
-// extern char *optarg; 
-// extern int optind;
-// int ft_getopt(int argc, char * const argv[], const char *optstring);
+/* verbose */
+
+# define DIGITS "0123456789abcdef0123456789ABCDEF"
+
+enum
+{
+	VERBOSE_OFF = 0,
+	VERBOSE_ON = 1
+};
+
+extern int	verbose_mode;
+
+void	ft_verbose(const char *fmt, ...);
 
 #endif /* UTILS_H */

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 14:22:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 23:22:30 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,13 @@
 #include "elf.h"
 #include "payload/payload.h"
 
+#define WD_VERSION "1.0"
+#define WD_AUTHOR "mgama and mbrement"
+
 #define WD_PREFIX "woody"
+#ifndef WD_OUTPUT_FILE
+#define WD_OUTPUT_FILE "woody"
+#endif /* WD_OUTPUT_FILE */
 
 #define WD_MAGIC 0x7F454C46
 
@@ -91,6 +97,9 @@ typedef struct
 	t_elf_program_header	*program_headers;
 	t_elf_section			*section_tables;
 }	t_elf_file;
+
+// Check endianness and swap bytes if needed
+#define MAGIC(x, e)	(e == LITTLE_ENDIAN ? x : ((x >> 24) & 0xff) | ((x >> 8) & 0xff00) | ((x << 8) & 0xff0000) | ((x << 24) & 0xff000000))
 
 /**
  * key

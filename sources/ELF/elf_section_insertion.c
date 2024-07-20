@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 16:16:44 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 23:14:34 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	(void)last_load_prog;
 	elf->e_shnum += 1;
 
+	ft_verbose("\nCreating new section...\n");
 	size_t new_section_headers_size = sizeof(t_elf_section) * elf->e_shnum;
 	void *tmp = malloc(new_section_headers_size);
 	if (tmp == NULL)
@@ -158,27 +159,40 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	new_section->sh_offset = current_offset;
 	new_section->sh_address = current_vaddr;
 	packer->new_section_size = current_offset_padding;
+	ft_verbose("New section offset: %#x\n", new_section->sh_offset);
+	ft_verbose("New section address: %#x\n", new_section->sh_address);
 	// printf("new_section->sh_offset: %#lx, new_section->sh_address: %#lx\n", new_section->sh_offset, new_section->sh_address);
 	// printf("prog p_memsz addr: %#lx\n", elf->program_headers[last_load_prog].p_offset + elf->program_headers[last_load_prog].p_memsz);
 	// printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
 
 	packer->loader_offset = new_section->sh_address;
 
-	/* TODO: check if text_section is NULL*/
+	ft_verbose("Extracting text section...\n");
 	t_elf_section *text_section = get_text_section(elf);
+	if (text_section == NULL)
+	{
+		ft_error("The text section could not be found in the file");
+		free(new_section);
+		return (-1);
+	}
+	ft_verbose("Text section found\n");
+	ft_verbose("Copying payload data into new section...\n");
 	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
 	{
 		free(new_section);
 		return (-1);
 	}
+	ft_verbose("Payload data copied\n");
 
 	new_section->sh_size = packer->payload_64_size;
 	packer->new_section_size += calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
+	ft_verbose("New section size: %#x (%d bytes)\n", new_section->sh_size, new_section->sh_size);
 	// printf("packer->new_section_size: %#lx\n\n", packer->new_section_size);
 	// printf("new elf->program_headers[last_load_prog].p_memsz: %#lx\n\n", elf->program_headers[last_load_prog].p_memsz + packer->new_section_size);
 
 	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section) * (elf->e_shnum - last_section_in_prog - 1 - 1);
 
+	ft_verbose("Moving section headers...\n");
 	ft_memmove(elf->section_tables + last_section_in_prog + 2, elf->section_tables + last_section_in_prog + 1, remaining_after_section_headers_data_size);
 
 	last_section_in_prog += 1;
@@ -190,6 +204,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 			elf->e_shstrndx += 1;
 		}
 
+		ft_verbose("Updating section string table...\n");
 		if (set_new_elf_section_string_table(elf, new_section) == -1)
 		{
 			if (new_section->data)
@@ -200,17 +215,20 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	}
 	else
 	{
-		ft_error("No section string table found");
+		ft_warning("No section string table found");
 	}
 
+	ft_verbose("Updating section headers...\n");
 	ft_memcpy(&elf->section_tables[last_section_in_prog], new_section, sizeof(t_elf_section));
+	ft_verbose("New section copied\n");
 
+	ft_verbose("Updating symbol table...\n");
 	for (int i = 0; i < elf->e_shnum; i++) {
 		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0) {
 			elf->section_tables[i].sh_link += 1;
 		}
 	}
-
+	ft_verbose(B_GREEN"\nNew section successfully created\n"RESET);
 	free(new_section);
 	return (0);
 }
@@ -219,8 +237,11 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable,
 {
 	(void)last_loadable_section;
 	// // Mettre à jour la taille du segment
+	ft_verbose("\nUpdating program header...\n");
+	ft_verbose("Last loadable segment: %d\n", last_loadable);
 	elf->program_headers[last_loadable].p_memsz += packer->new_section_size;
 	elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
+	ft_verbose("New program header size: %#x\n", elf->program_headers[last_loadable].p_memsz);
 
 	// Mettre à jour les flags pour inclure les permissions d'exécution et d'écriture
 	elf->program_headers[last_loadable].p_flags |= PF_X | PF_W | PF_R;
@@ -229,28 +250,41 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable,
 void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
 	(void)packer;
+	ft_verbose("\nUpdating section addresses...\n");
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
+		ft_verbose("Updating %s%s%s (%d) section offset\n", B_CYAN, elf->section_tables[i + 1].sh_name, RESET, i + 1);
 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
+			ft_verbose("Previous section is SHT_NOBITS\n");
+			ft_verbose("New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
 			continue;
 		}
 		uint64_t offset_padding = calculate_padded_size(
 			elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, 
 			elf->section_tables[i + 1].sh_addralign
 		) - (elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size);
+		ft_verbose("Previous offset: %#x\n", elf->section_tables[i + 1].sh_offset);
+		ft_verbose("Previous address: %#x\n", elf->section_tables[i + 1].sh_address);
+		ft_verbose("Section offset padding: %d\n", offset_padding);
 
 		elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size + offset_padding;
 		elf->section_tables[i + 1].sh_address = elf->section_tables[i].sh_address + elf->section_tables[i].sh_size + offset_padding;
+		ft_verbose("New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
+		ft_verbose("New address: %#x\n", elf->section_tables[i + 1].sh_address);
 	}
 
 	int section_count = elf->e_shnum;
 	elf->e_shoff = elf->section_tables[section_count - 1].sh_offset + elf->section_tables[section_count - 1].sh_size;
+	ft_verbose("New section headers offset: %#x\n", elf->e_shoff);
 }
 
 void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
+	ft_verbose("\nUpdating entry point...\n");
 	uint64_t last_entry_point = elf->e_entry;
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
+	ft_verbose("Last entry point: %#x\n", last_entry_point);
+	ft_verbose("New entry point: %#x\n", elf->e_entry);
 	// printf("last_entry_point: %#lx\n", last_entry_point);
 	// printf("new_entry_point: %#lx\n", elf->e_entry);
 
@@ -272,6 +306,7 @@ void	update_symbols(t_elf_file *elf, t_packer *packer)
 	int symstr_idx = 0;
 	int symtab_idx = 0;
 
+	ft_verbose("\nUpdating symbol table...\n");
 	for (uint16_t i = 0; i < elf->e_shnum; i++) {
 		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0 && elf->section_tables[i].sh_type == SHT_SYMTAB)
 			symtab_idx = i;
@@ -294,7 +329,9 @@ void	update_symbols(t_elf_file *elf, t_packer *packer)
 
 		if (strcmp((char *)(elf->section_tables[symstr_idx].data + sym.st_name), "_start") == 0)
 		{
+			ft_verbose("Updating %s%s%s symbol\n", B_CYAN, "_start", RESET);
 			sym.st_value = elf->e_entry;
+			ft_verbose("New symbol value: %#x\n", sym.st_value);
 			memmove(absoffset, &sym, sizeof(sym));
 			break;
 		}
@@ -307,9 +344,14 @@ int	elf_insert_section(t_elf_file *elf, int opt)
 	packer.payload_64_size = WB_PAYLOAD_SIZE;
 	packer.payload_64 = (uint8_t *)wd_playload_64;
 	packer.new_section_size = 0;
+	ft_verbose("\nStarting new section insertion...\n");
+	ft_verbose("Payload: %p\n", packer.payload_64);
+	ft_verbose("Payload size: %u\n", packer.payload_64_size);
 	
 	int progi = efl_find_last_prog_header(elf);
+	ft_verbose("Last program header index: %d\n", progi);
 	int sectioni = efl_find_last_section_header(elf, progi);
+	ft_verbose("Last section header index: %d\n", sectioni);
 	if (create_new_elf_section(elf, &packer, progi, sectioni) == -1)
 		return (-1);
 

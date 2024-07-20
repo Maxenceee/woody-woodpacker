@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 16:06:38 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/20 23:52:21 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,31 +43,39 @@ t_elf_section	*get_text_section(t_elf_file *elf)
 
 int	encrypt_text_section(t_elf_file *elf)
 {
+	ft_verbose("\nEncrypting the `%s%s%s` section...\n", B_CYAN, ".text", RESET);
 	t_elf_section	*text_section = get_text_section(elf);
 	if (text_section == NULL)
 		return (ft_error("The text section could not be found in the file"), -1);
 
 	int csize = (text_section->sh_size + text_section->sh_size % 256);
+	ft_verbose("Text section size: %d (aligned: %d)\n", text_section->sh_size, csize);
+	if (csize == 0)
+		return (ft_error("The text section is empty"), -1);
+
 	uint8_t *cypher = ft_calloc(sizeof(uint8_t), csize);
 	if (cypher == NULL)
 		return (ft_error("Could not allocate memory"), -1);
+
 	uint8_t *f_key = ft_calloc(sizeof(uint8_t), 256);
 	if (f_key == NULL)
 		return (ft_error("Could not allocate memory"), -1);
 
 	AES_256_Key_Expansion(key_aes, f_key);
-	int i = -1;
-	printf("Key expansion:\n");
-	while (f_key[++i])
-		printf("%02x ", f_key[i]);
-	printf("\n");
+	// int i = -1;
+	// printf("Key expansion:\n");
+	// while (f_key[++i])
+	// 	printf("%02x ", f_key[i]);
+	// printf("\n");
 
 	static const uint8_t nonce[4] = {0x00, 0xFA, 0xAC, 0x24};
 	static const uint8_t IV[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00};
-	
+
+	ft_verbose("Starting encryption...\n");
 	AES_CTR_encrypt((uint8_t *)text_section->data, cypher, IV , nonce, text_section->sh_size, f_key, 64);
 
 	ft_memmove(text_section->data, cypher, text_section->sh_size); // copy the encrypted data in the section data buffer
+	ft_verbose("Encryption done\n");
 	free(cypher);
 	free(f_key);
 	return (0);
@@ -78,7 +86,8 @@ int	packer(t_elf_file *elf)
 	// if (encrypt_text_section(elf) == -1)
 	// 	return (-1);
 
-	int fd = open("woody", O_CREAT | O_WRONLY | O_TRUNC, 0755);
+	ft_verbose("\nPacking the file...\n");
+	int fd = open(WD_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, 0755);
 	if (fd == -1)
 		return (ft_error("Could not open file."), -1);
 

@@ -14,6 +14,7 @@
 
 static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 {
+	ft_verbose("\nReading ELF section tables...\n");
 	reader->seek(reader, elf_file->e_shoff);
 	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section));
 	if (elf_file->section_tables == NULL)
@@ -43,8 +44,10 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
 #endif /* WD_32BITS_EXEC */
 	}
+	ft_verbose("Section table contains %d entries\n", elf_file->e_shnum);
 	if (elf_file->e_shstrndx > 0)
 	{
+		ft_verbose("String table found at index: %d\n", elf_file->e_shstrndx);
 		for (int i = 0; i < elf_file->e_shnum; i++)
 		{
 			reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
@@ -76,6 +79,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 
 static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader)
 {
+	ft_verbose("\nReading ELF program headers...\n");
 	reader->seek(reader, elf_file->e_phoff);
 	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
 	if (elf_file->program_headers == NULL)
@@ -101,6 +105,7 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 		elf_file->program_headers[i].p_align = reader->get_uint64(reader);
 #endif /* WD_32BITS_EXEC */
 	}
+	ft_verbose("Program header contains %d entries\n", elf_file->e_phnum);
 	return (0);
 }
 
@@ -110,22 +115,30 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file == NULL)
 		return (ft_error("Could not allocate memory"), NULL);
 
+	ft_verbose("\nStarting file parsing...\n");
 	/**
 	 * By default we set en endianness to little endian because it's the endianness of the header
 	 */
 	reader->set_endian(reader, READER_LITTLE_ENDIAN);
 	reader->get_bytes(reader, elf_file->e_ident.raw, 16);
 
+	ft_verbose("\nReading ELF magic number...\n");
+	ft_verbose("Magic number: %X ", MAGIC(elf_file->e_ident.ei_magic, reader->endian));
 	if (elf_file->e_ident.ei_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
 	{
+		ft_verbose("%s\n", B_RED"invalid"RESET);
 		delete_elf_file(elf_file);
 		return (ft_error("Invalid file format"), NULL);
 	}
 
+	ft_verbose("%s\n", B_GREEN"valid"RESET);
+
+	ft_verbose("\nReading ELF endianness...\n");
 	if (elf_file->e_ident.ei_data == 2)
 	{
 		reader->set_endian(reader, READER_BIG_ENDIAN);
 	}
+	ft_verbose("Endianness: %s\n", elf_file->e_ident.ei_data == READER_BIG_ENDIAN ? B_BLUE"Big"RESET : B_CYAN"Little"RESET);
 
 	/**
 	 * We check that the e_ident version is 1, if not the file is not valid
@@ -145,6 +158,7 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		return (ft_error("Incompatible ABI"), NULL);
 	}
 
+	ft_verbose("\nReading ELF class...\n");
 #ifdef WD_64BITS_EXEC
 	if (elf_file->e_ident.ei_class != WD_64BITS)
 	{
@@ -158,6 +172,9 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		return (ft_error("Incompatible class"), NULL);
 	}
 #endif /* WD_64BITS_EXEC */
+	ft_verbose("Class: %s%s%s\n", B_CYAN, elf_file->e_ident.ei_class == WD_32BITS ? "32 bits" : "64 bits", RESET);
+
+	ft_verbose(B_GREEN"\nELF file is valid\n"RESET);
 
 	reader->seek(reader, 0x10);
 	elf_file->e_type = reader->get_uint16(reader);
@@ -181,13 +198,13 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	elf_file->e_shnum = reader->get_uint16(reader);
 	elf_file->e_shstrndx = reader->get_uint16(reader);
 
-	if (get_elf_tables_offset(elf_file, reader))
+	if (get_elf_program_headers(elf_file, reader))
 	{
 		delete_elf_file(elf_file);
 		return (NULL);
 	}
 
-	if (get_elf_program_headers(elf_file, reader))
+	if (get_elf_tables_offset(elf_file, reader))
 	{
 		delete_elf_file(elf_file);
 		return (NULL);
