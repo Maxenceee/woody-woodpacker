@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/20 23:35:47 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 01:46:21 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,6 @@ int	main(int ac, char **av)
 	}
 	close(fd);
 
-	// Get the file e_type reading 3 bytes as a string
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)
 	{
