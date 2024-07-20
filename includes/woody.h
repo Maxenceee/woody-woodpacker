@@ -6,12 +6,16 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 22:31:45 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/19 17:54:17 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WOODY_H
 # define WOODY_H
+
+#if !defined(WD_32BITS_EXEC) && !defined(WD_64BITS_EXEC)
+# define WD_64BITS_EXEC 
+#endif /* WD_32BITS_EXEC */
 
 #include <fcntl.h>
 #include "reader/binary_reader.h"

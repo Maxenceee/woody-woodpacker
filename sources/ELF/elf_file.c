@@ -154,6 +154,20 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		return (ft_error("Incompatible ABI"), NULL);
 	}
 
+#ifdef WD_64BITS_EXEC
+	if (elf_file->e_ident.ei_class != WD_64BITS)
+	{
+		delete_elf_file(elf_file);
+		return (ft_error("Incompatible class"), NULL);
+	}
+#else
+	if (elf_file->e_ident.ei_class != WD_32BITS)
+	{
+		delete_elf_file(elf_file);
+		return (ft_error("Incompatible class"), NULL);
+	}
+#endif /* WD_64BITS_EXEC */
+
 	reader->seek(reader, 0x10);
 	elf_file->e_type = reader->get_uint16(reader);
 	elf_file->e_machine = reader->get_uint16(reader);
