@@ -133,12 +133,42 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 
 	ft_verbose("%s\n", B_GREEN"valid"RESET);
 
+	ft_verbose("\nReading ELF class...\n");
+#ifdef WD_64BITS_EXEC
+	if (elf_file->e_ident.ei_class != WD_64BITS)
+	{
+		delete_elf_file(elf_file);
+		return (ft_error("Incompatible class"), NULL);
+	}
+#else
+	if (elf_file->e_ident.ei_class != WD_32BITS)
+	{
+		delete_elf_file(elf_file);
+		return (ft_error("Incompatible class"), NULL);
+	}
+#endif /* WD_64BITS_EXEC */
+	ft_verbose("Class: %s%s%s\n", B_CYAN, elf_file->e_ident.ei_class == WD_32BITS ? "32 bits" : "64 bits", RESET);
+
 	ft_verbose("\nReading ELF endianness...\n");
-	if (elf_file->e_ident.ei_data == 2)
+#if 1
+	if (elf_file->e_ident.ei_data == READER_BIG_ENDIAN)
 	{
 		reader->set_endian(reader, READER_BIG_ENDIAN);
 	}
+#endif
 	ft_verbose("Endianness: %s\n", elf_file->e_ident.ei_data == READER_BIG_ENDIAN ? B_BLUE"Big"RESET : B_CYAN"Little"RESET);
+#if 0
+	/**
+	 * INFO:
+	 * If big endian is detected is set but this file is not big endian,
+	 * the reading process ends up with infinit loop because of incoeherent values.
+	 */
+	if (elf_file->e_ident.ei_data == READER_BIG_ENDIAN)
+	{
+		delete_elf_file(elf_file);
+		return (ft_error("Incompatible endianness"), NULL);
+	}
+#endif
 
 	/**
 	 * We check that the e_ident version is 1, if not the file is not valid
@@ -157,24 +187,6 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		delete_elf_file(elf_file);
 		return (ft_error("Incompatible ABI"), NULL);
 	}
-
-	ft_verbose("\nReading ELF class...\n");
-#ifdef WD_64BITS_EXEC
-	if (elf_file->e_ident.ei_class != WD_64BITS)
-	{
-		delete_elf_file(elf_file);
-		return (ft_error("Incompatible class"), NULL);
-	}
-#else
-	if (elf_file->e_ident.ei_class != WD_32BITS)
-	{
-		delete_elf_file(elf_file);
-		return (ft_error("Incompatible class"), NULL);
-	}
-#endif /* WD_64BITS_EXEC */
-	ft_verbose("Class: %s%s%s\n", B_CYAN, elf_file->e_ident.ei_class == WD_32BITS ? "32 bits" : "64 bits", RESET);
-
-	ft_verbose(B_GREEN"\nELF file is valid\n"RESET);
 
 	reader->seek(reader, 0x10);
 	elf_file->e_type = reader->get_uint16(reader);
@@ -198,6 +210,22 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	elf_file->e_shnum = reader->get_uint16(reader);
 	elf_file->e_shstrndx = reader->get_uint16(reader);
 
+	if (elf_file->e_entry > reader->size
+		|| elf_file->e_phoff > reader->size
+		|| elf_file->e_shoff > reader->size
+		|| elf_file->e_ehsize > reader->size
+		|| elf_file->e_shstrndx > elf_file->e_shnum
+		|| elf_file->e_shnum > reader->size
+		|| elf_file->e_phnum > reader->size
+		|| elf_file->e_phentsize > reader->size
+		|| elf_file->e_shentsize > reader->size
+	)
+	{
+		print_elf_file(elf_file, PELF_HEADER);
+		delete_elf_file(elf_file);
+		return (ft_error("Could not read file because of incoeherent values"), NULL);
+	}
+
 	if (get_elf_program_headers(elf_file, reader))
 	{
 		delete_elf_file(elf_file);
@@ -209,6 +237,8 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		delete_elf_file(elf_file);
 		return (NULL);
 	}
+
+	ft_verbose(B_GREEN"\nELF file is valid\n"RESET);
 
 	return (elf_file);
 }

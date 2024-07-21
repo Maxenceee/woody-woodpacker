@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 20:06:54 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/18 22:43:37 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 02:07:15 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ typedef struct s_binary_reader	t_binary_reader;
 
 enum e_endian_reader
 {
-	READER_BIG_ENDIAN		= 0X00,
-	READER_LITTLE_ENDIAN	= 0X01
+	READER_LITTLE_ENDIAN	= 0X01,
+	READER_BIG_ENDIAN		= 0X02
 };
 
 struct s_binary_reader

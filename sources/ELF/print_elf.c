@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 14:14:32 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 01:51:58 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 {
 	if (level & PELF_ALL || level & PELF_HEADER)
 	{
-		printf("ELF Header:\n");
+		printf("\nELF Header:\n");
 		printf("  Magic:   ");
 		for (int i = 0; i < 16; i++)
 			printf("%02X ", elf_file->e_ident.raw[i]);
