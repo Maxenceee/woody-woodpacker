@@ -12,13 +12,57 @@
 
 #include "woody.h"
 
+static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader)
+{
+	ft_verbose("\nReading ELF program headers...\n");
+	reader->seek(reader, elf_file->e_phoff);
+	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
+	if (elf_file->program_headers == NULL)
+		return (ft_error("Could not allocate memory"), -1);
+
+	for (int i = 0; i < elf_file->e_phnum; i++)
+	{
+		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
+#ifdef WD_32BITS_EXEC
+		elf_file->program_headers[i].p_offset = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_vaddr = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_paddr = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_filesz = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_memsz = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_align = reader->get_uint32(reader);
+#else
+		elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
+		elf_file->program_headers[i].p_offset = reader->get_uint64(reader);
+		elf_file->program_headers[i].p_vaddr = reader->get_uint64(reader);
+		elf_file->program_headers[i].p_paddr = reader->get_uint64(reader);
+		elf_file->program_headers[i].p_filesz = reader->get_uint64(reader);
+		elf_file->program_headers[i].p_memsz = reader->get_uint64(reader);
+		elf_file->program_headers[i].p_align = reader->get_uint64(reader);
+#endif /* WD_32BITS_EXEC */
+
+		if (elf_file->program_headers[i].p_offset > reader->size
+			|| elf_file->program_headers[i].p_filesz > reader->size
+			|| elf_file->program_headers[i].p_memsz < elf_file->program_headers[i].p_filesz
+			|| elf_file->program_headers[i].p_align < 1
+		)
+		{
+			print_elf_file(elf_file, PELF_HEADER | PELF_PROG | PELF_ERROR);
+			return (ft_error("Could not read file because of incoeherent values"), -1);
+		}
+	}
+	ft_verbose("Program header contains %d entries\n", elf_file->e_phnum);
+	return (0);
+}
+
 static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 {
-	ft_verbose("\nReading ELF section tables...\n");
+	ft_verbose("\nReading ELF sections table...\n");
 	reader->seek(reader, elf_file->e_shoff);
 	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section));
 	if (elf_file->section_tables == NULL)
-		return (ft_error("Could not allocate memory"), 1);
+		return (ft_error("Could not allocate memory"), -1);
+
 	for (int i = 0; i < elf_file->e_shnum; i++)
 	{
 		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
@@ -43,7 +87,21 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		elf_file->section_tables[i].sh_addralign = reader->get_uint64(reader);
 		elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
 #endif /* WD_32BITS_EXEC */
+
+		if (elf_file->section_tables[i].sh_type == SHT_NULL)
+			continue;
+		if (elf_file->section_tables[i].sh_offset > reader->size
+			|| elf_file->section_tables[i].sh_size > reader->size
+			|| elf_file->section_tables[i].sh_addralign < 1
+			|| elf_file->section_tables[i].sh_info > elf_file->e_shnum
+			|| elf_file->section_tables[i].sh_link > elf_file->e_shnum
+		)
+		{
+			print_elf_file(elf_file, PELF_HEADER | PELF_SECTION | PELF_ERROR);
+			return (ft_error("Could not read file because of incoeherent values"), -1);
+		}
 	}
+
 	ft_verbose("Section table contains %d entries\n", elf_file->e_shnum);
 	if (elf_file->e_shstrndx > 0)
 	{
@@ -53,7 +111,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 			reader->seek(reader, elf_file->section_tables[elf_file->e_shstrndx].sh_offset + elf_file->section_tables[i].sh_name_offset);
 			elf_file->section_tables[i].sh_name = reader->get_rstring(reader);
 			if (elf_file->section_tables[i].sh_name == NULL)
-				return (ft_error("Could not allocate memory"), 1);
+				return (ft_error("Could not allocate memory"), -1);
 		}
 	}
 
@@ -65,7 +123,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 
 			elf_file->section_tables[i].data = malloc(elf_section_data_size);
 			if (elf_file->section_tables[i].data == NULL) {
-				return (ft_error("Could not allocate memory"), 1);
+				return (ft_error("Could not allocate memory"), -1);
 			}
 
 			ft_memset(elf_file->section_tables[i].data, 0, elf_section_data_size);
@@ -74,38 +132,6 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		}
 	}
 
-	return (0);
-}
-
-static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader)
-{
-	ft_verbose("\nReading ELF program headers...\n");
-	reader->seek(reader, elf_file->e_phoff);
-	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
-	if (elf_file->program_headers == NULL)
-		return (ft_error("Could not allocate memory"), 1);
-	for (int i = 0; i < elf_file->e_phnum; i++)
-	{
-		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
-#ifdef WD_32BITS_EXEC
-		elf_file->program_headers[i].p_offset = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_vaddr = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_paddr = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_filesz = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_memsz = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_align = reader->get_uint32(reader);
-#else
-		elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_offset = reader->get_uint64(reader);
-		elf_file->program_headers[i].p_vaddr = reader->get_uint64(reader);
-		elf_file->program_headers[i].p_paddr = reader->get_uint64(reader);
-		elf_file->program_headers[i].p_filesz = reader->get_uint64(reader);
-		elf_file->program_headers[i].p_memsz = reader->get_uint64(reader);
-		elf_file->program_headers[i].p_align = reader->get_uint64(reader);
-#endif /* WD_32BITS_EXEC */
-	}
-	ft_verbose("Program header contains %d entries\n", elf_file->e_phnum);
 	return (0);
 }
 
@@ -127,7 +153,6 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	if (elf_file->e_ident.ei_magic != 0x464C457F) // 0x7F 'E' 'L' 'F' but reversed because of endianness
 	{
 		ft_verbose("%s\n", B_RED"invalid"RESET);
-		delete_elf_file(elf_file);
 		return (ft_error("Invalid file format"), NULL);
 	}
 
@@ -137,13 +162,11 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 #ifdef WD_64BITS_EXEC
 	if (elf_file->e_ident.ei_class != WD_64BITS)
 	{
-		delete_elf_file(elf_file);
 		return (ft_error("Incompatible class"), NULL);
 	}
 #else
 	if (elf_file->e_ident.ei_class != WD_32BITS)
 	{
-		delete_elf_file(elf_file);
 		return (ft_error("Incompatible class"), NULL);
 	}
 #endif /* WD_64BITS_EXEC */
@@ -175,7 +198,6 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	 */
 	if (elf_file->e_ident.ei_version != 1)
 	{
-		delete_elf_file(elf_file);
 		return (ft_error("Wrong version"), NULL);
 	}
 
@@ -184,7 +206,6 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	 */
 	if (elf_file->e_ident.ei_osabi != 0x00 && elf_file->e_ident.ei_osabi != 0x03)
 	{
-		delete_elf_file(elf_file);
 		return (ft_error("Incompatible ABI"), NULL);
 	}
 
@@ -210,31 +231,27 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	elf_file->e_shnum = reader->get_uint16(reader);
 	elf_file->e_shstrndx = reader->get_uint16(reader);
 
-	if (elf_file->e_entry > reader->size
-		|| elf_file->e_phoff > reader->size
+	if (elf_file->e_phoff > reader->size
 		|| elf_file->e_shoff > reader->size
-		|| elf_file->e_ehsize > reader->size
+		|| elf_file->e_ehsize != WD_ELF_HEADER_SIZE
+		|| elf_file->e_phentsize != WD_ELF_PROGRAM_HEADER_SIZE
+		|| elf_file->e_shentsize != WD_ELF_SECTION_HEADER_SIZE
 		|| elf_file->e_shstrndx > elf_file->e_shnum
-		|| elf_file->e_shnum > reader->size
-		|| elf_file->e_phnum > reader->size
-		|| elf_file->e_phentsize > reader->size
-		|| elf_file->e_shentsize > reader->size
+		|| elf_file->e_shnum > reader->size / WD_ELF_PROGRAM_HEADER_SIZE
+		|| elf_file->e_phnum > reader->size / WD_ELF_SECTION_HEADER_SIZE
 	)
 	{
 		print_elf_file(elf_file, PELF_HEADER);
-		delete_elf_file(elf_file);
 		return (ft_error("Could not read file because of incoeherent values"), NULL);
 	}
 
-	if (get_elf_program_headers(elf_file, reader))
+	if (get_elf_program_headers(elf_file, reader) == -1)
 	{
-		delete_elf_file(elf_file);
 		return (NULL);
 	}
 
-	if (get_elf_tables_offset(elf_file, reader))
+	if (get_elf_tables_offset(elf_file, reader) == -1)
 	{
-		delete_elf_file(elf_file);
 		return (NULL);
 	}
 

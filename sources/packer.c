@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 23:52:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 05:27:46 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	packer(t_elf_file *elf)
 	if (fd == -1)
 		return (ft_error("Could not open file."), -1);
 
-	size_t elf_header_size = sizeof(t_elf_file) - sizeof(t_elf_program_header *) - sizeof(t_elf_section *);
+	size_t elf_header_size = WD_ELF_HEADER_SIZE;
 	size_t elf_section_header_size = sizeof(t_elf_section) - sizeof(char *) - sizeof(uint8_t *);
 
 	write_to_file(fd, elf, elf_header_size);

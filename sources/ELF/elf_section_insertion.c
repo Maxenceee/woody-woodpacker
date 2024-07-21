@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 01:46:06 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 05:18:58 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,12 +336,12 @@ int	elf_insert_section(t_elf_file *elf, int opt)
 	packer.new_section_size = 0;
 	ft_verbose("\nStarting new section insertion...\n");
 	ft_verbose("Payload: %p\n", packer.payload_64);
-	ft_verbose("Payload size: %u\n", packer.payload_64_size);
+	ft_verbose("Payload size: %u bytes\n", packer.payload_64_size);
 	
 	int progi = efl_find_last_prog_header(elf);
-	ft_verbose("Last program header index: %d\n", progi);
+	ft_verbose("Last loadable program header index: %d\n", progi);
 	int sectioni = efl_find_last_section_header(elf, progi);
-	ft_verbose("Last section header index: %d\n", sectioni);
+	ft_verbose("Last loadable section header index: %d\n", sectioni);
 	if (create_new_elf_section(elf, &packer, progi, sectioni) == -1)
 		return (-1);
 

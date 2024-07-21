@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 01:51:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 05:56:25 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,21 +455,24 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			printf("%#lx\n", elf_file->program_headers[i].p_align);
 		}
 
-		printf("\nSection to Segment mapping:\n");
-		printf("  Segment Sections...\n");
-		for (int i = 0; i < elf_file->e_phnum; i++)
+		if (0 == (level & PELF_ERROR))
 		{
-			printf("   %02d     ", i);
-			for (int j = 1; j < elf_file->e_shnum; j++)
+			printf("\nSection to Segment mapping:\n");
+			printf("  Segment Sections...\n");
+			for (int i = 0; i < elf_file->e_phnum; i++)
 			{
-				if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
-					elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
-					elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_memsz)
+				printf("   %02d     ", i);
+				for (int j = 1; j < elf_file->e_shnum; j++)
 				{
-					printf("%s ", elf_file->section_tables[j].sh_name);
+					if (elf_file->section_tables[j].sh_offset >= elf_file->program_headers[i].p_offset &&
+						elf_file->section_tables[j].sh_offset + elf_file->section_tables[j].sh_size <=
+						elf_file->program_headers[i].p_offset + elf_file->program_headers[i].p_memsz)
+					{
+						printf("%s ", elf_file->section_tables[j].sh_name);
+					}
 				}
+				printf("\n");
 			}
-			printf("\n");
 		}
 	}
 

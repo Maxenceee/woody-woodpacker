@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 23:22:30 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 05:55:02 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,10 @@ typedef struct
 	t_elf_section			*section_tables;
 }	t_elf_file;
 
+#define WD_ELF_HEADER_SIZE (sizeof(t_elf_file) - sizeof(t_elf_program_header *) - sizeof(t_elf_section *))
+#define WD_ELF_PROGRAM_HEADER_SIZE sizeof(t_elf_program_header)
+#define WD_ELF_SECTION_HEADER_SIZE (sizeof(t_elf_section) - sizeof(char *) - sizeof(uint8_t *))
+
 // Check endianness and swap bytes if needed
 #define MAGIC(x, e)	(e == LITTLE_ENDIAN ? x : ((x >> 24) & 0xff) | ((x >> 8) & 0xff00) | ((x << 8) & 0xff0000) | ((x << 24) & 0xff000000))
 
@@ -135,6 +139,7 @@ void			delete_elf_file(t_elf_file *file_format);
 #define PELF_SECTION	0x08
 #define PELF_SYM		0x10
 #define PELF_DATA		0x20
+#define PELF_ERROR		0x80
 
 void			print_elf_file(t_elf_file *elf_file, int level);
 

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 21:42:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 22:52:10 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 05:16:26 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void ft_switch_types(const char *fmt, va_list *argp, int hex)
 		ft_putstr_fd(RESET, STDOUT_FILENO);
 		break;
 	case 'u':
-		ft_putstr_fd(B_PINK, STDOUT_FILENO);
+		ft_putstr_fd(B_YELLOW, STDOUT_FILENO);
 		ft_putnbr_base(va_arg(*argp, unsigned long), 0, 10);
 		ft_putstr_fd(RESET, STDOUT_FILENO);
 		break;
