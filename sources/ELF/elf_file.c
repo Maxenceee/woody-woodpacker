@@ -226,6 +226,8 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		return (ft_error("Could not read file because of incoeherent values"), NULL);
 	}
 
+	ft_verbose(B_GREEN"\nELF file is valid\n"RESET);
+
 	if (get_elf_program_headers(elf_file, reader))
 	{
 		delete_elf_file(elf_file);
@@ -237,8 +239,6 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 		delete_elf_file(elf_file);
 		return (NULL);
 	}
-
-	ft_verbose(B_GREEN"\nELF file is valid\n"RESET);
 
 	return (elf_file);
 }
