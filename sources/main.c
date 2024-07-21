@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/21 21:45:43 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/22 01:36:23 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ int	main(int ac, char **av)
 					break;
 				}
 				if ((key_size = ft_strlen(options.optarg)) != WD_AES_KEY_SIZE)
-					ft_warning("Key should be 64 bytes long, padding with 0s");
-				ft_memmove(key_aes, options.optarg, key_size);
+					ft_warning("Key should be 64 bytes long, key will be risized");
+				ft_memmove(key_aes, options.optarg, ft_min(key_size, WD_AES_KEY_SIZE));
 				break;
 			case 'h':
 				option |= F_HEADER;
