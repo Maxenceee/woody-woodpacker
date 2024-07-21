@@ -16,6 +16,7 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 {
 	ft_verbose("\nReading ELF program headers...\n");
 	reader->seek(reader, elf_file->e_phoff);
+
 	elf_file->program_headers = ft_calloc(elf_file->e_phnum, sizeof(t_elf_program_header));
 	if (elf_file->program_headers == NULL)
 		return (ft_error("Could not allocate memory"), -1);
@@ -43,7 +44,7 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 
 		if (elf_file->program_headers[i].p_offset > reader->size
 			|| elf_file->program_headers[i].p_filesz > reader->size
-			|| elf_file->program_headers[i].p_memsz < elf_file->program_headers[i].p_filesz
+			|| elf_file->program_headers[i].p_memsz < elf_file->program_headers[i].p_filesz // memsz must be greater or equal to filesz
 			|| elf_file->program_headers[i].p_align < 1
 		)
 		{
@@ -59,6 +60,7 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 {
 	ft_verbose("\nReading ELF sections table...\n");
 	reader->seek(reader, elf_file->e_shoff);
+
 	elf_file->section_tables = ft_calloc(elf_file->e_shnum, sizeof(t_elf_section));
 	if (elf_file->section_tables == NULL)
 		return (ft_error("Could not allocate memory"), -1);

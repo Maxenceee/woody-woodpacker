@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/21 01:46:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 21:45:43 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	main(int ac, char **av)
 						ft_error_msg("Cannot read key from file", options.optarg + 1);
 						return (1);
 					}
-					close(fd);
+					(void)close(fd);
 					break;
 				}
 				if ((key_size = ft_strlen(options.optarg)) != WD_AES_KEY_SIZE)

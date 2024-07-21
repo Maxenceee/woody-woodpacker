@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 05:27:46 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 21:46:47 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void add_zero_padding(int fd, size_t end_offset) {
 	char c = 0;
 
 	while(offset < end_offset) {
-		write_to_file(fd, &c, sizeof(c));
+		(void)write_to_file(fd, &c, sizeof(c));
 	}
 }
 
@@ -92,27 +92,27 @@ int	packer(t_elf_file *elf)
 		return (ft_error("Could not open file."), -1);
 
 	size_t elf_header_size = WD_ELF_HEADER_SIZE;
-	size_t elf_section_header_size = sizeof(t_elf_section) - sizeof(char *) - sizeof(uint8_t *);
+	size_t elf_section_header_size = WD_ELF_SECTION_HEADER_SIZE;
 
-	write_to_file(fd, elf, elf_header_size);
+	(void)write_to_file(fd, elf, elf_header_size);
 	add_zero_padding(fd, elf->e_phoff);
 
 	for (int i = 0; i < elf->e_phnum; i++) {
-		write_to_file(fd, &elf->program_headers[i], sizeof(t_elf_program_header));
+		(void)write_to_file(fd, &elf->program_headers[i], sizeof(t_elf_program_header));
 	}
 
 	for (int i = 0; i < elf->e_shnum; i++) {
 		if (elf->section_tables[i].sh_type != SHT_NOBITS)
 		{
 			add_zero_padding(fd, elf->section_tables[i].sh_offset);
-			write_to_file(fd, elf->section_tables[i].data, elf->section_tables[i].sh_size);
+			(void)write_to_file(fd, elf->section_tables[i].data, elf->section_tables[i].sh_size);
 		}
 	}
 
 	add_zero_padding(fd, elf->e_shoff);
 
 	for (int i = 0; i < elf->e_shnum; i++) {
-		write_to_file(fd, &elf->section_tables[i], elf_section_header_size);
+		(void)write_to_file(fd, &elf->section_tables[i], elf_section_header_size);
 	}
 
 	close(fd);

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 05:18:58 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/21 21:45:16 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,8 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	return (index);
 }
 
-uint8_t	*prepare_payload(t_elf_section *new_section_headers, t_elf_section *text_section, t_packer *packer)
+uint8_t	*prepare_payload(t_elf_section *text_section, t_packer *packer)
 {
-	(void)new_section_headers;
-
 	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
 	if (!payload)
 		return (NULL);
@@ -91,6 +89,10 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	size_t section_name_len = sizeof(WB_SECTION_NAME) + 1;
 	ft_memcpy(section_name, WB_SECTION_NAME, section_name_len);
 
+	/**
+	 * If a section with the same name already exists, we append a number to the
+	 * section name to make it unique.
+	 */
 	while (has_section(elf, section_name))
 	{
 		section_name = ft_strjoin(section_name, "-2");
@@ -122,9 +124,8 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	return (0);
 }
 
-int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog, int last_section_in_prog)
+int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_in_prog)
 {
-	(void)last_load_prog;
 	elf->e_shnum += 1;
 
 	ft_verbose("\nCreating new section...\n");
@@ -147,9 +148,17 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
 	new_section->sh_addralign = 16;
 
+	/**
+	 * The section offset must be aligned with its alignment value, as the size of the
+	 * pretending section is not necessarily a multiple of its alignment, a padding is
+	 * calculated to correct the potential gap.
+	 */
 	uint64_t current_offset_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
 	uint64_t current_offset = elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size + current_offset_padding;
 
+	/**
+	 * Same the section address.
+	 */
 	uint64_t current_vaddr_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
 	uint64_t current_vaddr = elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size + current_vaddr_padding;
 	
@@ -171,7 +180,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	}
 	ft_verbose("Text section found\n");
 	ft_verbose("Copying payload data into new section...\n");
-	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
+	if ((new_section->data = prepare_payload(text_section, packer)) == NULL)
 	{
 		free(new_section);
 		return (-1);
@@ -179,6 +188,11 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	ft_verbose("Payload data copied\n");
 
 	new_section->sh_size = packer->payload_64_size;
+	/**
+	 * The true size of the section might not be a multiple of its alignment value,
+	 * a padding is calculated to correct the potential gap and we save it to be used
+	 * later to remap the section headers.
+	 */
 	packer->new_section_size += calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
 	ft_verbose("New section size: %#x (%d bytes)\n", new_section->sh_size, new_section->sh_size);
 
@@ -207,7 +221,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	}
 	else
 	{
-		ft_warning("No section string table found");
+		(void)ft_warning("No section string table found");
 	}
 
 	ft_verbose("Updating section headers...\n");
@@ -225,11 +239,11 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_load_prog
 	return (0);
 }
 
-void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable, int last_loadable_section)
+void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 {
-	(void)last_loadable_section;
 	ft_verbose("\nUpdating program header...\n");
 	ft_verbose("Last loadable segment: %d\n", last_loadable);
+
 	elf->program_headers[last_loadable].p_memsz += packer->new_section_size;
 	elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
 	ft_verbose("New program header size: %#x\n", elf->program_headers[last_loadable].p_memsz);
@@ -237,18 +251,31 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable,
 	elf->program_headers[last_loadable].p_flags |= PF_X | PF_W | PF_R;
 }
 
-void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
+void	update_section_addr(t_elf_file *elf, int last_loadable)
 {
-	(void)packer;
 	ft_verbose("\nUpdating section addresses...\n");
+	/**
+	 * Since we added a new section, we need to update the offset of the following sections.
+	 * For each section, the new offset is the offset of the last section plus its size
+	 * and the padding needed to align the next section.
+	 */
 	for (int i = last_loadable; i < elf->e_shnum - 1; i++) {
 		ft_verbose("Updating %s%s%s (%d) section offset\n", B_CYAN, elf->section_tables[i + 1].sh_name, RESET, i + 1);
+	
+		/**
+		 * It the last section is SHT_NOBITS, we don't need to add its size to the offset of the next section.
+		 */
 		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
 			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
 			ft_verbose("Previous section is SHT_NOBITS\n");
 			ft_verbose("New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
 			continue;
 		}
+
+		/**
+		 * Calculate the padding needed to align the next section based on the offset and size of
+		 * the last section and the alignment of the current section.
+		 */
 		uint64_t offset_padding = calculate_padded_size(
 			elf->section_tables[i].sh_offset + elf->section_tables[i].sh_size, 
 			elf->section_tables[i + 1].sh_addralign
@@ -263,6 +290,9 @@ void	update_section_addr(t_elf_file *elf, t_packer *packer, int last_loadable)
 		ft_verbose("New address: %#x\n", elf->section_tables[i + 1].sh_address);
 	}
 
+	/**
+	 * Once all the sections have been updated, we need to update the section headers offset.
+	 */
 	int section_count = elf->e_shnum;
 	elf->e_shoff = elf->section_tables[section_count - 1].sh_offset + elf->section_tables[section_count - 1].sh_size;
 	ft_verbose("New section headers offset: %#x\n", elf->e_shoff);
@@ -278,16 +308,16 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	// printf("last_entry_point: %#lx\n", last_entry_point);
 	// printf("new_entry_point: %#lx\n", elf->e_entry);
 
+	/**
+	 * To calculate the offset from the jump instruction to the previous entry point, we need to
+	 * know the address of the jump instruction and the address of the instruction after the jump.
+	 */
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address + 4; // + 4 bytes to go to the address of the instruction after jump
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
 	// printf("offset: %d => %#x\n", offset, offset);
 	// printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
-	/**
-	 * TODO:
-	 * mettre a jour les offset pour pas tout casser
-	 */
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
 
@@ -317,6 +347,9 @@ void	update_symbols(t_elf_file *elf, t_packer *packer)
 		if (sym.st_name == 0)
 			continue;
 
+		/**
+		 * If debug flag is set, we update the `_start` symbol to point to the new entry point.
+		 */
 		if (strcmp((char *)(elf->section_tables[symstr_idx].data + sym.st_name), "_start") == 0)
 		{
 			ft_verbose("Updating %s%s%s symbol\n", B_CYAN, "_start", RESET);
@@ -342,12 +375,12 @@ int	elf_insert_section(t_elf_file *elf, int opt)
 	ft_verbose("Last loadable program header index: %d\n", progi);
 	int sectioni = efl_find_last_section_header(elf, progi);
 	ft_verbose("Last loadable section header index: %d\n", sectioni);
-	if (create_new_elf_section(elf, &packer, progi, sectioni) == -1)
+	if (create_new_elf_section(elf, &packer, sectioni) == -1)
 		return (-1);
 
 	sectioni += 1;
-	update_program_header(elf, &packer, progi, sectioni);
-	update_section_addr(elf, &packer, sectioni);
+	update_program_header(elf, &packer, progi);
+	update_section_addr(elf, sectioni);
 	update_entry_point(elf, &packer, sectioni);
 
 	if (opt & F_UDSYM)
