@@ -116,6 +116,10 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 				return (ft_error("Could not allocate memory"), -1);
 		}
 	}
+	else
+	{
+		ft_verbose("No string table found\n");
+	}
 
 	size_t elf_section_data_size;
 	for (int i = 0; i < elf_file->e_shnum; i++)
