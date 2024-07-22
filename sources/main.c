@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/22 01:36:23 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/22 17:57:59 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main(int ac, char **av)
 	int ch, option = 0;
 	int key_size = WD_AES_KEY_SIZE;
 
-	struct optparse_long longopts[] = {
+	struct getopt_list_s optlist[] = {
         {"file-header", 'h', OPTPARSE_NONE},
         {"segments", 'l', OPTPARSE_NONE},
         {"sections", 'S', OPTPARSE_NONE},
@@ -50,10 +50,10 @@ int	main(int ac, char **av)
 		{"no-pack", 'n', OPTPARSE_NONE},
         {0}
     };
-	struct optparse options;
+	struct getopt_s options;
 
-    optparse_init(&options, av);
-	while ((ch = optparse_long(&options, longopts, NULL)) != -1) {
+    ft_getopt_init(&options, av);
+	while ((ch = ft_getopt(&options, optlist, NULL)) != -1) {
 		switch (ch) {
 			case 'k':
 				option |= F_KEY;
