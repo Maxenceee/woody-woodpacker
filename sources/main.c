@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/22 17:57:59 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/22 18:09:51 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int	main(int ac, char **av)
 	int fd = open(target, O_RDONLY);
 	if (fd == -1)
 	{
-		printf("Error: Cannot open file %s\n", target);
+		ft_error_msg("Cannot open file", target);
 		return (1);
 	}
 
@@ -138,7 +138,7 @@ int	main(int ac, char **av)
 
 	printf("\nAES key: %s0x", B_PINK);
 	for (size_t i = 0; i < WD_AES_KEY_SIZE; i++)
-		printf("%x", key_aes[i]);
+		printf("%02x", key_aes[i]);
 	printf(RESET"\n");
 	printf("AES key (ASCII): %s%s%s\n", B_CYAN, key_aes, RESET);
 
@@ -149,7 +149,7 @@ int	main(int ac, char **av)
 	if (!reader)
 	{
 		close(fd);
-		printf("Error: Cannot read file %s\n", target);
+		ft_error_msg("Cannot read file", target);
 		return (1);
 	}
 	close(fd);

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 21:45:16 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/22 18:05:38 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	void *tmp = malloc(new_string_table_size);
 	if (tmp == NULL)
 	{
-		printf("Bad readlloc in set_new_elf_section_string_table\n");
 		free(section_name);
 		return (-1);
 	}
@@ -133,7 +132,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_i
 	void *tmp = malloc(new_section_headers_size);
 	if (tmp == NULL)
 	{
-		printf("Bad readlloc in create_new_elf_section\n");
 		return (-1);
 	}
 	ft_memcpy(tmp, elf->section_tables, sizeof(t_elf_section) * (elf->e_shnum - 1));
