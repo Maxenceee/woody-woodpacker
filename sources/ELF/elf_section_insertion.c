@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   elf_section_insertion.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 18:22:37 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/23 19:08:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	return (index);
 }
 
-uint8_t	*prepare_payload(t_elf_section *text_section, t_packer *packer)
+uint8_t	*prepare_payload(t_elf_section *new_section, t_elf_section *text_section, t_packer *packer)
 {
 	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
 	if (!payload)
@@ -75,12 +75,14 @@ uint8_t	*prepare_payload(t_elf_section *text_section, t_packer *packer)
 	// Copy key inside payload
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 
-	printf("WD_PAYLOAD_OFF_DATA_START: %#016x\n", text_section->sh_offset);
-	printf("WD_PAYLOAD_OFF_DATA_SIZE:  %#016x\n", text_section->sh_size);
-	printf("WD_PAYLOAD_OFF_DATA_ADDR:  %#016x\n", text_section->sh_address);
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &text_section->sh_address, sizeof(uint64_t));
+	printf("WD_PAYLOAD_OFF_DATA_START: %#016lx\n", new_section->sh_address);
+	printf("WD_PAYLOAD_OFF_DATA_SIZE:  %#016lx\n", text_section->sh_size);
+	printf("WD_PAYLOAD_OFF_DATA_ADDR:  %#016lx\n", text_section->sh_address);
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &new_section->sh_address, sizeof(uint64_t));
+	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &new_section->sh_address, sizeof(uint64_t));
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &text_section->sh_address, sizeof(uint64_t));
+	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_address, sizeof(uint64_t));
 	return (payload);
 }
 
@@ -182,7 +184,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_i
 	}
 	ft_verbose("Text section found\n");
 	ft_verbose("Copying payload data into new section...\n");
-	if ((new_section->data = prepare_payload(text_section, packer)) == NULL)
+	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
 	{
 		free(new_section);
 		return (-1);
@@ -250,7 +252,11 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
 	ft_verbose("New program header size: %#x\n", elf->program_headers[last_loadable].p_memsz);
 
-	elf->program_headers[last_loadable].p_flags |= PF_X | PF_W | PF_R;
+	for (int i = 0; i < elf->e_phnum; i++)
+	{
+		if (elf->program_headers[i].p_type == PT_LOAD)
+			elf->program_headers[i].p_flags |= PF_X | PF_W | PF_R;
+	}
 }
 
 void	update_section_addr(t_elf_file *elf, int last_loadable)
@@ -321,6 +327,7 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
+	// ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &elf->e_entry, sizeof(uint64_t));
 }
 
 void	update_symbols(t_elf_file *elf, t_packer *packer)

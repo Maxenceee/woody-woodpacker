@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   packer.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 18:05:03 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/23 18:47:53 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	packer(t_elf_file *elf)
 	ft_verbose("\nPacking the file...\n");
 	int fd = open(WD_OUTPUT_FILE, O_CREAT | O_WRONLY | O_TRUNC, 0755);
 	if (fd == -1)
-		return (ft_error("Could not open file."), -1);
+		return (ft_error_msg("Could not open file", WD_OUTPUT_FILE), -1);
 
 	size_t elf_header_size = WD_ELF_HEADER_SIZE;
 	size_t elf_section_header_size = WD_ELF_SECTION_HEADER_SIZE;
