@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 14:17:15 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 19:22:21 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 23:08:42 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,12 @@ void	AES_CTR_encrypt(const unsigned char *in, unsigned char *out, const unsigned
  * AES 128 bits ecb
  */
 
-#define aes_128_ecb_encrypt CDECL_NORM(aes_128_ecb_encrypt)
+#ifdef WD_32BITS_EXEC
+#define aes_128_ecb_encrypt CDECL_NORM(aes_128_ecb_encrypt_64)
+#else
+#define aes_128_ecb_encrypt CDECL_NORM(aes_128_ecb_encrypt_32)
+#endif /* WD_32BITS_EXEC */
+
 void	aes_128_ecb_encrypt(uint8_t *data, uint64_t size, uint8_t *key, uint64_t kye_size);
 
 /**

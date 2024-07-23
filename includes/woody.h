@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 22:48:36 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 23:05:16 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,8 @@ extern uint8_t	key_aes[WD_AES_KEY_SIZE];
 typedef struct
 {
 	uint64_t	loader_offset;
-	uint8_t		*payload_64;
-	uint64_t	payload_64_size;
+	uint8_t		*payload;
+	uint64_t	payload_size;
 	uint64_t	new_section_size;
 }	t_packer;
 

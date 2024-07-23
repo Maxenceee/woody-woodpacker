@@ -2,8 +2,14 @@ MANDATORY_DIR	=	sources
 HEADERS_DIR		=	includes
 OBJ_DIR			=	.objs
 
+BITS			=	$(shell getconf LONG_BIT)
+
 SRCS			=	$(shell find $(MANDATORY_DIR) -name "*.c")
-SRCS_ASM		=	$(shell find $(MANDATORY_DIR) -name "*.asm")
+ifeq ($(BITS), 32)
+	SRCS_ASM		=	$(shell find $(MANDATORY_DIR) -name "*_32.asm")
+else
+	SRCS_ASM		=	$(shell find $(MANDATORY_DIR) -name "*_64.asm")
+endif
 
 OBJS			=	$(patsubst $(MANDATORY_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 OBJS_ASM		=	$(patsubst $(MANDATORY_DIR)%.asm, $(OBJ_DIR)%.o, $(SRCS_ASM))
