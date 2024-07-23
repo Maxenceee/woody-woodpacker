@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/23 15:56:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 16:02:47 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	usage(void)
 void	header(void)
 {
 	printf(HEADER"\n              .\n           ,'/ \\`.\n          |\\/___\\/|\n          \\'\\   /`/\n           `.\\ /,'\n              |\n              |\n             |=|\n        /\\  ,|=|.  /\\\n    ,'`.  \\/ |=| \\/  ,'`.\n  ,'    `.|\\ `-' /|,'    `.\n,'   .-._ \\ `---' / _,-.   `.\n   ,'    `-`-._,-'-'    `.\n  '                       `\n"RESET);
-	printf(HACKER"%*sWoodyWoodpacker\n\n"RESET, 8, "");
+	printf(HACKER"%*sWoodyWoodpacker%s\n\n", 8, "", RESET);
 }
 
 int	main(int ac, char **av)
