@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 19:16:25 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:39:30 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,7 +328,7 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	// ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &elf->e_entry, sizeof(uint64_t));
 }
 
-void	update_symbols(t_elf_file *elf, t_packer *packer)
+void	update_symbols(t_elf_file *elf)
 {
 	int symstr_idx = 0;
 	int symtab_idx = 0;
@@ -391,6 +391,6 @@ int	elf_insert_section(t_elf_file *elf, int opt)
 	update_entry_point(elf, &packer, sectioni);
 
 	if (opt & F_UDSYM)
-		update_symbols(elf, &packer);
+		update_symbols(elf);
 	return (0);
 }

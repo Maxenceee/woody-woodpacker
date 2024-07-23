@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 21:42:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 05:16:26 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:38:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void ft_putstr_fd(char *s, int fd)
 	write(fd, s, c);
 }
 
-void ft_putnbr_base(uint32_t nbr, int capitals, int baselen)
+void ft_putnbr_base(uint32_t nbr, int capitals, uint32_t baselen)
 {
 	if (nbr >= baselen)
 	{

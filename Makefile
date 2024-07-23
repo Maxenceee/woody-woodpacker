@@ -13,7 +13,7 @@ HEADERS			=	$(shell find $(HEADERS_DIR) -name "*.h") $(shell find $(MANDATORY_DI
 CC				=	gcc
 ASM				=	nasm
 RM				=	rm
-CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 #-Wall -Wextra -Werror
+CFLAGS			=	-I$(HEADERS_DIR) -I$(MANDATORY_DIR) -g3 -O0 -Wall -Wextra -Werror
 
 ifeq ($(shell uname), Darwin)
 	ASMFLAGS	=	-f macho64 -D __APPLE__
@@ -51,11 +51,11 @@ $(NAME): $(OBJS) $(OBJS_ASM)
 
 clean:
 	@echo "$(RED)Cleaning build folder$(DEFAULT)"
-	@$(RM) -r $(OBJ_DIR)
+	-@$(RM) -r $(OBJ_DIR)
 
 fclean: clean
 	@echo "$(RED)Cleaning $(NAME)$(DEFAULT)"
-	@$(RM) $(NAME)
+	-@$(RM) $(NAME)
 
 re: fclean all
 
