@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/22 18:09:51 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 15:56:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,12 @@ static void	usage(void)
 	exit(64);
 }
 
+void	header(void)
+{
+	printf(HEADER"\n              .\n           ,'/ \\`.\n          |\\/___\\/|\n          \\'\\   /`/\n           `.\\ /,'\n              |\n              |\n             |=|\n        /\\  ,|=|.  /\\\n    ,'`.  \\/ |=| \\/  ,'`.\n  ,'    `.|\\ `-' /|,'    `.\n,'   .-._ \\ `---' / _,-.   `.\n   ,'    `-`-._,-'-'    `.\n  '                       `\n"RESET);
+	printf(HACKER"%*sWoodyWoodpacker\n\n"RESET, 8, "");
+}
+
 int	main(int ac, char **av)
 {
 	char *target;
@@ -51,6 +57,8 @@ int	main(int ac, char **av)
         {0}
     };
 	struct getopt_s options;
+
+	header();
 
     ft_getopt_init(&options, av);
 	while ((ch = ft_getopt(&options, optlist, NULL)) != -1) {

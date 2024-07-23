@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/03 16:09:35 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 22:55:41 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 15:51:38 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
  *	-- Header Color
  */
 
-# define HEADER		"\x1b[1;38;5;216m"
+# define HEADER		"\x1b[1;38;5;31m"
 
 /*
  *	-- Reset Colors
@@ -41,7 +41,7 @@
 # define RED		"\033[0;31m"
 # define GREEN		"\033[0;32m"
 # define YELLOW		"\033[0;33m"
-# define ORANGE	"\x1b[0;38;5;202m"
+# define ORANGE		"\x1b[0;38;5;202m"
 # define BLUE		"\033[0;34m"
 # define PINK		"\033[0;35m"
 # define CYAN		"\033[0;36m"
@@ -111,5 +111,11 @@
 # define DTAB	"\t\t"
 # define TTAB	"\t\t\t"
 # define QTAB	"\t\t\t\t"
+
+/*
+ * Hacker
+ */
+
+# define HACKER		"\x1b[1;5;38;5;40m"
 
 #endif /* PCOLORS_H */
