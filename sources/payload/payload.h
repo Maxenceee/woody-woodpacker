@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 22:36:41 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 18:38:47 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:29:20 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,8 @@
 
 #include "types.h"
 
-// #define payload_64 CDECL_NORM(payload_64)
-// #define payload_64_size CDECL_NORM(payload_64_size)
-
-#define payload_64 CDECL_NORM(aes_128_ecb_decrypt)
-#define payload_64_size CDECL_NORM(aes_128_ecb_decrypt_size)
+#define payload_64 CDECL_NORM(payload_aes128_64)
+#define payload_64_size CDECL_NORM(payload_aes128_64_size)
 
 extern uint8_t	payload_64;
 extern uint64_t	payload_64_size;
@@ -32,6 +29,10 @@ extern uint64_t	payload_64_size;
 #define WD_PAYLOAD_OFF_DATA_ADDR (24) // 3 * sizeof(uint64_t) 
 #define WD_PAYLOAD_OFF_DATA_START (16) // 2 * sizeof(uint64_t)
 #define WD_PAYLOAD_OFF_DATA_SIZE (8) //  sizeof(uint64_t)
+
+/**
+ * INFO: Built-in example
+ */
 
 // #define WB_PAYLOAD_SIZE sizeof(wd_playload_64)
 // static const unsigned char wd_playload_64[] = {

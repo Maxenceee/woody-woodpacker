@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 19:08:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 19:16:25 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,14 +75,9 @@ uint8_t	*prepare_payload(t_elf_section *new_section, t_elf_section *text_section
 	// Copy key inside payload
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 
-	printf("WD_PAYLOAD_OFF_DATA_START: %#016lx\n", new_section->sh_address);
-	printf("WD_PAYLOAD_OFF_DATA_SIZE:  %#016lx\n", text_section->sh_size);
-	printf("WD_PAYLOAD_OFF_DATA_ADDR:  %#016lx\n", text_section->sh_address);
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &new_section->sh_address, sizeof(uint64_t));
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &new_section->sh_address, sizeof(uint64_t));
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
 	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &text_section->sh_address, sizeof(uint64_t));
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_address, sizeof(uint64_t));
 	return (payload);
 }
 
@@ -252,10 +247,17 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
 	ft_verbose("New program header size: %#x\n", elf->program_headers[last_loadable].p_memsz);
 
+	/**
+	 * Add reading and exectuting permission to the program header containing our section
+	 */
+	elf->program_headers[last_loadable].p_flags |= PF_R | PF_X;
 	for (int i = 0; i < elf->e_phnum; i++)
 	{
-		if (elf->program_headers[i].p_type == PT_LOAD)
-			elf->program_headers[i].p_flags |= PF_X | PF_W | PF_R;
+		/**
+		 * Since we will write in runtime in .text section we must add wrting permission
+		 */
+		if (elf->program_headers[i].p_type == PT_LOAD && elf->program_headers[i].p_flags & PF_X)
+			elf->program_headers[i].p_flags |=  PF_W;
 	}
 }
 
@@ -313,8 +315,6 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	elf->e_entry = elf->section_tables[last_loadable].sh_address;
 	ft_verbose("Last entry point: %#x\n", last_entry_point);
 	ft_verbose("New entry point: %#x\n", elf->e_entry);
-	printf("last_entry_point: %#lx\n", last_entry_point);
-	printf("new_entry_point: %#lx\n", elf->e_entry);
 
 	/**
 	 * To calculate the offset from the jump instruction to the previous entry point, we need to
@@ -323,8 +323,6 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address + 4; // + 4 bytes to go to the address of the instruction after jump
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
-	printf("offset: %d => %#x\n", offset, offset);
-	printf("calc new_entry_point: %#lx\n", jmp_instruction_address + offset);
 
 	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 	// ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &elf->e_entry, sizeof(uint64_t));

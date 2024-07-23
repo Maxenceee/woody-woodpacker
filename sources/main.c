@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/23 17:15:55 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/23 19:35:45 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	usage(void)
 void	header(void)
 {
 	printf(HEADER"\n              .\n           ,'/ \\`.\n          |\\/___\\/|\n          \\'\\   /`/\n           `.\\ /,'\n              |\n              |\n             |=|\n        /\\  ,|=|.  /\\\n    ,'`.  \\/ |=| \\/  ,'`.\n  ,'    `.|\\ `-' /|,'    `.\n,'   .-._ \\ `---' / _,-.   `.\n   ,'    `-`-._,-'-'    `.\n  '                       `\n"RESET);
-	printf(HACKER"%*sWoodyWoodpacker%s\n\n", 8, "", RESET);
+	printf("%*s%sWoodyWoodpacker%s\n\n", 8, "", HACKER, RESET);
 }
 
 int	main(int ac, char **av)

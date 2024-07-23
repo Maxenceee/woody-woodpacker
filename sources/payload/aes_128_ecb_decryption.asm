@@ -1,5 +1,5 @@
-global _aes_128_ecb_decrypt
-global _aes_128_ecb_decrypt_size
+global _payload_aes128_64
+global _payload_aes128_64_size
 
 %macro pushx 1-*
  %rep %0
@@ -23,7 +23,7 @@ global _aes_128_ecb_decrypt_size
 
 [BITS 64]
 
-_aes_128_ecb_decrypt:
+_payload_aes128_64:
 	pushfq
 	pushx rax, rdi, rsi, rsp, rdx, rcx
 
@@ -35,7 +35,7 @@ _aes_128_ecb_decrypt:
 	syscall
 
     ; We save pie offset
-    lea r12, [rel _aes_128_ecb_decrypt]
+    lea r12, [rel _payload_aes128_64]
     sub r12, [rel info_offset]
 
     jmp start_unpacking
@@ -133,4 +133,4 @@ padding:        dq  0xbbbbbbbbbbbbbbbb
 info_addr:	    dq	0xcccccccccccccccc
 info_offset:    dq  0xeeeeeeeeeeeeeeee
 info_size:	    dq  0xdddddddddddddddd
-_aes_128_ecb_decrypt_size:		dq $-_aes_128_ecb_decrypt
+_payload_aes128_64_size:		dq $-_payload_aes128_64

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   woody.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 17:25:39 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/23 19:30:34 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #include "elf.h"
 #include "payload/payload.h"
 
-#define WD_VERSION "1.0"
+#define WD_VERSION "3.0"
 #define WD_AUTHOR "mgama and mbrement"
 
 #define WD_PREFIX "woody"
@@ -151,12 +151,5 @@ int				packer(t_elf_file *elf);
 
 int	elf_insert_section(t_elf_file *elf, int opt);
 t_elf_section	*get_text_section(t_elf_file *elf);
-
-/**
- * Encryption
- */
-
-#define aes_128_ecb_encrypt CDECL_NORM(aes_128_ecb_encrypt)
-void	aes_128_ecb_encrypt(uint8_t *data, uint64_t size, uint8_t *key, uint64_t kye_size);
 
 #endif /* WOODY_H */
