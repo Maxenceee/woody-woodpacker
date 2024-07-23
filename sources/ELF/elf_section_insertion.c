@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 19:39:30 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 22:48:28 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,17 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 
 uint8_t	*prepare_payload(t_elf_section *new_section, t_elf_section *text_section, t_packer *packer)
 {
-	uint8_t	*payload = (uint8_t *)malloc(packer->payload_64_size);
+	uint8_t	*payload = (uint8_t *)malloc(packer->payload_size);
 	if (!payload)
 		return (NULL);
 
-	ft_memcpy(payload, packer->payload_64, packer->payload_64_size);
+	ft_memcpy(payload, packer->payload, packer->payload_size);
 	// Copy key inside payload
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
+	ft_memcpy(payload + packer->payload_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &new_section->sh_address, sizeof(uint64_t));
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
-	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &text_section->sh_address, sizeof(uint64_t));
+	ft_memcpy(payload + packer->payload_size - WD_PAYLOAD_OFF_DATA_START, &new_section->sh_address, sizeof(addr_t));
+	ft_memcpy(payload + packer->payload_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(addr_t));
+	ft_memcpy(payload + packer->payload_size - WD_PAYLOAD_OFF_DATA_ADDR, &text_section->sh_address, sizeof(addr_t));
 	return (payload);
 }
 
@@ -186,13 +186,13 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_i
 	}
 	ft_verbose("Payload data copied\n");
 
-	new_section->sh_size = packer->payload_64_size;
+	new_section->sh_size = packer->payload_size;
 	/**
 	 * The true size of the section might not be a multiple of its alignment value,
 	 * a padding is calculated to correct the potential gap and we save it to be used
 	 * later to remap the section headers.
 	 */
-	packer->new_section_size += calculate_padded_size(packer->payload_64_size, new_section->sh_addralign);
+	packer->new_section_size += calculate_padded_size(packer->payload_size, new_section->sh_addralign);
 	ft_verbose("New section size: %#x (%d bytes)\n", new_section->sh_size, new_section->sh_size);
 
 	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section) * (elf->e_shnum - last_section_in_prog - 1 - 1);
@@ -320,12 +320,11 @@ void	update_entry_point(t_elf_file *elf, t_packer *packer, int last_loadable)
 	 * To calculate the offset from the jump instruction to the previous entry point, we need to
 	 * know the address of the jump instruction and the address of the instruction after the jump.
 	 */
-	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR;
+	uint64_t jmp_instruction_address = elf->e_entry + packer->payload_size - WD_PAYLOAD_RETURN_ADDR;
 	uint64_t next_instruction_address = jmp_instruction_address + 4; // + 4 bytes to go to the address of the instruction after jump
 	int32_t offset = (int32_t)(last_entry_point - next_instruction_address);
 
-	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
-	// ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &elf->e_entry, sizeof(uint64_t));
+	ft_memcpy(elf->section_tables[last_loadable].data + packer->payload_size - WD_PAYLOAD_RETURN_ADDR, &offset, sizeof(offset));
 }
 
 void	update_symbols(t_elf_file *elf)
@@ -371,12 +370,12 @@ void	update_symbols(t_elf_file *elf)
 int	elf_insert_section(t_elf_file *elf, int opt)
 {
 	t_packer	packer;
-	packer.payload_64_size = WB_PAYLOAD_SIZE;
-	packer.payload_64 = (uint8_t *)wd_playload_64;
+	packer.payload_size = WB_PAYLOAD_SIZE;
+	packer.payload = (uint8_t *)wd_playload;
 	packer.new_section_size = 0;
 	ft_verbose("\nStarting new section insertion...\n");
-	ft_verbose("Payload: %p\n", packer.payload_64);
-	ft_verbose("Payload size: %u bytes\n", packer.payload_64_size);
+	ft_verbose("Payload: %p\n", packer.payload);
+	ft_verbose("Payload size: %u bytes\n", packer.payload_size);
 	
 	int progi = efl_find_last_prog_header(elf);
 	ft_verbose("Last loadable program header index: %d\n", progi);

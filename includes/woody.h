@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 19:30:34 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 22:48:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,24 +57,24 @@ enum
  * Structures
  */
 
+typedef union
+{
+    struct
+    {
+        uint32_t ei_magic;       // magic number
+        uint8_t  ei_class;       // 32 bits or 64 bits
+        uint8_t  ei_data;        // little or big endian
+        uint8_t  ei_version;     // elf version
+        uint8_t  ei_osabi;       // operating system target
+        uint8_t  ei_abi_version; // abi version
+        char     ei_pad[7];      // Reserved padding bytes
+    };
+    uint8_t raw[16];
+} t_elf_ident;
+
 typedef struct
 {
-	union
-	{
-		struct
-		{
-			uint32_t	ei_magic;				// magic number
-			uint8_t		ei_class;				// 32 bits or 64 bits
-			uint8_t		ei_data;				// little of big endian
-			uint8_t		ei_version;				// elf version
-			uint8_t		ei_osabi;				// operating system target
-			uint8_t		ei_abi_version;			// abi version
-			char		ei_pad[7];				// Reserved padding bytes
-		};
-
-		uint8_t		raw[16];
-	} e_ident;
-
+	t_elf_ident	e_ident;
 	uint16_t	e_type;						// object type
 	uint16_t	e_machine;					// machine type
 	uint32_t	e_version;					// object version

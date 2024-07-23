@@ -1,6 +1,12 @@
 global _payload_aes128_64
 global _payload_aes128_64_size
 
+%ifdef __APPLE__
+%define JUMP_ADDR [rel 0x0]
+%else
+%define JUMP_ADDR 0x0
+%endif
+
 %macro pushx 1-*
  %rep %0
    push %1
@@ -31,7 +37,7 @@ _payload_aes128_64:
     mov rax, 1
 	mov	rdi, rax
 	lea	rsi, [rel msg]
-	mov	rdx, msg_len
+	mov	rdx, 14
 	syscall
 
     ; We save pie offset
@@ -52,7 +58,6 @@ key_expansion_128:
     ret
 
 msg	db "....WOODY....", 0x0a, 0
-msg_len	equ	$ - msg
 
 start_unpacking:
     movdqu xmm1, [rel info_key]
@@ -124,7 +129,7 @@ aes_loop:
 clean:
     popx rax, rdi, rsi, rsp, rdx, rcx
     popfq
-    jmp	0xFFFFFFFF
+    jmp	JUMP_ADDR
 
 ; random values here, to be patched
 info_start:
