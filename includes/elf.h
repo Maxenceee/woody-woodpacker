@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 14:14:32 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 00:33:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,7 @@
 #define PT_LOPROC		0x70000000	/* Start of processor-specific */
 #define PT_HIPROC		0x7fffffff	/* End of processor-specific */
 
-typedef
-#ifdef WD_32BITS_EXEC
-struct
-{
-	uint32_t	p_type;
-	uint32_t	p_offset;
-	uint32_t	p_vaddr;
-	uint32_t	p_paddr;
-	uint32_t	p_filesz;
-	uint32_t	p_memsz;
-	uint32_t	p_flags;
-	uint32_t	p_align;
-}
-#else
-struct
+typedef struct
 {
 	uint32_t	p_type;
 	uint32_t	p_flags;
@@ -72,29 +58,9 @@ struct
 	uint64_t	p_filesz;
 	uint64_t	p_memsz;
 	uint64_t	p_align;
-}
-#endif/* WD_32BITS_EXEC */
-t_elf_program_header;
+} t_elf_program_header;
 
-typedef
-#ifdef WD_32BITS_EXEC
-struct
-{
-	uint32_t	sh_name_offset;
-	uint32_t	sh_type;
-	uint32_t	sh_flags;
-	uint32_t	sh_address;
-	uint32_t	sh_offset;
-	uint32_t	sh_size;
-	uint32_t	sh_link;
-	uint32_t	sh_info;
-	uint32_t	sh_addralign;
-	uint32_t	sh_entsize;
-	uint8_t		*data;
-	char		*sh_name;
-}
-#else
-struct
+typedef struct
 {
 	uint32_t	sh_name_offset;
 	uint32_t	sh_type;
@@ -108,9 +74,7 @@ struct
 	uint64_t	sh_entsize;
 	uint8_t		*data;
 	char		*sh_name;
-}
-#endif/* WD_32BITS_EXEC */
-t_elf_section;
+} t_elf_section;
 
 #define SHT_NULL			0		/* Section header table entry unused */
 #define SHT_PROGBITS		1		/* Program data */
@@ -168,18 +132,7 @@ t_elf_section;
 #define PF_MASKOS	0x0ff00000	/* OS-specific */
 #define PF_MASKPROC	0xf0000000	/* Processor-specific */
 
-typedef
-#ifdef WD_32BITS_EXEC
-struct
-{
-	uint32_t	st_name;
-	uint32_t	st_value;
-	uint32_t	st_size;
-	uint8_t		st_info;
-	uint8_t		st_other;
-	uint16_t	st_shndx;
-}
-#else
+typedef 
 struct
 {
 	uint32_t	st_name;
@@ -188,9 +141,7 @@ struct
 	uint16_t	st_shndx;
 	uint64_t	st_value;
 	uint64_t	st_size;
-}
-#endif /* WD_32BITS_EXEC */
-t_elf_sym;
+} t_elf_sym;
 
 enum
 {

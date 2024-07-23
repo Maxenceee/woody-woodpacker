@@ -25,15 +25,6 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 	for (int i = 0; i < elf_file->e_phnum; i++)
 	{
 		elf_file->program_headers[i].p_type = reader->get_uint32(reader);
-#ifdef WD_32BITS_EXEC
-		elf_file->program_headers[i].p_offset = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_vaddr = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_paddr = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_filesz = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_memsz = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
-		elf_file->program_headers[i].p_align = reader->get_uint32(reader);
-#else
 		elf_file->program_headers[i].p_flags = reader->get_uint32(reader);
 		elf_file->program_headers[i].p_offset = reader->get_uint64(reader);
 		elf_file->program_headers[i].p_vaddr = reader->get_uint64(reader);
@@ -41,7 +32,6 @@ static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader
 		elf_file->program_headers[i].p_filesz = reader->get_uint64(reader);
 		elf_file->program_headers[i].p_memsz = reader->get_uint64(reader);
 		elf_file->program_headers[i].p_align = reader->get_uint64(reader);
-#endif /* WD_32BITS_EXEC */
 
 		if (elf_file->program_headers[i].p_offset > reader->size
 			|| elf_file->program_headers[i].p_filesz > reader->size
@@ -70,26 +60,14 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 	{
 		elf_file->section_tables[i].sh_name_offset = reader->get_uint32(reader);
 		elf_file->section_tables[i].sh_type = reader->get_uint32(reader);
-#ifdef WD_32BITS_EXEC
-		elf_file->section_tables[i].sh_flags = reader->get_uint32(reader);
-		elf_file->section_tables[i].sh_address = reader->get_uint32(reader);
-		elf_file->section_tables[i].sh_offset = reader->get_uint32(reader);
-		elf_file->section_tables[i].sh_size = reader->get_uint32(reader);
-#else
 		elf_file->section_tables[i].sh_flags = reader->get_uint64(reader);
 		elf_file->section_tables[i].sh_address = reader->get_uint64(reader);
 		elf_file->section_tables[i].sh_offset = reader->get_uint64(reader);
 		elf_file->section_tables[i].sh_size = reader->get_uint64(reader);
-#endif /* WD_32BITS_EXEC */
 		elf_file->section_tables[i].sh_link = reader->get_uint32(reader);
 		elf_file->section_tables[i].sh_info = reader->get_uint32(reader);
-#ifdef WD_32BITS_EXEC
-		elf_file->section_tables[i].sh_addralign = reader->get_uint32(reader);
-		elf_file->section_tables[i].sh_entsize = reader->get_uint32(reader);
-#else
 		elf_file->section_tables[i].sh_addralign = reader->get_uint64(reader);
 		elf_file->section_tables[i].sh_entsize = reader->get_uint64(reader);
-#endif /* WD_32BITS_EXEC */
 
 		if (elf_file->section_tables[i].sh_type == SHT_NULL)
 			continue;
@@ -164,17 +142,10 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	ft_verbose("%s\n", B_GREEN"valid"RESET);
 
 	ft_verbose("\nReading ELF class...\n");
-#ifdef WD_64BITS_EXEC
 	if (elf_file->e_ident.ei_class != WD_64BITS)
 	{
-		return (ft_error("Incompatible class"), NULL);
+		return (ft_error("Incompatible class or unsupported class"), NULL);
 	}
-#else
-	if (elf_file->e_ident.ei_class != WD_32BITS)
-	{
-		return (ft_error("Incompatible class"), NULL);
-	}
-#endif /* WD_64BITS_EXEC */
 	ft_verbose("Class: %s%s%s\n", B_CYAN, elf_file->e_ident.ei_class == WD_32BITS ? "32 bits" : "64 bits", RESET);
 
 	ft_verbose("\nReading ELF endianness...\n");
@@ -218,16 +189,9 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	elf_file->e_type = reader->get_uint16(reader);
 	elf_file->e_machine = reader->get_uint16(reader);
 	elf_file->e_version = reader->get_uint32(reader);
-
-#ifdef WD_32BITS_EXEC
-	elf_file->e_entry += reader->get_uint32(reader);
-	elf_file->e_phoff = reader->get_uint32(reader);
-	elf_file->e_shoff = reader->get_uint32(reader);
-#else
 	elf_file->e_entry += reader->get_uint64(reader);
 	elf_file->e_phoff = reader->get_uint64(reader);
 	elf_file->e_shoff = reader->get_uint64(reader);
-#endif /* WD_32BITS_EXEC */
 	elf_file->e_flags = reader->get_uint32(reader);
 	elf_file->e_ehsize = reader->get_uint16(reader);
 	elf_file->e_phentsize = reader->get_uint16(reader);

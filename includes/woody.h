@@ -6,16 +6,12 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 23:51:12 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 00:34:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WOODY_H
 # define WOODY_H
-
-#if !defined(WD_32BITS_EXEC) && !defined(WD_64BITS_EXEC)
-# define WD_64BITS_EXEC 
-#endif /* WD_32BITS_EXEC */
 
 #include <fcntl.h>
 #include "reader/binary_reader.h"
@@ -78,15 +74,9 @@ typedef struct
 	uint16_t	e_type;						// object type
 	uint16_t	e_machine;					// machine type
 	uint32_t	e_version;					// object version
-#ifdef WD_32BITS_EXEC
-	uint32_t	e_entry;					// address where the execution starts
-	uint32_t	e_phoff;					// program headers' offset
-	uint32_t	e_shoff;					// section headers' offset
-#else
 	uint64_t	e_entry;					// address where the execution starts
 	uint64_t	e_phoff;					// program headers' offset
 	uint64_t	e_shoff;					// section headers' offset
-#endif /* WD_32BITS_EXEC */
 	uint32_t	e_flags;					// architecture-specific flags
 	uint16_t	e_ehsize;					// elf header size
 	uint16_t	e_phentsize; 				// size of a single program header
