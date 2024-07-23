@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "woody.h"
+#include <stdio.h>
 
 static int	get_elf_program_headers(t_elf_file *elf_file, t_binary_reader *reader)
 {
@@ -95,8 +96,6 @@ static int	get_elf_tables_offset(t_elf_file *elf_file, t_binary_reader *reader)
 		if (elf_file->section_tables[i].sh_offset > reader->size
 			|| elf_file->section_tables[i].sh_size > reader->size
 			|| elf_file->section_tables[i].sh_addralign < 1
-			|| elf_file->section_tables[i].sh_info > elf_file->e_shnum
-			|| elf_file->section_tables[i].sh_link > elf_file->e_shnum
 		)
 		{
 			print_elf_file(elf_file, PELF_HEADER | PELF_SECTION | PELF_ERROR);
@@ -239,9 +238,9 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 
 	if (elf_file->e_phoff > reader->size
 		|| elf_file->e_shoff > reader->size
-		|| elf_file->e_ehsize != WD_ELF_HEADER_SIZE
-		|| elf_file->e_phentsize != WD_ELF_PROGRAM_HEADER_SIZE
-		|| elf_file->e_shentsize != WD_ELF_SECTION_HEADER_SIZE
+		|| (elf_file->e_ehsize != 0 && elf_file->e_ehsize != WD_ELF_HEADER_SIZE)
+		|| (elf_file->e_phentsize != 0 && elf_file->e_phentsize != WD_ELF_PROGRAM_HEADER_SIZE)
+		|| (elf_file->e_shentsize != 0 && elf_file->e_shentsize != WD_ELF_SECTION_HEADER_SIZE)
 		|| elf_file->e_shstrndx > elf_file->e_shnum
 		|| elf_file->e_shnum > reader->size / WD_ELF_PROGRAM_HEADER_SIZE
 		|| elf_file->e_phnum > reader->size / WD_ELF_SECTION_HEADER_SIZE

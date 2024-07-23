@@ -20,7 +20,7 @@
 
 [BITS 64]
 
-global aes_128_ecb_encrypt:function
+global _aes_128_ecb_encrypt:function
 
 _key_expansion_128:
     pshufd xmm2, xmm2, 0xff

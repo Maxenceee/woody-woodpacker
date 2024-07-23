@@ -6,7 +6,7 @@
 /*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 16:25:21 by mbrement         ###   ########lyon.fr   */
+/*   Updated: 2024/07/23 18:00:50 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <stdio.h>
 
 size_t calculate_padding(size_t size, size_t alignment) {
+	if (alignment == 0)
+		return (0);
 	size_t padding = (alignment - (size % alignment)) % alignment;
 	return (padding);
 }
@@ -73,10 +75,12 @@ uint8_t	*prepare_payload(t_elf_section *text_section, t_packer *packer)
 	// Copy key inside payload
 	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_KEY, key_aes, WD_AES_KEY_SIZE);
 
-	// printf("WD_PAYLOAD_OFF_DATA_START: %#016x\n", text_section->sh_offset);
-	// printf("WD_PAYLOAD_OFF_DATA_SIZE: %#016x\n", text_section->sh_size);
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
-	// ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
+	printf("WD_PAYLOAD_OFF_DATA_START: %#016x\n", text_section->sh_offset);
+	printf("WD_PAYLOAD_OFF_DATA_SIZE:  %#016x\n", text_section->sh_size);
+	printf("WD_PAYLOAD_OFF_DATA_ADDR:  %#016x\n", text_section->sh_address);
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_START, &text_section->sh_offset, sizeof(uint64_t));
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_SIZE, &text_section->sh_size, sizeof(uint64_t));
+	ft_memcpy(payload + packer->payload_64_size - WD_PAYLOAD_OFF_DATA_ADDR, &text_section->sh_address, sizeof(uint64_t));
 	return (payload);
 }
 

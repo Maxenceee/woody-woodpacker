@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   woody.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 05:55:02 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 17:25:39 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ typedef struct
  * key
  */
 
-#define WD_AES_KEY_SIZE 64
+#define WD_AES_KEY_SIZE 16
 extern uint8_t	key_aes[WD_AES_KEY_SIZE];
 
 /**
@@ -151,5 +151,12 @@ int				packer(t_elf_file *elf);
 
 int	elf_insert_section(t_elf_file *elf, int opt);
 t_elf_section	*get_text_section(t_elf_file *elf);
+
+/**
+ * Encryption
+ */
+
+#define aes_128_ecb_encrypt CDECL_NORM(aes_128_ecb_encrypt)
+void	aes_128_ecb_encrypt(uint8_t *data, uint64_t size, uint8_t *key, uint64_t kye_size);
 
 #endif /* WOODY_H */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
+/*   By: mbrement <mbrement@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/23 16:05:04 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 17:15:55 by mbrement         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	usage(void)
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-s", "--symbols", "Display the symbol table");
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-d", "--data", "Display the section data");
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-g", "--update-syms", "Update debug symbols");
-	(void)fprintf(stderr, "  %s, %-20s %s\n", "-k", "--key=<key-val|@file_path>", "Use custom encrypt key (64 bytes)");
+	(void)fprintf(stderr, "  %s, %-20s %s\n", "-k", "--key=<key-val|@file_path>", "Use custom encrypt key (16 bytes)");
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-v", "--verbose", "Verbose mode");
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-V", "--version", "Print version");
 	exit(64);
@@ -77,7 +77,7 @@ int	main(int ac, char **av)
 					{
 						if (key_size != -1)
 						{
-							ft_warning("Key file should contain 64 bytes, key will be risized");
+							ft_warning("Key file should contain 16 bytes, key will be risized");
 							break;	
 						}
 						ft_error_msg("Cannot read key from file", options.optarg + 1);
@@ -87,7 +87,7 @@ int	main(int ac, char **av)
 					break;
 				}
 				if ((key_size = ft_strlen(options.optarg)) != WD_AES_KEY_SIZE)
-					ft_warning("Key should be 64 bytes long, key will be risized");
+					ft_warning("Key should be 16 bytes long, key will be risized");
 				ft_memmove(key_aes, options.optarg, ft_min(key_size, WD_AES_KEY_SIZE));
 				break;
 			case 'h':
