@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 22:36:41 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/23 19:29:20 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 23:53:55 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 extern uint8_t	payload_64;
 extern uint64_t	payload_64_size;
 
-#define wd_playload_64 &payload_64
+#define wd_playload &payload_64
 #define WB_PAYLOAD_SIZE payload_64_size
 
 #define WD_PAYLOAD_RETURN_ADDR (24 + 16 + 4) // 3 * sizeof(uint64_t) + sizeof(aes_key) + sizeof(int32_t)
