@@ -20,7 +20,7 @@
 
 [BITS 64]
 
-global _aes_128_ecb_encrypt:function
+global _aes_128_ecb_encrypt
 
 _key_expansion_128:
     pshufd xmm2, xmm2, 0xff
@@ -32,29 +32,6 @@ _key_expansion_128:
     pxor xmm1, xmm3
     pxor xmm1, xmm2
     ret
-
-; Used for padding
-; PKCS PADDING
-;aes_pkcs_padding:
-;    sub r9, rsi
-;    mov rcx, 16
-;    sub rcx, r9
-;
-;    ; push
-;    sub rsp, 16
-;    movdqu oword [rsp], xmm15
-;.aes_pkcs_pad_loop:
-;    mov [rsp+rcx], r9b
-;    inc rcx
-;    cmp rcx, 16
-;    jnz .aes_pkcs_pad_loop
-;
-;    ; pop
-;    movdqu  xmm15, oword [rsp]
-;    add     rsp, 16
-;
-;    jmp after_padding
-
 
 ; void aes_128_ecb_encrypt(char *data, size_t data_size, char *key, size_t key_size)
 ;                           rdi             rsi         rdx             r10
@@ -93,14 +70,6 @@ _aes_loop:
     ; Load .text plaintext section block in xmm15
     movdqu xmm15, [rdi + r8]
 
-; Used for padding
-;
-;    mov r9, r8
-;    add r9, 16
-;    cmp r9, rsi
-;    jg aes_pkcs_padding
-;after_padding:
-
     ; Whitening step - Round 0
     pxor xmm15, xmm0 ; First xor
 
@@ -122,32 +91,6 @@ _aes_loop:
     cmp rsi, r8
     jle clean
     jmp _aes_loop
-
-; Used for padding
-;    mov r9, r8
-;    add r9, 16
-;    cmp r9, rsi
-;    jg padded_block
-;    ; Load the encrypted .text section block
-;    movdqu [rdi + r8], xmm15
-;    jmp end_aes_loop
-;padded_block:
-;    mov rcx, rsi
-;    sub rcx, r8
-;    ; push
-;    sub rsp, 16
-;    movdqu oword [rsp], xmm15
-;padded_block_loop:
-;    mov rdx, [rdi+r8]
-;    add rsp, 1
-;    mov [rdx+rcx], spl
-;    inc rcx
-;    cmp rcx,16
-;    jnz padded_block_loop
-;    add rsp, 16
-;end_aes_loop:
-;    add r8, 16
-;    jmp aes_loop
 
 clean:
     popx rax, rdi, rsi, rsp, rdx, rcx
