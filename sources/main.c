@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/23 16:02:47 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/23 16:05:04 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	main(int ac, char **av)
 					{
 						if (key_size != -1)
 						{
-							ft_warning("Key file should contain 64 bytes, padding with 0s");
+							ft_warning("Key file should contain 64 bytes, key will be risized");
 							break;	
 						}
 						ft_error_msg("Cannot read key from file", options.optarg + 1);
