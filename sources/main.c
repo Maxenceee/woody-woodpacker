@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/24 16:30:49 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 18:14:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ static void	usage(void)
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-k", "--key=<key-val|@file_path>", "Use custom encrypt key (16 bytes)");
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-v", "--verbose", "Verbose mode");
 	(void)fprintf(stderr, "  %s, %-20s %s\n", "-V", "--version", "Print version");
+	(void)fprintf(stderr, "  Don't pack itself !\n");
 	exit(64);
 }
 
