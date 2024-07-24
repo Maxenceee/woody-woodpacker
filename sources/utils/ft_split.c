@@ -6,11 +6,38 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 19:28:38 by mgama             #+#    #+#             */
-/*   Updated: 2023/09/28 11:27:19 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:33:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.h"
+
+char	**free_tab(char **tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab[i])
+	{
+		free(tab[i++]);
+	}
+	free(tab);
+	return (0);
+}
+
+int	check_separator(char c, char *charset)
+{
+	int	i;
+
+	i = 0;
+	while (charset[i] != '\0')
+	{
+		if (c == charset[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 static int	count_strings(const char *str, char *charset)
 {
