@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/24 16:22:16 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:30:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,15 @@ int	main(int ac, char **av)
 					int fd = open(options.optarg + 1, O_RDONLY);
 					if (fd == -1)
 					{
-						ft_error_msg("Cannot open file", options.optarg + 1);
+						ft_error_msg("Cannot open key file", options.optarg + 1);
 						return (1);
 					}
-					if ((key_size = read(fd, key_aes, WD_AES_KEY_SIZE)) != WD_AES_KEY_SIZE)
+					/**
+					 * Check file content size macthes WD_AES_KEY_SIZE:
+					 * - If the number of bytes read is less than WD_AES_KEY_SIZE
+					 * - Seek to the end and check if the offset is greater than WD_AES_KEY_SIZE
+					 */
+					if ((key_size = read(fd, key_aes, WD_AES_KEY_SIZE)) != WD_AES_KEY_SIZE || lseek(fd, 0, SEEK_END) != WD_AES_KEY_SIZE)
 					{
 						if (key_size != -1)
 						{
