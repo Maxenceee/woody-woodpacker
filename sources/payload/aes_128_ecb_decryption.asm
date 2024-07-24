@@ -29,16 +29,18 @@ global _payload_aes128_64_size
 
 [BITS 64]
 
+segment .text align=16
+
 _payload_aes128_64:
 	pushfq
 	pushx rax, rdi, rsi, rsp, rdx, rcx
 
     ; sys_write
     mov rax, 1
-	mov	rdi, rax
-	lea	rsi, [rel msg]
-	mov	rdx, 14
-	syscall
+    mov rdi, rax
+    lea rsi, [rel displayed_str]
+    mov rdx, 14
+    syscall
 
     ; We save pie offset
     lea r12, [rel _payload_aes128_64]
@@ -56,8 +58,6 @@ key_expansion_128:
     pxor xmm1, xmm3
     pxor xmm1, xmm2
     ret
-
-msg	db "....WOODY....", 0x0a, 0
 
 start_unpacking:
     movdqu xmm1, [rel info_key]
@@ -126,6 +126,7 @@ aes_loop:
     jle clean
     jmp aes_loop
 
+
 clean:
     popx rax, rdi, rsi, rsp, rdx, rcx
     popfq
@@ -133,6 +134,7 @@ clean:
 
 ; random values here, to be patched
 info_start:
+displayed_str:  db "....WOODY....", 0x0a, 0
 info_key:	    dq	0xaaaaaaaaaaaaaaaa
 padding:        dq  0xbbbbbbbbbbbbbbbb
 info_addr:	    dq	0xcccccccccccccccc
