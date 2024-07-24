@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/24 12:29:39 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:13:08 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define WOODY_H
 
 #include <fcntl.h>
+#include <sys/stat.h>
+
 #include "reader/binary_reader.h"
 #include "AES/aes.h"
 #include "elf.h"

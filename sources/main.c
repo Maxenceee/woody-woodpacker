@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/24 15:41:41 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:12:45 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,22 @@ void	header(void)
 {
 	printf(HEADER"\n              .\n           ,'/ \\`.\n          |\\/___\\/|\n          \\'\\   /`/\n           `.\\ /,'\n              |\n              |\n             |=|\n        /\\  ,|=|.  /\\\n    ,'`.  \\/ |=| \\/  ,'`.\n  ,'    `.|\\ `-' /|,'    `.\n,'   .-._ \\ `---' / _,-.   `.\n   ,'    `-`-._,-'-'    `.\n  '                       `\n"RESET);
 	printf("%*s%sWoodyWoodpacker%s\n\n", 8, "", HACKER, RESET);
+}
+
+int is_same_file(const char *file1, const char *file2) {
+    struct stat stat1, stat2;
+
+    if (stat(file1, &stat1) != 0) {
+        perror("stat");
+        return 0;
+    }
+
+    if (stat(file2, &stat2) != 0) {
+        perror("stat");
+        return 0;
+    }
+
+    return (stat1.st_ino == stat2.st_ino) && (stat1.st_dev == stat2.st_dev);
 }
 
 int	main(int ac, char **av)
