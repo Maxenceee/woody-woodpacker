@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/24 16:12:45 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:15:20 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,12 @@ int	main(int ac, char **av)
 	if (ac - options.optind != 1)
 		usage();
 	target = av[options.optind];
+
+	if (is_same_file(av[0], target))
+	{
+		ft_error("Cannot pack itself !");
+		return (1);
+	}
 
 	ft_verbose("\n%s<== Verbose mode activated ==>%s\n\n", B_RED, RESET);
 
