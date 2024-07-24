@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/24 00:34:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 12:29:39 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "elf.h"
 #include "payload/payload.h"
 
-#define WD_VERSION "3.0"
+#define WD_VERSION "3.5"
 #define WD_AUTHOR "mgama and mbrement"
 
 #define WD_PREFIX "woody"
