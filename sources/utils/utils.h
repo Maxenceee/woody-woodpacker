@@ -6,19 +6,22 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 19:02:43 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 22:14:35 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:19:43 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_H
 # define UTILS_H
 
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <stdint.h>
-# include <fcntl.h>
-# include <string.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include "ft_getopt.h"
 #include "pcolors.h"
 
@@ -70,6 +73,8 @@ int		ft_strlcpy(char *dest, char *src, uint32_t size);
 void	ft_replace(char *src, char to_rep, char set);
 int		ft_extension(char *str, char *end);
 int		ft_strmultichr(char *str, char *chrlst);
+
+int		is_same_file(const char *file1, const char *file2);
 
 /* verbose */
 

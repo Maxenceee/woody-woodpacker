@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 19:00:38 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/24 00:33:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:23:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,12 @@
 #define ELF_H
 
 #include <stdint.h>
+
+enum
+{
+	ELF_32BITS = 1,
+	ELF_64BITS = 2
+};
 
 #define ET_NONE		0		/* No file type */
 #define ET_REL		1		/* Relocatable file */

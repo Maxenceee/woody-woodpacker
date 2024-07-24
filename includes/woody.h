@@ -6,15 +6,12 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/24 16:13:08 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 16:22:37 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WOODY_H
 # define WOODY_H
-
-#include <fcntl.h>
-#include <sys/stat.h>
 
 #include "reader/binary_reader.h"
 #include "AES/aes.h"
@@ -44,12 +41,6 @@
 #define F_UDSYM		0x40
 #define F_NOOUTPUT	0x80
 
-
-enum
-{
-	WD_32BITS = 1,
-	WD_64BITS = 2
-};
 
 /*
  * Structures

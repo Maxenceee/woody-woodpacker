@@ -142,11 +142,11 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	ft_verbose("%s\n", B_GREEN"valid"RESET);
 
 	ft_verbose("\nReading ELF class...\n");
-	if (elf_file->e_ident.ei_class != WD_64BITS)
+	if (elf_file->e_ident.ei_class != ELF_64BITS)
 	{
 		return (ft_error("Incompatible class or unsupported class"), NULL);
 	}
-	ft_verbose("Class: %s%s%s\n", B_CYAN, elf_file->e_ident.ei_class == WD_32BITS ? "32 bits" : "64 bits", RESET);
+	ft_verbose("Class: %s%s%s\n", B_CYAN, elf_file->e_ident.ei_class == ELF_32BITS ? "32 bits" : "64 bits", RESET);
 
 	ft_verbose("\nReading ELF endianness...\n");
 #if 1
