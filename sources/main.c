@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/23 19:35:45 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/24 12:25:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,7 @@ int	main(int ac, char **av)
 
 	if (option & F_NOOUTPUT)
 	{
-		ft_verbose("No output option, skipping packer\n");
+		ft_verbose("\nNo packaging option, skipping the packer\n");
 		return (0);
 	}
 
