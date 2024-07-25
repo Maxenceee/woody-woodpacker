@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 23:28:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 23:30:56 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	return (0);
 }
 
-int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_in_prog)
+int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable, int last_section_in_prog)
 {
 	elf->e_shnum += 1;
 
@@ -172,18 +172,20 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_i
 	 * pretending section is not necessarily a multiple of its alignment, a padding is
 	 * calculated to correct the potential gap.
 	 */
-	uint64_t current_offset_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
-	uint64_t current_offset = elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size + current_offset_padding;
+	// uint64_t current_offset_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
+	// uint64_t current_offset = elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size + current_offset_padding;
+	uint64_t current_offset = elf->program_headers[last_loadable].p_offset + elf->program_headers[last_loadable].p_memsz;
 
 	/**
 	 * Same the section address.
 	 */
-	uint64_t current_vaddr_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
-	uint64_t current_vaddr = elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size + current_vaddr_padding;
+	// uint64_t current_vaddr_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
+	// uint64_t current_vaddr = elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size + current_vaddr_padding;
+	uint64_t current_vaddr = elf->program_headers[last_loadable].p_vaddr + elf->program_headers[last_loadable].p_memsz;
 	
 	new_section->sh_offset = current_offset;
 	new_section->sh_address = current_vaddr;
-	packer->new_section_size = current_offset_padding;
+	// packer->new_section_size = current_offset_padding;
 	ft_verbose("New section offset: %#x\n", new_section->sh_offset);
 	ft_verbose("New section address: %#x\n", new_section->sh_address);
 
@@ -212,7 +214,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_section_i
 	 * a padding is calculated to correct the potential gap and we save it to be used
 	 * later to remap the section headers.
 	 */
-	packer->new_section_size += calculate_padded_size(packer->payload_size, new_section->sh_addralign);
+	// packer->new_section_size += calculate_padded_size(packer->payload_size, new_section->sh_addralign);
 	ft_verbose("New section size: %#x (%d bytes)\n", new_section->sh_size, new_section->sh_size);
 
 	size_t remaining_after_section_headers_data_size = sizeof(t_elf_section) * (elf->e_shnum - last_section_in_prog - 1 - 1);
@@ -297,15 +299,15 @@ void	update_section_addr(t_elf_file *elf, int last_loadable)
 		/**
 		 * It the last section is SHT_NOBITS, we don't need to add its size to the offset of the next section.
 		 */
-		// if (elf->section_tables[i].sh_type == SHT_NOBITS) {
-		// 	elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
-		// 	ft_verbose("  Previous section is SHT_NOBITS\n");
-		// 	if (elf->section_tables[i + 1].sh_address != 0)
-		// 		elf->section_tables[i + 1].sh_address = elf->section_tables[i].sh_address;
-		// 	ft_verbose("  New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
-		// 	ft_verbose("  New address: %#x\n", elf->section_tables[i + 1].sh_address);
-		// 	continue;
-		// }
+		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
+			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
+			ft_verbose("  Previous section is SHT_NOBITS\n");
+			if (elf->section_tables[i + 1].sh_address != 0)
+				elf->section_tables[i + 1].sh_address = elf->section_tables[i].sh_address;
+			ft_verbose("  New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
+			ft_verbose("  New address: %#x\n", elf->section_tables[i + 1].sh_address);
+			continue;
+		}
 
 		/**
 		 * Calculate the padding needed to align the next section based on the offset and size of
@@ -430,7 +432,7 @@ int	elf_insert_section(t_elf_file *elf, int opt)
 	ft_verbose("Last loadable program header index: %d\n", progi);
 	int sectioni = efl_find_last_section_header(elf, progi);
 	ft_verbose("Last loadable section header index: %d\n", sectioni);
-	if (create_new_elf_section(elf, &packer, sectioni) == -1)
+	if (create_new_elf_section(elf, &packer, progi, sectioni) == -1)
 		return (-1);
 
 	sectioni += 1;
