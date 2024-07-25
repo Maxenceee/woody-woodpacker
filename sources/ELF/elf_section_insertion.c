@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 19:26:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 22:45:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,8 +261,9 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	ft_verbose("\nUpdating program header...\n");
 	ft_verbose("Last loadable segment: %d\n", last_loadable);
 
-	elf->program_headers[last_loadable].p_memsz += packer->new_section_size;
-	elf->program_headers[last_loadable].p_filesz += packer->new_section_size;
+	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->new_section_size;
+	elf->program_headers[last_loadable].p_memsz = new_segment_size;
+	elf->program_headers[last_loadable].p_filesz = new_segment_size;
 	ft_verbose("New program header size: %#x\n", elf->program_headers[last_loadable].p_memsz);
 
 	/**
