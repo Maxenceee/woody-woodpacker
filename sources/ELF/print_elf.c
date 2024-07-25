@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/21 05:56:25 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 18:28:30 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ static void	print_elf_program_flag(uint32_t flag)
 	printf("%*s%s", 3 - res, "", "    ");
 }
 
-static void	print_elf_sym(t_elf_section *sym_section, t_elf_section *symstr_section)
+static void	print_elf_sym(t_elf_section *sym_section, t_elf_section *symstr_section, const char *ssymname)
 {
-	printf("\nSymbol table '.symtab' contains %ld entries:\n", sym_section->sh_size / sizeof(t_elf_sym));
+	printf("\nSymbol table '%s' contains %ld entries:\n", ssymname, sym_section->sh_size / sizeof(t_elf_sym));
 	printf("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n");
 	t_elf_sym sym;
 	for (size_t j = 0; j * sizeof(t_elf_sym) < sym_section->sh_size; j++) {
@@ -488,7 +488,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				symstr_idx = i;
 		}
 		
-		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx]);
+		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx], ".dynsym");
 
 		for (uint16_t i = 0; i < elf_file->e_shnum; i++) {
 			if (strcmp(elf_file->section_tables[i].sh_name, ".symtab") == 0 && elf_file->section_tables[i].sh_type == SHT_SYMTAB)
@@ -497,7 +497,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				symstr_idx = i;
 		}
 
-		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx]);
+		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx], ".symtab");
 	}
 
 	if (level & PELF_DATA)

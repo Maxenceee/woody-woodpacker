@@ -31,7 +31,7 @@ global _payload_aes128_64_size
 
 _payload_aes128_64:
 	pushfq
-	pushx rax, rdi, rsi, rsp, rdx, rcx
+	pushx rax, rdi, rsi, rsp, rdx, rcx, r8, r9, r12
 
     ; sys_write
     mov rax, 1
@@ -127,7 +127,7 @@ aes_loop:
     jmp aes_loop
 
 clean:
-    popx rax, rdi, rsi, rsp, rdx, rcx
+    popx rax, rdi, rsi, rsp, rdx, rcx, r8, r9, r12
     popfq
     jmp	JUMP_ADDR
 
