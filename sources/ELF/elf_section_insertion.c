@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 23:27:05 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 23:28:05 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,15 +297,15 @@ void	update_section_addr(t_elf_file *elf, int last_loadable)
 		/**
 		 * It the last section is SHT_NOBITS, we don't need to add its size to the offset of the next section.
 		 */
-		if (elf->section_tables[i].sh_type == SHT_NOBITS) {
-			elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
-			ft_verbose("  Previous section is SHT_NOBITS\n");
-			if (elf->section_tables[i + 1].sh_address != 0)
-				elf->section_tables[i + 1].sh_address = elf->section_tables[i].sh_address;
-			ft_verbose("  New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
-			ft_verbose("  New address: %#x\n", elf->section_tables[i + 1].sh_address);
-			continue;
-		}
+		// if (elf->section_tables[i].sh_type == SHT_NOBITS) {
+		// 	elf->section_tables[i + 1].sh_offset = elf->section_tables[i].sh_offset;
+		// 	ft_verbose("  Previous section is SHT_NOBITS\n");
+		// 	if (elf->section_tables[i + 1].sh_address != 0)
+		// 		elf->section_tables[i + 1].sh_address = elf->section_tables[i].sh_address;
+		// 	ft_verbose("  New offset: %#x\n", elf->section_tables[i + 1].sh_offset);
+		// 	ft_verbose("  New address: %#x\n", elf->section_tables[i + 1].sh_address);
+		// 	continue;
+		// }
 
 		/**
 		 * Calculate the padding needed to align the next section based on the offset and size of
