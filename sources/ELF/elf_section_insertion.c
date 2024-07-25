@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 23:30:56 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 23:39:04 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,6 @@ int		efl_find_last_section_header(t_elf_file *elf, int progindex)
 	t_elf_program_header *prog = (t_elf_program_header *)elf->program_headers + progindex;
 	for (int j = 1; j < elf->e_shnum; j++)
 	{
-		// if (elf->section_tables[j].sh_offset >= prog->p_offset &&
-		// 	elf->section_tables[j].sh_offset + elf->section_tables[j].sh_size <= prog->p_offset + prog->p_filesz)
 		if (elf->section_tables[j].sh_address >= prog->p_vaddr
                 && elf->section_tables[j].sh_address < prog->p_vaddr + prog->p_memsz)
 		{
@@ -167,25 +165,13 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
 	new_section->sh_addralign = 16;
 
-	/**
-	 * The section offset must be aligned with its alignment value, as the size of the
-	 * pretending section is not necessarily a multiple of its alignment, a padding is
-	 * calculated to correct the potential gap.
-	 */
-	// uint64_t current_offset_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
-	// uint64_t current_offset = elf->section_tables[last_section_in_prog].sh_offset + elf->section_tables[last_section_in_prog].sh_size + current_offset_padding;
 	uint64_t current_offset = elf->program_headers[last_loadable].p_offset + elf->program_headers[last_loadable].p_memsz;
-
-	/**
-	 * Same the section address.
-	 */
-	// uint64_t current_vaddr_padding = calculate_padding(elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size, elf->section_tables[last_section_in_prog].sh_addralign);
-	// uint64_t current_vaddr = elf->section_tables[last_section_in_prog].sh_address + elf->section_tables[last_section_in_prog].sh_size + current_vaddr_padding;
 	uint64_t current_vaddr = elf->program_headers[last_loadable].p_vaddr + elf->program_headers[last_loadable].p_memsz;
 	
 	new_section->sh_offset = current_offset;
 	new_section->sh_address = current_vaddr;
-	// packer->new_section_size = current_offset_padding;
+	packer->new_section_size = WB_PAYLOAD_SIZE;
+
 	ft_verbose("New section offset: %#x\n", new_section->sh_offset);
 	ft_verbose("New section address: %#x\n", new_section->sh_address);
 
@@ -265,8 +251,7 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	ft_verbose("\nUpdating program header...\n");
 	ft_verbose("Last loadable segment: %d\n", last_loadable);
 
-	printf("Segment size: %ld <> %ld\n", WB_PAYLOAD_SIZE, packer->new_section_size);
-	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + WB_PAYLOAD_SIZE;
+	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->new_section_size;
 	elf->program_headers[last_loadable].p_memsz = new_segment_size;
 	elf->program_headers[last_loadable].p_filesz = new_segment_size;
 	ft_verbose("New program header size: %#x\n", elf->program_headers[last_loadable].p_memsz);
