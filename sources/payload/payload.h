@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 22:36:41 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 22:51:30 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 23:34:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 #define WD_PAYLOAD_RETURN_ADDR (24 + 16 + 4) // 3 * sizeof(uint64_t) + sizeof(aes_key) + sizeof(int32_t)
 #define WD_PAYLOAD_OFF_KEY (24 + 16) // 3 * sizeof(uint64_t) + sizeof(aes_key)
 #define WD_PAYLOAD_OFF_DATA_ADDR (24) // 3 * sizeof(uint64_t) 
-#define WD_PAYLOAD_OFF_DATA_START (16) // 2 * sizeof(uint64_t)
-#define WD_PAYLOAD_OFF_DATA_SIZE (8) //  sizeof(uint64_t)
+#define WD_PAYLOAD_OFF_DATA_SIZE (16) //  sizeof(uint64_t)
+#define WD_PAYLOAD_OFF_DATA_START (8) // 2 * sizeof(uint64_t)
 
 /**
  * INFO: Built-in example

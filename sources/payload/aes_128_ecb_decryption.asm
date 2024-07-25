@@ -136,6 +136,6 @@ info_start:
 info_key:	    dq	0xaaaaaaaaaaaaaaaa
 padding:        dq  0xbbbbbbbbbbbbbbbb
 info_addr:	    dq	0xcccccccccccccccc
-info_offset:    dq  0xeeeeeeeeeeeeeeee
 info_size:	    dq  0xdddddddddddddddd
+info_offset:    dq  0xeeeeeeeeeeeeeeee
 _payload_aes128_64_size:		dq $-_payload_aes128_64
