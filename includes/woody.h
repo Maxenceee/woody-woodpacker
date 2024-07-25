@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/24 16:22:37 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 22:49:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ extern uint8_t	key_aes[WD_AES_KEY_SIZE];
  * packer
  */
 
-#define WB_SECTION_NAME ".i'm a teapot"
+// #define WB_SECTION_NAME ".i'm a teapot"
+#define WB_SECTION_NAME ".dec"
 
 typedef struct
 {
