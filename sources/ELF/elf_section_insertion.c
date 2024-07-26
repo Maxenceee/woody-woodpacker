@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/26 16:35:48 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 16:41:23 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,9 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	
 	new_section->sh_offset = current_offset;
 	new_section->sh_address = current_vaddr;
-	packer->new_section_size = current_offset_padding;
+	packer->new_section_size = current_offset_padding + WB_PAYLOAD_SIZE;
+
+	printf("current_offset_padding: %lld + %lld => %lld\n", current_offset_padding, WB_PAYLOAD_SIZE, current_offset_padding + WB_PAYLOAD_SIZE);
 
 	ft_verbose("New section offset: %#x\n", new_section->sh_offset);
 	ft_verbose("New section address: %#x\n", new_section->sh_address);
@@ -269,6 +271,7 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	ft_verbose("\nUpdating program header...\n");
 	ft_verbose("Last loadable segment: %d\n", last_loadable);
 
+	printf("seg: %lld + %lld => %lld\n", elf->program_headers[last_loadable].p_memsz, packer->new_section_size, elf->program_headers[last_loadable].p_memsz + packer->new_section_size);
 	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->new_section_size;
 	elf->program_headers[last_loadable].p_memsz = new_segment_size;
 	elf->program_headers[last_loadable].p_filesz = new_segment_size;
