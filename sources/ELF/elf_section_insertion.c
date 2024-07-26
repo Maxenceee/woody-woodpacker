@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 23:07:23 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/26 16:47:13 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 16:54:02 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,13 +165,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	new_section->sh_flags = SHF_EXECINSTR | SHF_ALLOC;
 	new_section->sh_addralign = 16;
 
-	// uint64_t current_offset = elf->program_headers[last_loadable].p_offset + elf->program_headers[last_loadable].p_memsz;
-	// uint64_t current_vaddr = elf->program_headers[last_loadable].p_vaddr + elf->program_headers[last_loadable].p_memsz;
-	
-	// new_section->sh_offset = current_offset;
-	// new_section->sh_address = current_vaddr;
-	// packer->new_section_size = WB_PAYLOAD_SIZE;
-
 	/**
 	 * The section offset must be aligned with its alignment value, as the size of the
 	 * pretending section is not necessarily a multiple of its alignment, a padding is
@@ -189,8 +182,6 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	new_section->sh_offset = current_offset;
 	new_section->sh_address = current_vaddr;
 	packer->new_section_size = current_offset_padding + WB_PAYLOAD_SIZE;
-
-	// printf("current_offset_padding: %lld + %lld => %lld\n", current_offset_padding, WB_PAYLOAD_SIZE, current_offset_padding + WB_PAYLOAD_SIZE);
 
 	ft_verbose("New section offset: %#x\n", new_section->sh_offset);
 	ft_verbose("New section address: %#x\n", new_section->sh_address);
@@ -271,7 +262,6 @@ void	update_program_header(t_elf_file *elf, t_packer *packer, int last_loadable)
 	ft_verbose("\nUpdating program header...\n");
 	ft_verbose("Last loadable segment: %d\n", last_loadable);
 
-	printf("seg: %lld + %lld => %lld\n", elf->program_headers[last_loadable].p_memsz, packer->new_section_size, elf->program_headers[last_loadable].p_memsz + packer->new_section_size);
 	size_t new_segment_size = elf->program_headers[last_loadable].p_memsz + packer->new_section_size;
 	elf->program_headers[last_loadable].p_memsz = new_segment_size;
 	elf->program_headers[last_loadable].p_filesz = new_segment_size;
