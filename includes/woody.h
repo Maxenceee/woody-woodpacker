@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 23:53:10 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:22:12 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "elf.h"
 #include "payload/payload.h"
 
-#define WD_VERSION "3.5"
+#define WD_VERSION "4.0"
 #define WD_AUTHOR "mgama and mbrement"
 
 #define WD_PREFIX "woody"
@@ -26,6 +26,7 @@
 #ifndef WD_OUTPUT_FILE
 # define WD_OUTPUT_FILE "woody"
 #endif /* WD_OUTPUT_FILE */
+
 
 /**
  * Options
@@ -41,8 +42,16 @@
 #define F_NOOUTPUT	0x80
 
 
+/**
+ * Key
+ */
+
+#define WD_AES_KEY_SIZE 16
+extern uint8_t	key_aes[WD_AES_KEY_SIZE];
+
+
 /*
- * Structures
+ * ELF
  */
 
 typedef union
@@ -89,15 +98,44 @@ typedef struct
 // Check endianness and swap bytes if needed
 #define MAGIC(x, e)	(e == LITTLE_ENDIAN ? x : ((x >> 24) & 0xff) | ((x >> 8) & 0xff00) | ((x << 8) & 0xff0000) | ((x << 24) & 0xff000000))
 
+t_elf_file	*new_elf_file(t_binary_reader *reader);
+void		delete_elf_file(t_elf_file *file_format);
+
+#define PELF_ALL		0x01
+#define PELF_HEADER		0x02
+#define PELF_PROG		0x04
+#define PELF_SECTION	0x08
+#define PELF_SYM		0x10
+#define PELF_DATA		0x20
+#define PELF_ERROR		0x80
+
+void	print_elf_file(t_elf_file *elf_file, int level);
+
+#ifdef __APPLE__
+
+#define PELF_LLX	"llx"
+#define PELF_LLXX	"llX"
+#define PELF_LLU	"llu"
+
+#else
+
+#define PELF_LLX	"lx"
+#define PELF_LLXX	"lX"
+#define PELF_LLU	"lu"
+
+#endif /* __APPLE__ */
+
+
 /**
- * key
+ * Insertion
  */
 
-#define WD_AES_KEY_SIZE 16
-extern uint8_t	key_aes[WD_AES_KEY_SIZE];
+int	elf_insert_section(t_elf_file *elf, int opt);
+t_elf_section	*get_text_section(t_elf_file *elf);
+
 
 /**
- * packer
+ * Packer
  */
 
 #define WB_SECTION_NAME ".i'm a teapot"
@@ -110,30 +148,6 @@ typedef struct
 	uint64_t	new_section_size;
 }	t_packer;
 
-/**
- * Function definitions
- */
-
-t_elf_file		*new_elf_file(t_binary_reader *reader);
-void			delete_elf_file(t_elf_file *file_format);
-
-#define PELF_ALL		0x01
-#define PELF_HEADER		0x02
-#define PELF_PROG		0x04
-#define PELF_SECTION	0x08
-#define PELF_SYM		0x10
-#define PELF_DATA		0x20
-#define PELF_ERROR		0x80
-
-void			print_elf_file(t_elf_file *elf_file, int level);
-
-int				packer(t_elf_file *elf);
-
-/**
- * Insertion
- */
-
-int	elf_insert_section(t_elf_file *elf, int opt);
-t_elf_section	*get_text_section(t_elf_file *elf);
+int	packer(t_elf_file *elf);
 
 #endif /* WOODY_H */
