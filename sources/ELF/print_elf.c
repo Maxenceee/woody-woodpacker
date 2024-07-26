@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/26 18:22:22 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:30:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@ static void	print_elf_program_flag(uint32_t flag)
 
 static void	print_elf_sym(t_elf_section *sym_section, t_elf_section *symstr_section, const char *ssymname)
 {
-	printf("\nSymbol table '%s' contains %"PELF_LLU" entries:\n", ssymname, sym_section->sh_size / sizeof(t_elf_sym));
+	printf("\nSymbol table '%s' contains %"PELF_llu" entries:\n", ssymname, sym_section->sh_size / sizeof(t_elf_sym));
 	printf("   Num:    Value          Size Type    Bind   Vis      Ndx Name\n");
 	t_elf_sym sym;
 	for (size_t j = 0; j * sizeof(t_elf_sym) < sym_section->sh_size; j++) {
 		void *absoffset = sym_section->data + j * sizeof(t_elf_sym);
 		memmove(&sym, absoffset, sizeof(sym));
 		printf("    %2ld: ", j);
-		printf("%016"PELF_LLX" ", sym.st_value);
-		printf("%5"PELF_LLU" ", sym.st_size);
+		printf("%016"PELF_llx" ", sym.st_value);
+		printf("%5"PELF_llu" ", sym.st_size);
 		switch (ELF64_ST_TYPE(sym.st_info))
 		{
 		case STT_NOTYPE:
@@ -245,9 +245,9 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			break;
 		}
 		printf("  Version:                           %#x\n", elf_file->e_version);
-		printf("  Entry point:                       %#"PELF_LLX"\n", elf_file->e_entry);
-		printf("  Start of program headers:          %"PELF_LLU" (bytes into file)\n", elf_file->e_phoff);
-		printf("  Start of section headers:          %"PELF_LLU" (bytes into file)\n", elf_file->e_shoff);
+		printf("  Entry point:                       %#"PELF_llx"\n", elf_file->e_entry);
+		printf("  Start of program headers:          %"PELF_llu" (bytes into file)\n", elf_file->e_phoff);
+		printf("  Start of section headers:          %"PELF_llu" (bytes into file)\n", elf_file->e_shoff);
 		printf("  Size of this header:               %d (bytes)\n", elf_file->e_ehsize);
 		printf("  Size of program headers:           %d (bytes)\n", elf_file->e_phentsize);
 		printf("  Number of program headers:         %d\n", elf_file->e_phnum);
@@ -369,10 +369,10 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				printf("%#-18x ", elf_file->section_tables[i].sh_type);
 				break;
 			}
-			printf("%#018"PELF_LLX" ", elf_file->section_tables[i].sh_address);
-			printf("%#018"PELF_LLX" ", elf_file->section_tables[i].sh_offset);
-			printf("%#018"PELF_LLX" ", elf_file->section_tables[i].sh_size);
-			printf("%#018"PELF_LLX"\n", elf_file->section_tables[i].sh_addralign);
+			printf("%#018"PELF_llx" ", elf_file->section_tables[i].sh_address);
+			printf("%#018"PELF_llx" ", elf_file->section_tables[i].sh_offset);
+			printf("%#018"PELF_llx" ", elf_file->section_tables[i].sh_size);
+			printf("%#018"PELF_llx"\n", elf_file->section_tables[i].sh_addralign);
 		}
 	}
 
@@ -446,13 +446,13 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 				printf("%#-14x ", elf_file->program_headers[i].p_type);
 				break;
 			}
-			printf("%#018"PELF_LLX" ", elf_file->program_headers[i].p_offset);
-			printf("%#018"PELF_LLX" ", elf_file->program_headers[i].p_vaddr);
-			printf("%#018"PELF_LLX" ", elf_file->program_headers[i].p_paddr);
-			printf("%#018"PELF_LLX" ", elf_file->program_headers[i].p_filesz);
-			printf("%#018"PELF_LLX" ", elf_file->program_headers[i].p_memsz);
+			printf("%#018"PELF_llx" ", elf_file->program_headers[i].p_offset);
+			printf("%#018"PELF_llx" ", elf_file->program_headers[i].p_vaddr);
+			printf("%#018"PELF_llx" ", elf_file->program_headers[i].p_paddr);
+			printf("%#018"PELF_llx" ", elf_file->program_headers[i].p_filesz);
+			printf("%#018"PELF_llx" ", elf_file->program_headers[i].p_memsz);
 			print_elf_program_flag(elf_file->program_headers[i].p_flags);
-			printf("%#"PELF_LLX"\n", elf_file->program_headers[i].p_align);
+			printf("%#"PELF_llx"\n", elf_file->program_headers[i].p_align);
 		}
 
 		if (0 == (level & PELF_ERROR))
@@ -536,7 +536,7 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 			{
 				if (j % 16 == 0)
 				{
-					printf("    %0*"PELF_LLXX": ", tab, j);
+					printf("    %0*"PELF_llX": ", tab, j);
 				}
 				else if (j % 4 == 0)
 				{

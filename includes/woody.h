@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/26 18:22:12 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:30:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,15 +113,15 @@ void	print_elf_file(t_elf_file *elf_file, int level);
 
 #ifdef __APPLE__
 
-#define PELF_LLX	"llx"
-#define PELF_LLXX	"llX"
-#define PELF_LLU	"llu"
+#define PELF_llx	"llx"
+#define PELF_llX	"llX"
+#define PELF_llu	"llu"
 
 #else
 
-#define PELF_LLX	"lx"
-#define PELF_LLXX	"lX"
-#define PELF_LLU	"lu"
+#define PELF_llx	"lx"
+#define PELF_llX	"lX"
+#define PELF_llu	"lu"
 
 #endif /* __APPLE__ */
 
