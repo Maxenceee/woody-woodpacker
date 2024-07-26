@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 14:18:17 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/20 23:46:42 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:39:31 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 void	gen_aes_key(uint8_t *dest, size_t size)
 {
 	struct timeval tv;
-    gettimeofday(&tv, NULL);
-    srand(tv.tv_usec);
+	gettimeofday(&tv, NULL);
+	srand(tv.tv_usec);
 
 	if (size)
 	{

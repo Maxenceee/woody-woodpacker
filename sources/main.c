@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/25 23:47:00 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/26 18:38:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,23 +44,23 @@ int	main(int ac, char **av)
 	int key_size = WD_AES_KEY_SIZE;
 
 	struct getopt_list_s optlist[] = {
-        {"file-header", 'h', OPTPARSE_NONE},
-        {"segments", 'l', OPTPARSE_NONE},
-        {"sections", 'S', OPTPARSE_NONE},
-        {"symbols", 's', OPTPARSE_NONE},
-        {"data", 'd', OPTPARSE_NONE},
-        {"update-syms", 'g', OPTPARSE_NONE},
-        {"key", 'k', OPTPARSE_REQUIRED},
-        {"verbose", 'v', OPTPARSE_NONE},
-        {"version", 'V', OPTPARSE_NONE},
+		{"file-header", 'h', OPTPARSE_NONE},
+		{"segments", 'l', OPTPARSE_NONE},
+		{"sections", 'S', OPTPARSE_NONE},
+		{"symbols", 's', OPTPARSE_NONE},
+		{"data", 'd', OPTPARSE_NONE},
+		{"update-syms", 'g', OPTPARSE_NONE},
+		{"key", 'k', OPTPARSE_REQUIRED},
+		{"verbose", 'v', OPTPARSE_NONE},
+		{"version", 'V', OPTPARSE_NONE},
 		{"no-pack", 'n', OPTPARSE_NONE},
-        {0}
-    };
+		{0}
+	};
 	struct getopt_s options;
 
 	header();
 
-    ft_getopt_init(&options, av);
+	ft_getopt_init(&options, av);
 	while ((ch = ft_getopt(&options, optlist, NULL)) != -1) {
 		switch (ch) {
 			case 'k':
