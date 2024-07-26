@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 12:09:20 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/25 23:36:42 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/25 23:53:10 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,10 @@
 #define WD_AUTHOR "mgama and mbrement"
 
 #define WD_PREFIX "woody"
-#ifndef WD_OUTPUT_FILE
-#define WD_OUTPUT_FILE "woody"
-#endif /* WD_OUTPUT_FILE */
 
-#define WD_MAGIC 0x7F454C46
+#ifndef WD_OUTPUT_FILE
+# define WD_OUTPUT_FILE "woody"
+#endif /* WD_OUTPUT_FILE */
 
 /**
  * Options
@@ -84,6 +83,8 @@ typedef struct
 #define WD_ELF_HEADER_SIZE (sizeof(t_elf_file) - sizeof(t_elf_program_header *) - sizeof(t_elf_section *))
 #define WD_ELF_PROGRAM_HEADER_SIZE sizeof(t_elf_program_header)
 #define WD_ELF_SECTION_HEADER_SIZE (sizeof(t_elf_section) - sizeof(char *) - sizeof(uint8_t *))
+
+#define WD_MAGIC 0x7F454C46
 
 // Check endianness and swap bytes if needed
 #define MAGIC(x, e)	(e == LITTLE_ENDIAN ? x : ((x >> 24) & 0xff) | ((x >> 8) & 0xff00) | ((x << 8) & 0xff0000) | ((x << 24) & 0xff000000))
