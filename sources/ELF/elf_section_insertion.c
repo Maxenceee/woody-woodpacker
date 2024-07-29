@@ -6,21 +6,23 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/29 11:46:57 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/29 11:54:24 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "woody.h"
 #include <stdio.h>
 
-size_t calculate_padding(size_t size, size_t alignment) {
+size_t calculate_padding(size_t size, size_t alignment)
+{
 	if (alignment == 0)
 		return (0);
 	size_t padding = (alignment - (size % alignment)) % alignment;
 	return (padding);
 }
 
-size_t calculate_padded_size(size_t size, size_t alignment) {
+size_t calculate_padded_size(size_t size, size_t alignment)
+{
 	size_t padding = (alignment - (size % alignment)) % alignment;
 	return (size + padding);
 }

@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/29 11:46:36 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/29 11:54:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 size_t offset = 0;
 
-int	write_to_file(int fd, void *data, size_t size) {
+int	write_to_file(int fd, void *data, size_t size)
+{
 	ssize_t written = write(fd, data, size);
 	if (written == -1) {
 		return (-1);
@@ -23,7 +24,8 @@ int	write_to_file(int fd, void *data, size_t size) {
 	return (0);
 }
 
-void add_zero_padding(int fd, size_t end_offset) {
+void add_zero_padding(int fd, size_t end_offset)
+{
 	char c = 0;
 
 	while(offset < end_offset) {
