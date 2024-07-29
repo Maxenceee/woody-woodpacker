@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/26 18:37:55 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/29 11:46:57 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ size_t calculate_padded_size(size_t size, size_t alignment) {
 int	has_section(t_elf_file *elf, const char *name)
 {
 	for (int i = 0; i < elf->e_shnum; i++) {
-		if (elf->section_tables[i].sh_name && strcmp(elf->section_tables[i].sh_name, name) == 0) {
+		if (elf->section_tables[i].sh_name && ft_strcmp(elf->section_tables[i].sh_name, name) == 0) {
 			return (1);
 		}
 	}
@@ -82,7 +82,7 @@ uint8_t	*prepare_payload(t_elf_section *new_section, t_elf_section *text_section
 }
 
 char *generate_section_name(const char *base_name, int suffix) {
-	size_t base_len = strlen(base_name);
+	size_t base_len = ft_strlen(base_name);
 	size_t new_len = base_len + 1 + snprintf(NULL, 0, "%d", suffix) + 1; // base + '-' + suffix_length + null terminator
 	char *new_name = malloc(new_len);
 	if (new_name == NULL) {
@@ -248,7 +248,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 
 	ft_verbose("Updating symbol table...\n");
 	for (int i = 0; i < elf->e_shnum; i++) {
-		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0) {
+		if (ft_strcmp(elf->section_tables[i].sh_name, ".symtab") == 0) {
 			elf->section_tables[i].sh_link += 1;
 		}
 	}
@@ -356,7 +356,7 @@ void	update_symbols_table(t_elf_file *elf, int symtab_idx, int symstr_idx)
 	t_elf_sym sym;
 	for (size_t j = 0; j * sizeof(t_elf_sym) < elf->section_tables[symtab_idx].sh_size; j++) {
 		void *absoffset = elf->section_tables[symtab_idx].data + j * sizeof(t_elf_sym);
-		memmove(&sym, absoffset, sizeof(sym));
+		ft_memmove(&sym, absoffset, sizeof(sym));
 
 		if (sym.st_name == 0)
 			continue;
@@ -364,12 +364,12 @@ void	update_symbols_table(t_elf_file *elf, int symtab_idx, int symstr_idx)
 		/**
 		 * If debug flag is set, we update the `_start` symbol to point to the new entry point.
 		 */
-		if (strcmp((char *)(elf->section_tables[symstr_idx].data + sym.st_name), "_start") == 0)
+		if (ft_strcmp((char *)(elf->section_tables[symstr_idx].data + sym.st_name), "_start") == 0)
 		{
 			ft_verbose("Updating %s%s%s symbol\n", B_CYAN, "_start", RESET);
 			sym.st_value = elf->e_entry;
 			ft_verbose("New symbol value: %#x\n", sym.st_value);
-			memmove(absoffset, &sym, sizeof(sym));
+			ft_memmove(absoffset, &sym, sizeof(sym));
 			break;
 		}
 	}
@@ -382,9 +382,9 @@ void	update_symbols(t_elf_file *elf)
 
 	ft_verbose("\nUpdating symbol table...\n");
 	for (uint16_t i = 0; i < elf->e_shnum; i++) {
-		if (strcmp(elf->section_tables[i].sh_name, ".symtab") == 0 && elf->section_tables[i].sh_type == SHT_SYMTAB)
+		if (ft_strcmp(elf->section_tables[i].sh_name, ".symtab") == 0 && elf->section_tables[i].sh_type == SHT_SYMTAB)
 			symtab_idx = i;
-		else if (strcmp(elf->section_tables[i].sh_name, ".strtab") == 0 && elf->section_tables[i].sh_type == SHT_STRTAB)
+		else if (ft_strcmp(elf->section_tables[i].sh_name, ".strtab") == 0 && elf->section_tables[i].sh_type == SHT_STRTAB)
 			symstr_idx = i;
 	}
 	if (symtab_idx == 0 || symstr_idx == 0)
@@ -398,9 +398,9 @@ void	update_symbols(t_elf_file *elf)
 	}
 	
 	for (uint16_t i = 0; i < elf->e_shnum; i++) {
-		if (strcmp(elf->section_tables[i].sh_name, ".dynsym") == 0 && elf->section_tables[i].sh_type == SHT_DYNSYM)
+		if (ft_strcmp(elf->section_tables[i].sh_name, ".dynsym") == 0 && elf->section_tables[i].sh_type == SHT_DYNSYM)
 			symtab_idx = i;
-		else if (strcmp(elf->section_tables[i].sh_name, ".dynstr") == 0 && elf->section_tables[i].sh_type == SHT_STRTAB)
+		else if (ft_strcmp(elf->section_tables[i].sh_name, ".dynstr") == 0 && elf->section_tables[i].sh_type == SHT_STRTAB)
 			symstr_idx = i;
 	}
 	if (symtab_idx == 0 || symstr_idx == 0)

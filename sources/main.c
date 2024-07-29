@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/26 18:38:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/29 11:50:50 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,13 +165,12 @@ int	main(int ac, char **av)
 	 * Create new reader
 	 */
 	t_binary_reader *reader = new_binary_reader(fd);
+	close(fd);
 	if (!reader)
 	{
-		close(fd);
 		ft_error_msg("Cannot read file", target);
 		return (1);
 	}
-	close(fd);
 
 	t_elf_file *elf_file = new_elf_file(reader);
 	if (elf_file == NULL)

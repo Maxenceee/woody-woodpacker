@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 21:36:57 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/26 18:30:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/29 11:46:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static void	print_elf_sym(t_elf_section *sym_section, t_elf_section *symstr_sect
 	t_elf_sym sym;
 	for (size_t j = 0; j * sizeof(t_elf_sym) < sym_section->sh_size; j++) {
 		void *absoffset = sym_section->data + j * sizeof(t_elf_sym);
-		memmove(&sym, absoffset, sizeof(sym));
+		ft_memmove(&sym, absoffset, sizeof(sym));
 		printf("    %2ld: ", j);
 		printf("%016"PELF_llx" ", sym.st_value);
 		printf("%5"PELF_llu" ", sym.st_size);
@@ -482,18 +482,18 @@ void	print_elf_file(t_elf_file *elf_file, int level)
 		int symstr_idx = 0;
 
 		for (uint16_t i = 0; i < elf_file->e_shnum; i++) {
-			if (strcmp(elf_file->section_tables[i].sh_name, ".dynsym") == 0 && elf_file->section_tables[i].sh_type == SHT_DYNSYM)
+			if (ft_strcmp(elf_file->section_tables[i].sh_name, ".dynsym") == 0 && elf_file->section_tables[i].sh_type == SHT_DYNSYM)
 				symtab_idx = i;
-			else if (strcmp(elf_file->section_tables[i].sh_name, ".dynstr") == 0 && elf_file->section_tables[i].sh_type == SHT_STRTAB)
+			else if (ft_strcmp(elf_file->section_tables[i].sh_name, ".dynstr") == 0 && elf_file->section_tables[i].sh_type == SHT_STRTAB)
 				symstr_idx = i;
 		}
 		
 		print_elf_sym(&elf_file->section_tables[symtab_idx], &elf_file->section_tables[symstr_idx], ".dynsym");
 
 		for (uint16_t i = 0; i < elf_file->e_shnum; i++) {
-			if (strcmp(elf_file->section_tables[i].sh_name, ".symtab") == 0 && elf_file->section_tables[i].sh_type == SHT_SYMTAB)
+			if (ft_strcmp(elf_file->section_tables[i].sh_name, ".symtab") == 0 && elf_file->section_tables[i].sh_type == SHT_SYMTAB)
 				symtab_idx = i;
-			else if (strcmp(elf_file->section_tables[i].sh_name, ".strtab") == 0 && elf_file->section_tables[i].sh_type == SHT_STRTAB)
+			else if (ft_strcmp(elf_file->section_tables[i].sh_name, ".strtab") == 0 && elf_file->section_tables[i].sh_type == SHT_STRTAB)
 				symstr_idx = i;
 		}
 

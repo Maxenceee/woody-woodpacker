@@ -211,16 +211,19 @@ t_elf_file	*new_elf_file(t_binary_reader *reader)
 	)
 	{
 		print_elf_file(elf_file, PELF_HEADER);
+		delete_elf_file(elf_file);
 		return (ft_error("Could not read file because of incoeherent values"), NULL);
 	}
 
 	if (get_elf_program_headers(elf_file, reader) == -1)
 	{
+		delete_elf_file(elf_file);
 		return (NULL);
 	}
 
 	if (get_elf_tables_offset(elf_file, reader) == -1)
 	{
+		delete_elf_file(elf_file);
 		return (NULL);
 	}
 

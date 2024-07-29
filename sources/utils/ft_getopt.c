@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 17:47:49 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/22 17:57:40 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/29 11:46:36 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ static void	ft_getopt_from_long(const struct getopt_list_s *longopts, char *opts
 	*p = '\0';
 }
 
-/* Unlike strcmp(), handles options containing "=". */
+/* Unlike ft_strcmp(), handles options containing "=". */
 static int	ft_getopt_longopts_match(const char *longname, const char *option)
 {
 	const char *a = option, *n = longname;
