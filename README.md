@@ -32,7 +32,7 @@ A packer is a type of software used to compress and encrypt executable files. Th
 
 The process of packing a binary involves several key steps to ensure the binary is properly encrypted and can execute normally. The main steps are as follows:
 1. **Read and verify the binary**: The input binary file is read into memory and its content is parsed to extract the necessary information, such as the ELF header, program headers, and section headers.
-2. **Search for a loadable segment**: A loadable segment (PT_LOAD) in the binary is searched for, where modifications can be safely made.
+2. **Search for a loadable segment**: A loadable segment in the binary is searched for, where modifications can be safely made.
 3. **Find the last section in the segment**: Within the found segment, the last section is identified to determine where to inject the new code.
 4. **Create a new section**: A new section is created to contain the injected decryption code. This involves:
 	- Specifying various parameters for the new section, such as name, type, flags, and size.
