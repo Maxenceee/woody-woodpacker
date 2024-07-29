@@ -53,13 +53,13 @@ After the ELF header, the file contains a series of sections. Each section has a
 Importtant sections:
 
 Section d'interpréteur :
-* .interp : Cette section spécifie le nom du programme interpréteur utilisé pour exécuter le fichier. Elle est essentielle pour lancer le programme.
+* `.interp` : Cette section spécifie le nom du programme interpréteur utilisé pour exécuter le fichier. Elle est essentielle pour lancer le programme.
 
 Sections de programme :
-* .text : Contient le code exécutable du programme.
-* .init : Contient le code d'initialisation du programme.
-* .fini : Contient le code de finalisation du programme.
-* .plt, .plt.got, .plt.sec : Sections utilisées pour la procédure de liaison dynamique, généralement nécessaires pour les appels de fonctions externes.
+* `.text` : Contient le code exécutable du programme.
+* `.init` : Contient le code d'initialisation du programme.
+* `.fini` : Contient le code de finalisation du programme.
+* `.plt`, .plt.got, .plt.sec : Sections utilisées pour la procédure de liaison dynamique, généralement nécessaires pour les appels de fonctions externes.
 
 Sections de données :
 * .rodata : Contient des données en lecture seule nécessaires à l'exécution du programme.
