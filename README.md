@@ -13,7 +13,7 @@ usage: woody_woodpacker <option(s)> file
   Options are:
   -h, --file-header        Display the ELF file header
   -l, --segments           Display the program headers
-  -S, --sections           Display the sections' header
+  -S, --sections           Display the sections\' header
   -s, --symbols            Display the symbol table
   -d, --data               Display the section data
   -g, --update-syms        Update debug symbols
