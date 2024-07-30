@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 12:59:30 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/29 11:54:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:45:57 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ t_elf_section	*get_text_section(t_elf_file *elf)
 int	encrypt_text_section(t_elf_file *elf)
 {
 	ft_verbose("\nEncrypting the `%s%s%s` section...\n", B_CYAN, ".text", RESET);
-	t_elf_section	*text_section = get_text_section(elf);
+	// t_elf_section	*text_section = get_text_section(elf);
+	t_elf_section *text_section = NULL;
 	if (text_section == NULL)
 		return (ft_error("The text section could not be found in the file"), -1);
 
