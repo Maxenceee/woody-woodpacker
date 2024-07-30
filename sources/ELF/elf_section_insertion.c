@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:41:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:42:20 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,8 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	elf->section_tables = tmp;
 	ft_memset(&elf->section_tables[elf->e_shnum - 1], 0, sizeof(t_elf_section)); // Initialize the new section in case of error during the creation
 
-	t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
+	// t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
+	t_elf_section *new_section = NULL
 	if (new_section == NULL)
 		return (-1);
 
@@ -192,8 +193,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	packer->loader_offset = new_section->sh_address;
 
 	ft_verbose("Extracting text section...\n");
-	// t_elf_section *text_section = get_text_section(elf);
-	t_elf_section *text_section = NULL;
+	t_elf_section *text_section = get_text_section(elf);
 	if (text_section == NULL)
 	{
 		ft_error("The text section could not be found in the file");
