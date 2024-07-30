@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:37:12 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:40:49 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	ft_memcpy(tmp, elf->section_tables, sizeof(t_elf_section) * (elf->e_shnum - 1));
 	free(elf->section_tables);
 	elf->section_tables = tmp;
+	ft_memset(&elf->section_tables[elf->e_shnum - 1], 0, sizeof(t_elf_section));
 
 	t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
 	if (new_section == NULL)
