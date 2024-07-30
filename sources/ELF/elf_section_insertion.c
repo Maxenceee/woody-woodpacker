@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/29 11:54:24 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:37:12 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,8 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	packer->loader_offset = new_section->sh_address;
 
 	ft_verbose("Extracting text section...\n");
-	t_elf_section *text_section = get_text_section(elf);
+	// t_elf_section *text_section = get_text_section(elf);
+	t_elf_section *text_section = NULL;
 	if (text_section == NULL)
 	{
 		ft_error("The text section could not be found in the file");
