@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/30 12:34:38 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:51:10 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,7 @@ int	main(int ac, char **av)
 	if (option & F_NOOUTPUT)
 	{
 		ft_verbose("\nNo packaging option, skipping the packer\n");
+		delete_elf_file(elf_file);
 		return (0);
 	}
 
