@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:45:29 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:47:39 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,8 @@ uint8_t	*prepare_payload(t_elf_section *new_section, t_elf_section *text_section
 char *generate_section_name(const char *base_name, int suffix) {
 	size_t base_len = ft_strlen(base_name);
 	size_t new_len = base_len + 1 + snprintf(NULL, 0, "%d", suffix) + 1; // base + '-' + suffix_length + null terminator
-	char *new_name = malloc(new_len);
+	// char *new_name = malloc(new_len);
+	char *new_name = NULL;
 	if (new_name == NULL) {
 		return NULL;
 	}
