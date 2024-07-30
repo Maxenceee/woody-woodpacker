@@ -24,6 +24,14 @@ usage: woody_woodpacker <option(s)> file
   -n, --no-pack            Do not pack the file
 ```
 
+### Example
+```sh
+$> ./woody_woodpacker /bin/bash
+$> ./woody
+....WOODY....
+max:~/woody-woodpacker$
+```
+
 ## Basic concept
 
 A packer is a type of software used to compress and encrypt executable files. The primary goal of this tool is to obfuscate the contents of a binary, making it harder to analyze or reverse-engineer. The program works by taking an input binary file and injecting decryption code into it during the packing process. When the packed binary is executed, the injected code runs first to decrypt the original content before handing over control to the original program. This ensures that while the binary is stored and transferred in an encrypted state, it can still execute normally when run. This process enhances security by protecting the binary from tampering and unauthorized access.
