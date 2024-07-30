@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:44:37 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:45:29 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,7 @@ char *generate_section_name(const char *base_name, int suffix) {
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section)
 {
-	// char *section_name = malloc(sizeof(WB_SECTION_NAME));
-	char *section_name = NULL;
+	char *section_name = malloc(sizeof(WB_SECTION_NAME));
 	if (section_name == NULL) {
 		return (-1);
 	}
