@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/30 01:29:01 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:20:09 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,12 +220,10 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	
-	if (packer(elf_file) == -1)
-	{
-		delete_elf_file(elf_file);
-		ft_error("An error occured during the packing process");
-		return (1);
-	}
+	packer(elf_file);
+
 	ft_verbose(B_GREEN"\nFile `%s%s%s` successfully packed in %s%s%s !\n"RESET, B_CYAN, target, B_GREEN, B_CYAN, WD_OUTPUT_FILE, B_GREEN);
 	delete_elf_file(elf_file);
+
+	return (0);
 }
