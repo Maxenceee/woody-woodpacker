@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:07:36 by mbrement          #+#    #+#             */
-/*   Updated: 2024/07/30 12:32:55 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:34:25 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ int	main(int ac, char **av)
 	if (packer(elf_file) == -1)
 	{
 		delete_elf_file(elf_file);
+		ft_error("An error occured while packing the file");
 		return (1);
 	}
 
