@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:48:06 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:49:52 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,6 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 			return -1;
 		}
 		section_name = new_name;
-		if (section_name == NULL) {
-			return -1;
-		}
 		suffix++;
 	}
 
