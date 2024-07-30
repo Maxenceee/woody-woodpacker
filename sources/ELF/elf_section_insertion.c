@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:49:52 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:50:13 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,9 @@ char *generate_section_name(const char *base_name, int suffix) {
 	size_t base_len = ft_strlen(base_name);
 	size_t new_len = base_len + 1 + snprintf(NULL, 0, "%d", suffix) + 1; // base + '-' + suffix_length + null terminator
 	char *new_name = malloc(new_len);
-	if (new_name == NULL) {
-		return NULL;
+	if (new_name == NULL)
+	{
+		return (NULL);
 	}
 	snprintf(new_name, new_len, "%s-%d", base_name, suffix);
 	return (new_name);
@@ -111,8 +112,9 @@ int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section
 	{
 		char *new_name = generate_section_name(WB_SECTION_NAME, suffix);
 		free(section_name);
-		if (new_name == NULL) {
-			return -1;
+		if (new_name == NULL)
+		{
+			return (-1);
 		}
 		section_name = new_name;
 		suffix++;
