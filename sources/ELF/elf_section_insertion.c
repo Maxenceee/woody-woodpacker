@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:42:33 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:43:43 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,8 +160,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	elf->section_tables = tmp;
 	ft_memset(&elf->section_tables[elf->e_shnum - 1], 0, sizeof(t_elf_section)); // Initialize the new section in case of error during the creation
 
-	// t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
-	t_elf_section *new_section = NULL;
+	t_elf_section *new_section = ft_calloc(1, sizeof(t_elf_section));
 	if (new_section == NULL)
 		return (-1);
 
@@ -202,7 +201,8 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	}
 	ft_verbose("Text section found\n");
 	ft_verbose("Copying payload data into new section...\n");
-	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
+	// if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
+	if ((new_section->data = NULL) == NULL)
 	{
 		free(new_section);
 		return (-1);
