@@ -6,7 +6,7 @@
 /*   By: mgama <mgama@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/26 18:37:53 by mgama             #+#    #+#             */
-/*   Updated: 2024/07/30 12:43:43 by mgama            ###   ########.fr       */
+/*   Updated: 2024/07/30 12:44:37 by mgama            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,8 @@ char *generate_section_name(const char *base_name, int suffix) {
 
 int	set_new_elf_section_string_table(t_elf_file *elf, t_elf_section *new_section)
 {
-	char *section_name = malloc(sizeof(WB_SECTION_NAME));
+	// char *section_name = malloc(sizeof(WB_SECTION_NAME));
+	char *section_name = NULL;
 	if (section_name == NULL) {
 		return (-1);
 	}
@@ -201,8 +202,7 @@ int	create_new_elf_section(t_elf_file *elf, t_packer *packer, int last_loadable,
 	}
 	ft_verbose("Text section found\n");
 	ft_verbose("Copying payload data into new section...\n");
-	// if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
-	if ((new_section->data = NULL) == NULL)
+	if ((new_section->data = prepare_payload(new_section, text_section, packer)) == NULL)
 	{
 		free(new_section);
 		return (-1);
